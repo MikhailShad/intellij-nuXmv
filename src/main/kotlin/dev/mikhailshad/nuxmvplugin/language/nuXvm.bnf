@@ -1,0 +1,589 @@
+{
+  parserClass="dev.mikhailshad.nuxmvplugin.language.parser.NuXmvParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="NuXmv"
+  psiImplClassSuffix="Impl"
+  psiPackage="dev.mikhailshad.nuxmvplugin.language.psi"
+  psiImplPackage="dev.mikhailshad.nuxmvplugin.language.psi.impl"
+
+  elementTypeHolderClass="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes"
+  elementTypeClass="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvElementType"
+  tokenTypeClass="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTokenType"
+
+  tokens = [
+    // Keywords
+    MODULE="MODULE"
+    VAR="VAR"
+    IVAR="IVAR"
+    FROZENVAR="FROZENVAR"
+    DEFINE="DEFINE"
+    CONSTANTS="CONSTANTS"
+    ASSIGN="ASSIGN"
+    TRANS="TRANS"
+    INIT="INIT"
+    INVAR="INVAR"
+    FAIRNESS="FAIRNESS"
+    JUSTICE="JUSTICE"
+    COMPASSION="COMPASSION"
+    CTLSPEC="CTLSPEC"
+    SPEC="SPEC"
+    LTLSPEC="LTLSPEC"
+    INVARSPEC="INVARSPEC"
+    PSLSPEC="PSLSPEC"
+    FUN="FUN"
+    ISA="ISA"
+    PRED="PRED"
+    MIRROR="MIRROR"
+    COMPUTE="COMPUTE"
+    // Operators and punctuation
+    LPAREN="("
+    RPAREN=")"
+    LBRACE="{"
+    RBRACE="}"
+    LBRACKET="["
+    RBRACKET="]"
+    DOT="."
+    COMMA=","
+    SEMICOLON=";"
+    COLON=":"
+    ASSIGN_OP=":="
+    PLUS="+"
+    MINUS="-"
+    MULT="*"
+    DIV="/"
+    MOD="mod"
+    AND="&"
+    OR="|"
+    NOT="!"
+    XOR="xor"
+    XNOR="xnor"
+    IMPLIES="->"
+    EQUIV="<->"
+    EQ="="
+    NEQ="!="
+    LT="<"
+    GT=">"
+    LE="<="
+    GE=">="
+    SHL="<<"
+    SHR=">>"
+    PI="pi"
+    ABS="abs"
+    MAX="max"
+    MIN="min"
+    SIN="sin"
+    COS="cos"
+    TAN="tan"
+    EXP="exp"
+    LN="ln"
+    POW="pow"
+    ASIN="asin"
+    ACOS="acos"
+    ATAN="atan"
+    SQRT="sqrt"
+    BOOL="bool"
+    TOINT="toint"
+    SIGNED="signed"
+    UNSIGNED="unsigned"
+    EXTEND="extend"
+    RESIZE="resize"
+    UNION="union"
+    IN="in"
+    COUNT="count"
+    FLOOR="floor"
+    NEXT="next"
+    CASE="case"
+    ESAC="esac"
+    TRUE="TRUE"
+    FALSE="FALSE"
+    SELF="self"
+    EG="EG"
+    EX="EX"
+    EF="EF"
+    AG="AG"
+    AX="AX"
+    AF="AF"
+    E_U="E["
+    A_U="A["
+    X="X"
+    G="G"
+    F="F"
+    U="U"
+    V="V"
+    Y="Y"
+    Z="Z"
+    H="H"
+    O="O"
+    S="S"
+    T="T"
+    TIME_UNTIL="time_until"
+    TIME_SINCE="time_since"
+    EBF="EBF"
+    ABF="ABF"
+    EBG="EBG"
+    ABG="ABG"
+    BU="BU"
+    FORALL="forall"
+    EXISTS="exists"
+    ALWAYS="always"
+    NEVER="never"
+    NEXT_EVENT="next_event"
+    NEXT_EVENT_A="next_event_a"
+    NEXT_EVENT_E="next_event_e"
+    WITHIN="within"
+    WHILENOT="whilenot"
+    SEQ="sequence"
+    SERE="SERE"
+    OBE="OBE"
+    FL="FL"
+    OBE_PROPERTY="OBE_property"
+    FL_PROPERTY="FL_property"
+    // Identifiers and literals
+    IDENTIFIER="regexp:[a-zA-Z_][a-zA-Z0-9_\-]*"
+    INTEGER="regexp:[0-9]+"
+    REAL="regexp:[0-9]+\.[0-9]+"
+    STRING="regexp:\"[^\"]*\""
+  ]
+}
+
+// Start rule
+nuXmvFile ::= moduleDeclaration*
+
+moduleDeclaration ::= MODULE IDENTIFIER (LPAREN moduleParameters? RPAREN)? moduleBody?
+
+moduleParameters ::= IDENTIFIER (COMMA IDENTIFIER)*
+
+moduleBody ::= moduleElement*
+
+moduleElement ::= varDeclaration
+                | ivarDeclaration
+                | frozenvarDeclaration
+                | functionDeclaration
+                | defineDeclaration
+                | constantsDeclaration
+                | assignConstraint
+                | transConstraint
+                | initConstraint
+                | invarConstraint
+                | fairnessConstraint
+                | ctlSpecification
+                | invarSpecification
+                | ltlSpecification
+                | computeSpecification
+                | parameterSynthProblem
+                | isaDeclaration
+                | predDeclaration
+                | mirrorDeclaration
+
+varDeclaration ::= VAR varList
+
+ivarDeclaration ::= IVAR simpleVarList
+
+frozenvarDeclaration ::= FROZENVAR simpleVarList
+
+varList ::= complexIdentifier COLON typeSpecifier SEMICOLON
+          | varList complexIdentifier COLON typeSpecifier SEMICOLON
+
+simpleVarList ::= complexIdentifier COLON simpleTypeSpecifier SEMICOLON
+                | simpleVarList complexIdentifier COLON simpleTypeSpecifier SEMICOLON
+
+complexIdentifier ::= IDENTIFIER
+                    | complexIdentifier DOT IDENTIFIER
+                    | complexIdentifier LBRACKET simpleExpression RBRACKET
+                    | SELF
+
+typeSpecifier ::= simpleTypeSpecifier
+                | moduleTypeSpecifier
+
+simpleTypeSpecifier ::= BOOLEAN
+                      | WORD LBRACKET INTEGER RBRACKET
+                      | UNSIGNED WORD LBRACKET INTEGER RBRACKET
+                      | SIGNED WORD LBRACKET INTEGER RBRACKET
+                      | INTEGER
+                      | REAL
+                      | CLOCK
+                      | LBRACE enumerationTypeBody RBRACE
+                      | INTEGER DOTDOT INTEGER
+                      | ARRAY INTEGER DOTDOT INTEGER OF simpleTypeSpecifier
+
+enumerationTypeBody ::= enumerationTypeValue
+                      | enumerationTypeBody COMMA enumerationTypeValue
+
+enumerationTypeValue ::= symbolicConstant
+                       | INTEGER
+
+symbolicConstant ::= complexIdentifier
+
+moduleTypeSpecifier ::= IDENTIFIER (LPAREN parameterList? RPAREN)?
+
+parameterList ::= simpleExpression
+                | parameterList COMMA simpleExpression
+
+functionDeclaration ::= FUN functionList
+
+functionList ::= functionDeclaration
+               | functionList functionDeclaration
+
+functionDeclaration ::= complexIdentifier COLON functionTypeSpecifier SEMICOLON
+
+functionTypeSpecifier ::= functionArgsTypeSpecifier ARROW simpleTypeSpecifier
+
+functionArgsTypeSpecifier ::= simpleTypeSpecifier
+                            | functionArgsTypeSpecifier STAR simpleTypeSpecifier
+
+defineDeclaration ::= DEFINE defineBody
+
+defineBody ::= complexIdentifier ASSIGN_OP nextExpression SEMICOLON
+             | defineBody complexIdentifier ASSIGN_OP nextExpression SEMICOLON
+
+constantsDeclaration ::= CONSTANTS constantsBody SEMICOLON
+
+constantsBody ::= complexIdentifier
+                | constantsBody COMMA complexIdentifier
+
+assignConstraint ::= ASSIGN assignList
+
+assignList ::= assign SEMICOLON
+             | assignList assign SEMICOLON
+
+assign ::= complexIdentifier ASSIGN_OP simpleExpression
+         | INIT LPAREN complexIdentifier RPAREN ASSIGN_OP simpleExpression
+         | NEXT LPAREN complexIdentifier RPAREN ASSIGN_OP nextExpression
+
+transConstraint ::= TRANS nextExpression SEMICOLON
+
+initConstraint ::= INIT simpleExpression SEMICOLON
+
+invarConstraint ::= INVAR simpleExpression SEMICOLON
+                  | INVAR simpleExpression IMPLIES simpleExpression SEMICOLON
+
+fairnessConstraint ::= FAIRNESS simpleExpression SEMICOLON
+                     | JUSTICE simpleExpression SEMICOLON
+                     | COMPASSION LPAREN simpleExpression COMMA simpleExpression RPAREN SEMICOLON
+
+ctlSpecification ::= CTLSPEC ctlExpression SEMICOLON
+                   | SPEC ctlExpression SEMICOLON
+                   | CTLSPEC NAME IDENTIFIER ASSIGN_OP ctlExpression SEMICOLON
+                   | SPEC NAME IDENTIFIER ASSIGN_OP ctlExpression SEMICOLON
+
+ctlExpression ::= simpleExpression
+                | LPAREN ctlExpression RPAREN
+                | NOT ctlExpression
+                | ctlExpression AND ctlExpression
+                | ctlExpression OR ctlExpression
+                | ctlExpression XOR ctlExpression
+                | ctlExpression XNOR ctlExpression
+                | ctlExpression IMPLIES ctlExpression
+                | ctlExpression EQUIV ctlExpression
+                | EG ctlExpression
+                | EX ctlExpression
+                | EF ctlExpression
+                | AG ctlExpression
+                | AX ctlExpression
+                | AF ctlExpression
+                | E_U ctlExpression U ctlExpression RPAREN
+                | A_U ctlExpression U ctlExpression RPAREN
+
+invarSpecification ::= INVARSPEC nextExpression SEMICOLON
+                     | INVARSPEC NAME IDENTIFIER ASSIGN_OP nextExpression SEMICOLON
+
+ltlSpecification ::= LTLSPEC ltlExpression SEMICOLON
+                   | LTLSPEC NAME IDENTIFIER ASSIGN_OP ltlExpression SEMICOLON
+
+ltlExpression ::= nextExpression
+                | LPAREN ltlExpression RPAREN
+                | NOT ltlExpression
+                | ltlExpression AND ltlExpression
+                | ltlExpression OR ltlExpression
+                | ltlExpression XOR ltlExpression
+                | ltlExpression XNOR ltlExpression
+                | ltlExpression IMPLIES ltlExpression
+                | ltlExpression EQUIV ltlExpression
+                | X ltlExpression
+                | G ltlExpression
+                | F ltlExpression
+                | ltlExpression U ltlExpression
+                | ltlExpression V ltlExpression
+                | Y ltlExpression
+                | Z ltlExpression
+                | H ltlExpression
+                | O ltlExpression
+                | ltlExpression S ltlExpression
+                | ltlExpression T ltlExpression
+                | TIME_UNTIL LPAREN nextExpression RPAREN
+                | TIME_SINCE LPAREN nextExpression RPAREN
+
+computeSpecification ::= COMPUTE computeExpression SEMICOLON
+                       | COMPUTE NAME IDENTIFIER ASSIGN_OP computeExpression SEMICOLON
+
+computeExpression ::= MIN LBRACKET rtctlExpression COMMA rtctlExpression RBRACKET
+                    | MAX LBRACKET rtctlExpression COMMA rtctlExpression RBRACKET
+
+rtctlExpression ::= ctlExpression
+                  | EBF range rtctlExpression
+                  | ABF range rtctlExpression
+                  | EBG range rtctlExpression
+                  | ABG range rtctlExpression
+                  | A_U rtctlExpression BU range rtctlExpression RPAREN
+                  | E_U rtctlExpression BU range rtctlExpression RPAREN
+
+range ::= INTEGER DOTDOT INTEGER
+
+pslspecDeclaration ::= PSLSPEC pslExpression SEMICOLON
+                     | PSLSPEC NAME IDENTIFIER ASSIGN_OP pslExpression SEMICOLON
+
+pslExpression ::= pslPrimaryExpression
+                | pslUnaryExpression
+                | pslBinaryExpression
+                | pslConditionalExpression
+                | pslCaseExpression
+                | pslProperty
+
+pslPrimaryExpression ::= constant
+                       | IDENTIFIER
+                       | LBRACE pslExpression (COMMA pslExpression)* RBRACE
+                       | LPAREN pslExpression RPAREN
+
+pslUnaryExpression ::= PLUS pslPrimaryExpression
+                     | MINUS pslPrimaryExpression
+                     | NOT pslPrimaryExpression
+
+pslBinaryExpression ::= pslExpression PLUS pslExpression
+                      | pslExpression MINUS pslExpression
+                      | pslExpression MULT pslExpression
+                      | pslExpression DIV pslExpression
+                      | pslExpression MOD pslExpression
+                      | pslExpression EQ pslExpression
+                      | pslExpression NEQ pslExpression
+                      | pslExpression LT pslExpression
+                      | pslExpression LE pslExpression
+                      | pslExpression GT pslExpression
+                      | pslExpression GE pslExpression
+                      | pslExpression AND pslExpression
+                      | pslExpression OR pslExpression
+                      | pslExpression XOR pslExpression
+                      | pslExpression IMPLIES pslExpression
+                      | pslExpression EQUIV pslExpression
+
+pslConditionalExpression ::= pslExpression QUESTION pslExpression COLON pslExpression
+
+pslCaseExpression ::= CASE pslCaseBody ESAC
+
+pslCaseBody ::= pslExpression COLON pslExpression SEMICOLON
+              | pslCaseBody pslExpression COLON pslExpression SEMICOLON
+
+pslProperty ::= replicator pslExpression
+              | FL_PROPERTY abort pslExpression
+              | pslExpression EQUIV pslExpression
+              | pslExpression IMPLIES pslExpression
+              | FL_PROPERTY
+              | OBE_PROPERTY
+
+replicator ::= FORALL IDENTIFIER LBRACKET indexRange RBRACKET IN valueSet COLON
+
+indexRange ::= LBRACKET range RBRACKET
+
+valueSet ::= LBRACE valueRange (COMMA valueRange)* RBRACE
+           | BOOLEAN
+
+valueRange ::= pslExpression
+             | range
+
+FL_PROPERTY ::= X FL_PROPERTY
+              | X NOT FL_PROPERTY
+              | F FL_PROPERTY
+              | G FL_PROPERTY
+              | LBRACKET FL_PROPERTY U FL_PROPERTY RBRACKET
+              | LBRACKET FL_PROPERTY W FL_PROPERTY RBRACKET
+              | ALWAYS FL_PROPERTY
+              | NEVER FL_PROPERTY
+              | NEXT FL_PROPERTY
+              | NEXT NOT FL_PROPERTY
+              | EVENTUALLY NOT FL_PROPERTY
+              | FL_PROPERTY UNTIL NOT FL_PROPERTY
+              | FL_PROPERTY UNTIL FL_PROPERTY
+              | FL_PROPERTY UNTIL NOT_ FL_PROPERTY
+              | FL_PROPERTY UNTIL_ FL_PROPERTY
+              | FL_PROPERTY BEFORE NOT FL_PROPERTY
+              | FL_PROPERTY BEFORE FL_PROPERTY
+              | FL_PROPERTY BEFORE NOT_ FL_PROPERTY
+              | FL_PROPERTY BEFORE_ FL_PROPERTY
+              | X LBRACKET INTEGER RBRACKET LPAREN FL_PROPERTY RPAREN
+              | X NOT LBRACKET INTEGER RBRACKET LPAREN FL_PROPERTY RPAREN
+              | NEXT LBRACKET INTEGER RBRACKET LPAREN FL_PROPERTY RPAREN
+              | NEXT NOT LBRACKET INTEGER RBRACKET LPAREN FL_PROPERTY RPAREN
+              | NEXT_A LBRACKET range RBRACKET LPAREN FL_PROPERTY RPAREN
+              | NEXT_A NOT LBRACKET range RBRACKET LPAREN FL_PROPERTY RPAREN
+              | NEXT_E LBRACKET range RBRACKET LPAREN FL_PROPERTY RPAREN
+              | NEXT_E NOT LBRACKET range RBRACKET LPAREN FL_PROPERTY RPAREN
+              | NEXT_EVENT NOT LPAREN pslExpression RPAREN LPAREN FL_PROPERTY RPAREN
+              | NEXT_EVENT LPAREN pslExpression RPAREN LPAREN FL_PROPERTY RPAREN
+              | NEXT_EVENT NOT LPAREN pslExpression RPAREN LBRACKET INTEGER RBRACKET LPAREN FL_PROPERTY RPAREN
+              | NEXT_EVENT LPAREN pslExpression RPAREN LBRACKET INTEGER RBRACKET LPAREN FL_PROPERTY RPAREN
+              | NEXT_EVENT_A NOT LPAREN pslExpression RPAREN LBRACKET pslExpression RBRACKET LPAREN FL_PROPERTY RPAREN
+              | NEXT_EVENT_A LPAREN pslExpression RPAREN LBRACKET pslExpression RBRACKET LPAREN FL_PROPERTY RPAREN
+              | NEXT_EVENT_E NOT LPAREN pslExpression RPAREN LBRACKET pslExpression RBRACKET LPAREN FL_PROPERTY RPAREN
+              | NEXT_EVENT_E LPAREN pslExpression RPAREN LBRACKET pslExpression RBRACKET LPAREN FL_PROPERTY RPAREN
+              | SEQ LPAREN FL_PROPERTY RPAREN
+              | SEQ ARROW SEQ NOT
+              | SEQ ARROW SEQ
+              | SEQ ARROW SEQ NOT_
+              | SEQ ARROW SEQ_
+              | ALWAYS SEQ
+              | G SEQ
+              | NEVER SEQ
+              | EVENTUALLY NOT SEQ
+              | WITHIN NOT LPAREN sequenceOrPslExpression COMMA pslExpression RPAREN SEQ
+              | WITHIN LPAREN sequenceOrPslExpression COMMA pslExpression RPAREN SEQ
+              | WITHIN NOT_ LPAREN sequenceOrPslExpression COMMA pslExpression RPAREN SEQ
+              | WITHIN_ LPAREN sequenceOrPslExpression COMMA pslExpression RPAREN SEQ
+              | WHILENOT NOT LPAREN pslExpression RPAREN SEQ
+              | WHILENOT LPAREN pslExpression RPAREN SEQ
+              | WHILENOT NOT_ LPAREN pslExpression RPAREN SEQ
+              | WHILENOT_ LPAREN pslExpression RPAREN SEQ
+              | SEQ SEMICOLON SEQ
+              | SEQ COLON SEQ
+              | SEQ AND SEQ
+              | SEQ AND AND SEQ
+              | SEQ OR SEQ
+              | SEQ LBRACKET STAR LBRACKET count RBRACKET RBRACKET
+              | LBRACKET STAR LBRACKET count RBRACKET RBRACKET
+              | SEQ LBRACKET PLUS RBRACKET
+              | LBRACKET PLUS RBRACKET
+              | pslExpression EQUALS count
+              | pslExpression ARROW count
+
+sequenceOrPslExpression ::= SEQ
+                          | pslExpression
+
+OBE_PROPERTY ::= AX OBE_PROPERTY
+               | AG OBE_PROPERTY
+               | AF OBE_PROPERTY
+               | A_U OBE_PROPERTY U OBE_PROPERTY RPAREN
+               | EX OBE_PROPERTY
+               | EG OBE_PROPERTY
+               | EF OBE_PROPERTY
+               | E_U OBE_PROPERTY U OBE_PROPERTY RPAREN
+
+simpleExpression ::= basicExpression
+
+basicExpression ::= constant
+                  | TIME
+                  | complexIdentifier
+                  | defineIdentifier
+                  | functionCall
+                  | LPAREN basicExpression RPAREN
+                  | PI
+                  | ABS LPAREN basicExpression RPAREN
+                  | MAX LPAREN basicExpression COMMA basicExpression RPAREN
+                  | MIN LPAREN basicExpression COMMA basicExpression RPAREN
+                  | SIN LPAREN basicExpression RPAREN
+                  | COS LPAREN basicExpression RPAREN
+                  | TAN LPAREN basicExpression RPAREN
+                  | EXP LPAREN basicExpression RPAREN
+                  | LN LPAREN basicExpression RPAREN
+                  | POW LPAREN basicExpression COMMA simpleExpression RPAREN
+                  | ASIN LPAREN basicExpression RPAREN
+                  | ACOS LPAREN basicExpression RPAREN
+                  | ATAN LPAREN basicExpression RPAREN
+                  | SQRT LPAREN basicExpression RPAREN
+                  | NOT basicExpression
+                  | basicExpression AND basicExpression
+                  | basicExpression OR basicExpression
+                  | basicExpression XOR basicExpression
+                  | basicExpression XNOR basicExpression
+                  | basicExpression IMPLIES basicExpression
+                  | basicExpression EQUIV basicExpression
+                  | basicExpression EQ basicExpression
+                  | basicExpression NEQ basicExpression
+                  | basicExpression LT basicExpression
+                  | basicExpression GT basicExpression
+                  | basicExpression LE basicExpression
+                  | basicExpression GE basicExpression
+                  | MINUS basicExpression
+                  | basicExpression PLUS basicExpression
+                  | basicExpression MINUS basicExpression
+                  | basicExpression MULT basicExpression
+                  | basicExpression DIV basicExpression
+                  | basicExpression MOD basicExpression
+                  | basicExpression SHL basicExpression
+                  | basicExpression SHR basicExpression
+                  | basicExpression LBRACKET index RBRACKET
+                  | basicExpression LBRACKET INTEGER COLON INTEGER RBRACKET
+                  | basicExpression COLON basicExpression
+                  | WORD1 LPAREN basicExpression RPAREN
+                  | BOOL LPAREN basicExpression RPAREN
+                  | TOINT LPAREN basicExpression RPAREN
+                  | SIGNED LPAREN basicExpression RPAREN
+                  | UNSIGNED LPAREN basicExpression RPAREN
+                  | EXTEND LPAREN basicExpression COMMA basicExpression RPAREN
+                  | RESIZE LPAREN basicExpression COMMA basicExpression RPAREN
+                  | basicExpression UNION basicExpression
+                  | LBRACE setBodyExpression RBRACE
+                  | basicExpression IN basicExpression
+                  | basicExpression QUESTION basicExpression COLON basicExpression
+                  | COUNT LPAREN basicExpressionList RPAREN
+                  | FLOOR LPAREN basicExpression RPAREN
+                  | caseExpression
+                  | NEXT LPAREN basicExpression RPAREN
+
+basicExpressionList ::= basicExpression
+                      | basicExpressionList COMMA basicExpression
+
+setBodyExpression ::= basicExpression
+                    | setBodyExpression COMMA basicExpression
+
+caseExpression ::= CASE caseBody ESAC
+
+caseBody ::= basicExpression COLON basicExpression SEMICOLON
+           | caseBody basicExpression COLON basicExpression SEMICOLON
+
+nextExpression ::= basicExpression
+
+functionCall ::= complexIdentifier LPAREN functionCallArgs? RPAREN
+
+functionCallArgs ::= simpleExpression
+                   | functionCallArgs COMMA simpleExpression
+
+constant ::= booleanConstant
+           | integerConstant
+           | realConstant
+           | symbolicConstant
+           | wordConstant
+           | rangeConstant
+
+booleanConstant ::= TRUE
+                  | FALSE
+
+integerConstant ::= INTEGER
+
+realConstant ::= REAL
+
+symbolicConstant ::= complexIdentifier
+
+wordConstant ::= INTEGER LBRACKET wordSignSpecifier? wordBase wordWidth RBRACKET wordValue
+
+wordSignSpecifier ::= U
+                     | S
+
+wordWidth ::= INTEGER
+
+wordBase ::= B
+           | O
+           | D
+           | H
+
+wordValue ::= hexDigit
+            | wordValue hexDigit
+
+hexDigit ::= INTEGER
+           | A
+           | B
+           | C
+           | D
+           | E
+           | F
+
+rangeConstant ::= INTEGER DOTDOT INTEGER
