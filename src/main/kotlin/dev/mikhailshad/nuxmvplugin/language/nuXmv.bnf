@@ -1,0 +1,436 @@
+{
+  parserClass="dev.mikhailshad.nuxmvplugin.language.parser.NuXmvParser"
+  parserUtilClass="dev.mikhailshad.nuxmvplugin.language.parser.NuXmvParserUtil"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="NuXmv"
+  psiImplClassSuffix="Impl"
+  psiPackage="dev.mikhailshad.nuxmvplugin.language.psi"
+  psiImplPackage="dev.mikhailshad.nuxmvplugin.language.psi.impl"
+
+  elementTypeHolderClass="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes"
+  elementTypeClass="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvElementType"
+  tokenTypeClass="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTokenType"
+
+  tokens=[
+    WHITESPACE      ='regexp:\s+'
+    BLOCK_COMMENT   = 'regexp:/--(.|\r|\n)*--/'
+    LINE_COMMENT    = 'regexp:--[^\r\n]*'
+
+    LTLSPEC         = 'LTLSPEC'
+    CTLSPEC         = 'CTLSPEC'
+    INVARSPEC       = 'INVARSPEC'
+    SPEC            = 'SPEC'
+
+    MODULE          = 'MODULE'
+    SELF            = 'self'
+    TRUE            = 'TRUE'
+    FALSE           = 'FALSE'
+
+    NOT             = '!'
+    AND             = '&'
+    OR              = '|'
+    XOR             = 'xor'
+    NOT_XOR         = 'xnor'
+    IMPLICATION     = '->'
+    EQUIVALENCE     = '<->'
+    EQUALITY        = '='
+    NOT_EQUALITY    = '!='
+    LESS            = '<'
+    GREATER         = '>'
+    LESS_EQ         = '<='
+    GREATER_EQ      = '>='
+
+    ASSIGN          = ':='
+
+    MINUS           = '-'
+    PLUS            = '+'
+    MULT            = '*'
+    DIV             = '/'
+    MOD             = 'mod'
+
+    SHIFT_RIGHT     = '>>'
+    SHIFT_LEFT      = '<<'
+
+    LPAREN          = '('
+    RPAREN          = ')'
+    LBRACE          = '{'
+    RBRACE          = '}'
+    LBRACKET        = '['
+    RBRACKET        = ']'
+    DOT             = '.'
+    COMMA           = ','
+    SEMICOLON       = ';'
+    COLON           = ':'
+    RANGE           = '..'
+    CONCAT          = '::'
+
+    TO_WORD1        = 'word1'
+    TO_BOOL         = 'bool'
+    TO_INT          = 'toint'
+    TO_SIGNED       = 'signed'
+    TO_UNSIGNED     = 'unsigned'
+    EXTEND          = 'extend'
+    RESIZE          = 'resize'
+    UNION           = 'union'
+    IN              = 'in'
+    QUESTION_MARK   = '?'
+    COUNT           = 'count'
+    FLOOR           = 'floor'
+    NEXT            = 'next'
+    CASE            = 'case'
+    ESAC            = 'esac'
+
+    // Type Specifier
+    BOOLEAN_TYPE        = 'boolean'
+    WORD_TYPE           = 'word'
+    UNSIGNED_WORD_TYPE  = 'unsigned word'
+    SIGNED_WORD_TYPE    = 'signed word'
+    INTEGER_TYPE        = 'integer'
+    REAL_TYPE           = 'real'
+    CLOCK_TYPE          = 'clock'
+    ARRAY_TYPE          = 'array'
+    ARRAY_OF            = 'of'
+
+    // State, Input, Frozen Variables
+    VAR              = 'VAR'
+    IVAR             = 'IVAR'
+    FROZENVAR        = 'FROZENVAR'
+
+    // Other
+    FUN_KW           = 'FUN'
+    DEFINE_KW        = 'DEFINE'
+    CONSTANTS_KW     = 'CONSTANTS'
+    ASSIGN_KW        = 'ASSIGN'
+    INIT_FUN         = "init"
+    INIT_KW          = "INIT"
+    TRANS_KW         = "TRANS"
+    INVAR_KW         = "INVAR"
+    FAIRNESS_KW      = "FAIRNESS"
+    JUSTICE_KW       = "JUSTICE"
+    COMPASSION_KW    = "COMPASSION"
+    TIME_DOMAIN_KW   = "@TIME DOMAIN"
+    PRED_KW          = "PRED"
+    MIRROR_KW        = "MIRROR"
+    ISA_KW           = "ISA"
+    NAME_KW          = "NAME"
+    COMPUTE_KW       = "COMPUTE"
+    MIN_KW           = "MIN"
+    MAX_KW           = "MAX"
+    PARSYNTH_KW      = "PARSYNTH"
+    VALID_KW         = "VALID"
+    SAT_KW           = "SAT"
+    MONOPOS_KW       = "MONOPOS"
+    MONONEG_KW       = "MONONEG"
+
+    IDENTIFIER = "regexp:[A-Za-z_][A-Za-z_0-9$\-#]*"
+    POSITIVE_INTEGER_NUMBER = "regexp:[0-9]+"
+    INTEGER_NUMBER = "regexp:-?[0-9]+"
+    FLOAT_NUMBER = "regexp:[0-9]+\.[0-9]+"
+    FRACTIONAL_NUMBER = "regexp:[fF]'[0-9]+/[0-9]+"
+    EXPONENTIAL_NUMBER = "regexp:([0-9]+|[0-9]+/[0-9]+)[eE](-?[0-9]+)"
+  ]
+
+  extends(".+LtlExpr")=LtlExpr
+  extends(".+CtlExpr")=CtlExpr
+  extends(".+BasicExpr")=BasicExpr
+}
+
+/*
+CODE FORMATTING
+===============
+- tokens are in ALL_CAPS
+- grammar rules are in CamelCase
+- meta rules and recoverWhile predicates should be in snake_case
+ */
+
+NuXmvFile ::= !<<eof>> NuXmvModule+ {pin=1}
+NuXmvModule ::= ModuleDeclaration ModuleBody?
+ModuleDeclaration ::= MODULE ModuleName (LPAREN ModuleParameters RPAREN)? {pin=1}
+ModuleName ::= IDENTIFIER
+ModuleParameters ::= IDENTIFIER (COMMA IDENTIFIER)*
+ModuleBody ::= ModuleElement+
+private ModuleElement ::= VarDeclaration
+    | IvarDeclaration
+    | FrozenVarDeclaration
+    | FunctionDeclaration
+    | DefineDeclaration
+    | ConstantsDeclaration
+    | AssignConstraint
+    | TransConstraint
+    | InitConstraint
+    | InvarConstraint
+    | FairnessConstraint
+    | JusticeConstraint
+    | CompassionConstraint
+    | CtlSpecification
+    | LtlSpecification
+    | InvarSpecification
+    | ComputeSpecification
+    | ParameterSynthProblemDeclaration
+    | IsaDeclaration
+    | PredDeclaration
+    | MirrorDeclaration
+    {recoverWhile=module_element_recover}
+
+private module_element_recover ::= !(
+    SEMICOLON | RBRACKET | RPAREN
+    | VAR | IVAR | FROZENVAR
+    | DEFINE_KW | CONSTANTS_KW | ASSIGN_KW | TRANS_KW | INIT_KW | INVAR_KW | COMPASSION_KW | FAIRNESS_KW | JUSTICE_KW
+    | LTLSPEC | CTLSPEC | SPEC | INVARSPEC
+    | COMPUTE_KW | PARSYNTH_KW
+    | ISA_KW | PRED_KW | MIRROR_KW
+    | MODULE
+    )
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// CTL SPEC
+///////////////////////////////////////////////////////////////////////////////////////////////////
+CtlSpecification ::= CtlSpecKeyWord CtlNamedSpecification? CtlExpr SEMICOLON? {pin=1}
+private CtlSpecKeyWord ::= CTLSPEC | SPEC
+private CtlNamedSpecification ::=  NAME_KW SimpleIdentifier ASSIGN
+
+CtlExpr ::= TreeCtlExprGroup
+    | PrimaryCtlExprGroup
+
+//ImplicationCtlExpr ::= CtlExpr IMPLICATION CtlExpr {rightAssociative = true}
+//EquivalenceCtlExpr ::= CtlExpr EQUIVALENCE CtlExpr
+//private BooleanOrCtlExprGroup ::= LogicalOrCtlExpr | LogicalXorCtlExpr | LogicalNotXorCtlExpr
+//LogicalOrCtlExpr ::= CtlExpr OR CtlExpr
+//LogicalXorCtlExpr ::= CtlExpr XOR CtlExpr
+//LogicalNotXorCtlExpr ::= CtlExpr NOT_XOR CtlExpr
+//LogicalAndCtlExpr ::= CtlExpr AND CtlExpr
+//LogicalNotCtlExpr ::= NOT CtlExpr
+
+private TreeCtlExprGroup ::= ExistGloballyCtlExpr
+    | ExistNextStateCtlExpr
+    | ExistFinallyCtlExpr
+    | ForAllGloballyCtlExpr
+    | ForAllNextStateCtlExpr
+    | ForAllFinallyCtlExpr
+    | ExistUntilCtlExpr
+    | ForAllUntilCtlExpr
+ExistGloballyCtlExpr ::= "EG" CtlExpr
+ExistNextStateCtlExpr ::= "EX" CtlExpr
+ExistFinallyCtlExpr ::= "EF" CtlExpr
+ForAllGloballyCtlExpr ::= "AG" CtlExpr
+ForAllNextStateCtlExpr ::= "AX" CtlExpr
+ForAllFinallyCtlExpr ::= "AF" CtlExpr
+ExistUntilCtlExpr ::= "E" LBRACKET CtlExpr "U" CtlExpr RBRACKET
+ForAllUntilCtlExpr ::= "A" LBRACKET CtlExpr "U" CtlExpr RBRACKET
+
+private PrimaryCtlExprGroup ::=  SimpleExpr | ParenthesisCtlExpr
+ParenthesisCtlExpr ::= LPAREN CtlExpr RPAREN
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// LTL SPEC
+///////////////////////////////////////////////////////////////////////////////////////////////////
+LtlSpecification ::= LTLSPEC LtlNamedSpecification? LtlExpr SEMICOLON? {pin=1}
+private LtlNamedSpecification ::= NAME_KW SimpleIdentifier ASSIGN
+LtlExpr ::= PastLtlExpr
+    | FutureLtlExpr
+    | LogicalLtlExpr
+    | ParenthesisLtlExpr
+    | NextSimpleExpr
+PastLtlExpr ::= "time_since" LPAREN NextSimpleExpr RPAREN
+//    | LtlExpr "@O~" LtlExpr
+//    | LtlExpr "T" LtlExpr
+//    | LtlExpr "S" LtlExpr
+    | "O" LtlExpr
+    | "H" LtlExpr
+    | "Z" LtlExpr
+    | "Y" LtlExpr
+FutureLtlExpr ::= "time_until" LPAREN NextSimpleExpr RPAREN
+//    | LtlExpr "@F~" LtlExpr
+//    | LtlExpr "V" LtlExpr
+//    | LtlExpr "U" LtlExpr
+    | "F" LtlExpr
+    | "G" LtlExpr
+    | "X" LtlExpr
+LogicalLtlExpr ::= NOT LtlExpr
+//    | LtlExpr EQUIVALENCE LtlExpr
+//    | LtlExpr IMPLICATION LtlExpr
+//    | LtlExpr NOT_XOR LtlExpr
+//    | LtlExpr XOR LtlExpr
+//    | LtlExpr OR LtlExpr
+//    | LtlExpr AND LtlExpr
+ParenthesisLtlExpr ::= LPAREN LtlExpr RPAREN
+
+InvarSpecification ::= INVARSPEC NamedInvarSpecification? NextSimpleExpr SEMICOLON? {pin=1}
+private NamedInvarSpecification ::= NAME_KW SimpleIdentifier ASSIGN
+
+VarDeclaration ::= VAR SingleVarDeclaration+ {pin=1}
+SingleVarDeclaration ::= VarName COLON TypeSpecifier SEMICOLON {pin=3}
+
+IvarDeclaration ::= IVAR SingleIvarDeclaration+ {pin=1}
+SingleIvarDeclaration ::= VarName COLON SimpleTypeSpecifier SEMICOLON {pin=3}
+
+FrozenVarDeclaration ::= FROZENVAR SingleIvarDeclaration {pin=1}
+VarName ::= ComplexIdentifier
+    | "\"" ComplexIdentifier "\""
+
+FunctionDeclaration ::= FUN_KW FunctionSpecification+
+FunctionSpecification ::= FunctionName COLON FunctionTypeSpecifier SEMICOLON {pin=3}
+FunctionName ::= ComplexIdentifier
+FunctionTypeSpecifier ::= FunctionArgTypesSpecifier IMPLICATION SimpleTypeSpecifier
+FunctionArgTypesSpecifier ::= SimpleTypeSpecifier (MULT SimpleTypeSpecifier)*
+
+DefineDeclaration ::= DEFINE_KW DefineBody+
+DefineBody ::= ComplexIdentifier ASSIGN NextSimpleExpr SEMICOLON {pin=3}
+
+ConstantsDeclaration ::= CONSTANTS_KW ConstantsBody SEMICOLON
+ConstantsBody ::= ComplexIdentifier (COMMA ComplexIdentifier)*
+
+AssignConstraint ::= ASSIGN_KW SingleAssignConstraint+
+SingleAssignConstraint ::= AssignExpr SEMICOLON
+private AssignExpr ::= InitAssignExpr | NextAssignExpr | SimpleAssignExpr
+SimpleAssignExpr ::= ComplexIdentifier ASSIGN SimpleExpr
+InitAssignExpr ::= INIT_FUN LPAREN ComplexIdentifier RPAREN ASSIGN SimpleExpr
+NextAssignExpr ::= NEXT LPAREN ComplexIdentifier RPAREN ASSIGN NextSimpleExpr
+
+TransConstraint ::= TRANS_KW NextSimpleExpr SEMICOLON?
+
+InitConstraint ::= INIT_KW SimpleExpr SEMICOLON?
+
+InvarConstraint ::= INVAR_KW SimpleExpr (IMPLICATION SimpleExpr)? SEMICOLON?
+
+FairnessConstraint ::= FAIRNESS_KW SimpleExpr SEMICOLON?
+JusticeConstraint ::= JUSTICE_KW SimpleExpr SEMICOLON?
+CompassionConstraint ::= COMPASSION_KW LPAREN SimpleExpr COMMA SimpleExpr RPAREN SEMICOLON?
+
+IsaDeclaration ::= ISA_KW IDENTIFIER
+
+PredDeclaration ::= PRED_KW SimpleExpr SEMICOLON?
+    | PRED_KW LESS SimpleExpr GREATER ASSIGN SimpleExpr SEMICOLON?
+
+ComputeSpecification ::= COMPUTE_KW ComputeExpr SEMICOLON?
+    | COMPUTE_KW NAME_KW identifier ASSIGN ComplexIdentifier SEMICOLON?
+ComputeExpr ::= (MIN_KW | MAX_KW) LBRACKET RtCtlExpr COMMA RtCtlExpr RBRACKET
+RtCtlExpr ::= CtlExpr
+    | ("EBF" | "ABF" | "EBG" | "ABG") INTEGER_NUMBER RANGE INTEGER_NUMBER RtCtlExpr
+    | ("A" | "E") LBRACKET RtCtlExpr "BU" RtCtlExpr RBRACKET
+
+// parameter_synth_problem
+ParameterSynthProblemDeclaration ::= PARSYNTH_KW ParameterSynthProblem SEMICOLON?
+ParameterSynthProblem ::= identifier ASSIGN LBRACE IdList OR [VALID_KW | SAT_KW] LtlExpr SynthOpts RBRACE
+IdList ::= identifier (COMMA identifier)*
+SynthOpts ::= SynthOpt (COMMA SynthOpt)*
+SynthOpt ::= MONONEG_KW
+    | MONOPOS_KW
+    | (MIN_KW | MAX_KW) LPAREN SimpleExpr RPAREN
+
+MirrorDeclaration ::= MIRROR_KW VariableIdentifier SEMICOLON?
+
+VariableIdentifier ::= ComplexIdentifier
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Types
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+TypeSpecifier ::= SimpleTypeSpecifier | ModuleTypeSpecifier
+SimpleTypeSpecifier ::= BOOLEAN_TYPE
+    | WORD_TYPE LBRACKET WholeNumber RBRACKET
+    | UNSIGNED_WORD_TYPE LBRACKET WholeNumber RBRACKET
+    | SIGNED_WORD_TYPE LBRACKET WholeNumber RBRACKET
+    | INTEGER_TYPE
+    | REAL_TYPE
+    | CLOCK_TYPE
+    | LBRACE EnumerationTypeBody RBRACE
+    | WholeNumber RANGE WholeNumber
+    | ARRAY_TYPE WholeNumber RANGE WholeNumber ARRAY_OF SimpleTypeSpecifier
+EnumerationTypeBody ::= EnumerationTypeValue (COMMA EnumerationTypeValue)*
+EnumerationTypeValue ::= WholeNumber | ComplexIdentifier
+ModuleTypeSpecifier ::= SimpleIdentifier ParameterList
+ParameterList ::= LPAREN [SimpleExpr (COMMA SimpleExpr)*] RPAREN
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Expressions
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+private SimpleExpr ::= BasicExpr
+private NextSimpleExpr ::= BasicExpr
+
+BasicExpr ::= ImplicationBasicExpr
+    | EquivalenceBasicExpr
+    | TernaryBasicExpr
+    | BooleanOrBasicExprGroup
+    | AndBasicExpr
+    | ComparisonBasicExprGroup
+    | InBasicExpr
+    | UnionBasicExpr
+    | ShiftBasicExprGroup
+    | AddBasicExprGroup
+    | MulBasicExprGroup
+    | ConcatBasicExpr
+    | UnaryMinusBasicExpr
+    | LogicalNotBasicExpr
+    | IndexBasicExpr
+    | CaseBasicExpr
+    | FunctionCallBasicExpr
+    | PrimaryBasicExprGroup
+
+CaseBasicExpr ::= CASE RegularCaseBody+ ESAC
+RegularCaseBody ::= BasicExpr COLON BasicExpr SEMICOLON
+TernaryBasicExpr ::= BasicExpr QUESTION_MARK BasicExpr COLON BasicExpr
+
+private ComparisonBasicExprGroup ::= LessBasicExpr | GreaterBasicExpr | LessEqBasicExpr | GreaterEqBasicExpr | EqualityBasicExpr | NotEqualityBasicExpr
+LessBasicExpr ::= BasicExpr LESS BasicExpr
+GreaterBasicExpr ::= BasicExpr GREATER BasicExpr
+LessEqBasicExpr ::= BasicExpr LESS_EQ BasicExpr
+GreaterEqBasicExpr ::= BasicExpr GREATER_EQ BasicExpr
+EqualityBasicExpr ::= BasicExpr EQUALITY BasicExpr
+NotEqualityBasicExpr ::= BasicExpr NOT_EQUALITY BasicExpr
+
+ConcatBasicExpr ::= BasicExpr CONCAT BasicExpr
+UnionBasicExpr ::= BasicExpr UNION BasicExpr
+InBasicExpr ::= BasicExpr IN BasicExpr
+
+ImplicationBasicExpr ::= BasicExpr IMPLICATION BasicExpr {rightAssociative = true}
+EquivalenceBasicExpr ::= BasicExpr EQUIVALENCE BasicExpr
+private BooleanOrBasicExprGroup ::= OrBasicExpr | XorBasicExpr | NotXorBasicExpr
+OrBasicExpr ::= BasicExpr OR BasicExpr
+XorBasicExpr ::= BasicExpr XOR BasicExpr
+NotXorBasicExpr ::= BasicExpr NOT_XOR BasicExpr
+AndBasicExpr ::= BasicExpr AND BasicExpr
+
+private AddBasicExprGroup ::= PlusBasicExpr | MinusBasicExpr
+PlusBasicExpr ::= BasicExpr PLUS BasicExpr
+MinusBasicExpr ::= BasicExpr MINUS BasicExpr
+
+private MulBasicExprGroup ::= MulBasicExpr | DivBasicExpr | ModBasicExpr
+MulBasicExpr ::= BasicExpr MULT BasicExpr
+DivBasicExpr ::= BasicExpr DIV BasicExpr
+ModBasicExpr ::= BasicExpr MOD BasicExpr
+
+private ShiftBasicExprGroup ::= ShiftLeftBasicExpr | ShiftRightBasicExpr
+ShiftLeftBasicExpr ::= BasicExpr SHIFT_LEFT BasicExpr
+ShiftRightBasicExpr ::= BasicExpr SHIFT_RIGHT BasicExpr
+
+LogicalNotBasicExpr ::= NOT BasicExpr
+UnaryMinusBasicExpr ::= MINUS BasicExpr
+
+IndexBasicExpr ::= BasicExpr LBRACKET WholeNumber (SEMICOLON WholeNumber)? RBRACKET {pin=2}
+
+FunctionCallBasicExpr ::= FunctionIdentifier LPAREN BasicExprList RPAREN
+FunctionIdentifier ::= INIT_FUN | NEXT | SimpleIdentifier
+BasicExprList ::= BasicExpr (COMMA BasicExpr)*
+
+private PrimaryBasicExprGroup ::= ReferenceBasicExpr | LiteralBasicExpr | ParenthesisBasicExpr
+ParenthesisBasicExpr ::= LPAREN BasicExpr RPAREN
+LiteralBasicExpr ::= BooleanConstant
+    | WholeNumber
+    | RealNumber
+    | WordConstant
+    | RangeConstant
+    | BuiltInConstant
+BooleanConstant ::= TRUE | FALSE
+WordConstant ::= "0" ("u"|"s")? ["b" | "B"] WholeNumber? "_" HEX_NUMBER
+RangeConstant ::= WholeNumber RANGE WholeNumber
+WholeNumber ::= POSITIVE_INTEGER_NUMBER | INTEGER_NUMBER
+RealNumber ::= FLOAT_NUMBER | FRACTIONAL_NUMBER | EXPONENTIAL_NUMBER
+BuiltInConstant ::= TIME | PI
+ReferenceBasicExpr ::= ComplexIdentifier | SimpleIdentifier
+ComplexIdentifier ::= BaseIdentifier (DOT SimpleIdentifier) * (LBRACKET BasicExpr RBRACKET)?
+private BaseIdentifier ::= SimpleIdentifier | SELF
+SimpleIdentifier ::= IDENTIFIER

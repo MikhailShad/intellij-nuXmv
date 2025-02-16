@@ -11,7 +11,6 @@ repositories {
     mavenCentral()
 }
 
-// Include the generated files in the source set
 sourceSets {
     main {
         java {
@@ -20,18 +19,12 @@ sourceSets {
     }
 }
 
-dependencies {
-    // Other dependencies.
-    testImplementation(kotlin("test"))
-}
-
-// Configure Gradle IntelliJ Plugin
-// Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
     version.set("2024.1.7")
-    type.set("IC") // Target IDE Platform
+    type.set("IC")
 
-    plugins.set(listOf(/* Plugin Dependencies */))
+    /* Plugin Dependencies */
+    plugins.set(listOf("com.intellij.java"))
 }
 
 tasks {
@@ -42,10 +35,6 @@ tasks {
     }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "17"
-    }
-
-    test {
-        useJUnitPlatform()
     }
 
     patchPluginXml {

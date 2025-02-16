@@ -20,6 +20,7 @@
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.java</depends>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
@@ -29,6 +30,21 @@
                 implementationClass="dev.mikhailshad.nuxmvplugin.language.NuXmvFileType"
                 fieldName="INSTANCE"
                 language="nuXmv"
-                extensions="nuxmv"/>
+                extensions="nuxmv;xmv;smv"/>
+        <lang.parserDefinition
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.language.parser.NuXmvParserDefinition"/>
+        <lang.syntaxHighlighterFactory
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.language.highlighter.NuXmvSyntaxHighlighterFactory"/>
+        <colorSettingsPage
+                implementation="dev.mikhailshad.nuxmvplugin.language.highlighter.NuXmvColourSettingsPage"/>
+        <codeInsight.lineMarkerProvider
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.language.editor.NuXmvLineMarkerProvider"/>
+        <completion.contributor
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.language.completion.NuXmvCompletionContributor"/>
+
     </extensions>
 </idea-plugin>
