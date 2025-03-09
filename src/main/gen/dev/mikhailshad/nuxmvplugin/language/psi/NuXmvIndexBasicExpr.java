@@ -5,10 +5,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface NuXmvIndexBasicExpr extends NuXmvBasicExpr {
+public interface NuXmvIndexBasicExpr extends NuXmvExpr {
 
     @NotNull
-    NuXmvBasicExpr getBasicExpr();
+    NuXmvExpr getExpr();
 
     @NotNull
     List<NuXmvWholeNumber> getWholeNumberList();

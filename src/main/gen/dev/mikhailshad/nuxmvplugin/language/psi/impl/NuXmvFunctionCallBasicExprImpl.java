@@ -9,7 +9,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFunctionIdentifier;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public class NuXmvFunctionCallBasicExprImpl extends NuXmvBasicExprImpl implements NuXmvFunctionCallBasicExpr {
+public class NuXmvFunctionCallBasicExprImpl extends NuXmvExprImpl implements NuXmvFunctionCallBasicExpr {
 
     public NuXmvFunctionCallBasicExprImpl(@NotNull ASTNode node) {
         super(node);

@@ -7,6 +7,6 @@ import org.jetbrains.annotations.NotNull;
 public interface NuXmvFairnessConstraint extends PsiElement {
 
     @NotNull
-    NuXmvBasicExpr getBasicExpr();
+    NuXmvExpr getExpr();
 
 }

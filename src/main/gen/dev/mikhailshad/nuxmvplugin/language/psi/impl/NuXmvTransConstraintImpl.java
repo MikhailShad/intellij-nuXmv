@@ -4,7 +4,7 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvBasicExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTransConstraint;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +27,8 @@ public class NuXmvTransConstraintImpl extends ASTWrapperPsiElement implements Nu
 
     @Override
     @NotNull
-    public NuXmvBasicExpr getBasicExpr() {
-        return findNotNullChildByClass(NuXmvBasicExpr.class);
+    public NuXmvExpr getExpr() {
+        return findNotNullChildByClass(NuXmvExpr.class);
     }
 
 }

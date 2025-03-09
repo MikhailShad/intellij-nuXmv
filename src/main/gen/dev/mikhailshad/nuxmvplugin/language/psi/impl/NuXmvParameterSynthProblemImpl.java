@@ -25,14 +25,14 @@ public class NuXmvParameterSynthProblemImpl extends ASTWrapperPsiElement impleme
 
     @Override
     @NotNull
-    public NuXmvIdList getIdList() {
-        return findNotNullChildByClass(NuXmvIdList.class);
+    public NuXmvExpr getExpr() {
+        return findNotNullChildByClass(NuXmvExpr.class);
     }
 
     @Override
     @NotNull
-    public NuXmvLtlExpr getLtlExpr() {
-        return findNotNullChildByClass(NuXmvLtlExpr.class);
+    public NuXmvIdList getIdList() {
+        return findNotNullChildByClass(NuXmvIdList.class);
     }
 
     @Override

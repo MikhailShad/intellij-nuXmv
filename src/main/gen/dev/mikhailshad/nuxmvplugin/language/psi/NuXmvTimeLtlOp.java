@@ -2,11 +2,7 @@
 package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
 
-public interface NuXmvSynthOpt extends PsiElement {
-
-    @Nullable
-    NuXmvExpr getExpr();
+public interface NuXmvTimeLtlOp extends PsiElement {
 
 }

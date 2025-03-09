@@ -2,12 +2,14 @@
 package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+public interface NuXmvUnaryLtlExpr extends NuXmvExpr {
 
-public interface NuXmvForAllUntilCtlExpr extends NuXmvCtlExpr {
+    @Nullable
+    NuXmvExpr getExpr();
 
     @NotNull
-    List<NuXmvCtlExpr> getCtlExprList();
+    NuXmvUnaryLtlOp getUnaryLtlOp();
 
 }

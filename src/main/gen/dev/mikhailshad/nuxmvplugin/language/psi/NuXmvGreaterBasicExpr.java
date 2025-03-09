@@ -5,9 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface NuXmvGreaterBasicExpr extends NuXmvBasicExpr {
+public interface NuXmvGreaterBasicExpr extends NuXmvExpr {
 
     @NotNull
-    List<NuXmvBasicExpr> getBasicExprList();
+    List<NuXmvExpr> getExprList();
 
 }

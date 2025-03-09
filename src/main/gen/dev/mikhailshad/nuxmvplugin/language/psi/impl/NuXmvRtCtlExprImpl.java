@@ -3,13 +3,13 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvCtlExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvRtCtlExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class NuXmvRtCtlExprImpl extends NuXmvCtlExprImpl implements NuXmvRtCtlExpr {
+public class NuXmvRtCtlExprImpl extends NuXmvExprImpl implements NuXmvRtCtlExpr {
 
     public NuXmvRtCtlExprImpl(@NotNull ASTNode node) {
         super(node);
@@ -28,8 +28,8 @@ public class NuXmvRtCtlExprImpl extends NuXmvCtlExprImpl implements NuXmvRtCtlEx
 
     @Override
     @Nullable
-    public NuXmvCtlExpr getCtlExpr() {
-        return findChildByClass(NuXmvCtlExpr.class);
+    public NuXmvExpr getExpr() {
+        return findChildByClass(NuXmvExpr.class);
     }
 
 }

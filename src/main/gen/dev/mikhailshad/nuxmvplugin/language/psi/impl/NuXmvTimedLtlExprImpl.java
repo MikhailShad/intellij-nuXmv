@@ -3,21 +3,22 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFutureLtlExpr;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvLtlExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTimeLtlOp;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTimedLtlExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class NuXmvFutureLtlExprImpl extends NuXmvLtlExprImpl implements NuXmvFutureLtlExpr {
+public class NuXmvTimedLtlExprImpl extends NuXmvExprImpl implements NuXmvTimedLtlExpr {
 
-    public NuXmvFutureLtlExprImpl(@NotNull ASTNode node) {
+    public NuXmvTimedLtlExprImpl(@NotNull ASTNode node) {
         super(node);
     }
 
     @Override
     public void accept(@NotNull NuXmvVisitor visitor) {
-        visitor.visitFutureLtlExpr(this);
+        visitor.visitTimedLtlExpr(this);
     }
 
     @Override
@@ -28,8 +29,14 @@ public class NuXmvFutureLtlExprImpl extends NuXmvLtlExprImpl implements NuXmvFut
 
     @Override
     @Nullable
-    public NuXmvLtlExpr getLtlExpr() {
-        return findChildByClass(NuXmvLtlExpr.class);
+    public NuXmvExpr getExpr() {
+        return findChildByClass(NuXmvExpr.class);
+    }
+
+    @Override
+    @NotNull
+    public NuXmvTimeLtlOp getTimeLtlOp() {
+        return findNotNullChildByClass(NuXmvTimeLtlOp.class);
     }
 
 }

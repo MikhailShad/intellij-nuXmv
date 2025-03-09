@@ -5,9 +5,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface NuXmvExistUntilCtlExpr extends NuXmvCtlExpr {
+public interface NuXmvUntilCtlExpr extends NuXmvExpr {
 
     @NotNull
-    List<NuXmvCtlExpr> getCtlExprList();
+    List<NuXmvExpr> getExprList();
+
+    @NotNull
+    NuXmvUntilCtlOp getUntilCtlOp();
 
 }

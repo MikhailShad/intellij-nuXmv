@@ -3,7 +3,7 @@ package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import org.jetbrains.annotations.Nullable;
 
-public interface NuXmvLiteralBasicExpr extends NuXmvBasicExpr {
+public interface NuXmvLiteralBasicExpr extends NuXmvExpr {
 
     @Nullable
     NuXmvBooleanConstant getBooleanConstant();

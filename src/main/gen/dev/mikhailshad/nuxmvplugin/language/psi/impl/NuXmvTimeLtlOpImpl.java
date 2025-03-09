@@ -4,18 +4,18 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvBasicExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTimeLtlOp;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class NuXmvBasicExprImpl extends ASTWrapperPsiElement implements NuXmvBasicExpr {
+public class NuXmvTimeLtlOpImpl extends ASTWrapperPsiElement implements NuXmvTimeLtlOp {
 
-    public NuXmvBasicExprImpl(@NotNull ASTNode node) {
+    public NuXmvTimeLtlOpImpl(@NotNull ASTNode node) {
         super(node);
     }
 
     public void accept(@NotNull NuXmvVisitor visitor) {
-        visitor.visitBasicExpr(this);
+        visitor.visitTimeLtlOp(this);
     }
 
     @Override

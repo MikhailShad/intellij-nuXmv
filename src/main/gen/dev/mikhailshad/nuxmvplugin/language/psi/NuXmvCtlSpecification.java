@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 public interface NuXmvCtlSpecification extends PsiElement {
 
     @Nullable
-    NuXmvCtlExpr getCtlExpr();
+    NuXmvExpr getExpr();
 
     @Nullable
     NuXmvSimpleIdentifier getSimpleIdentifier();

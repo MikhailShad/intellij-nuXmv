@@ -3,7 +3,7 @@ package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface NuXmvFunctionCallBasicExpr extends NuXmvBasicExpr {
+public interface NuXmvFunctionCallBasicExpr extends NuXmvExpr {
 
     @NotNull
     NuXmvBasicExprList getBasicExprList();

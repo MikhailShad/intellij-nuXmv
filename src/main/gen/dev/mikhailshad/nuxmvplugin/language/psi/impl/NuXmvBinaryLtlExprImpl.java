@@ -1,27 +1,26 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvComplexIdentifier;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvBinaryLtlExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvBinaryLtlOp;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvSimpleIdentifier;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class NuXmvComplexIdentifierImpl extends ASTWrapperPsiElement implements NuXmvComplexIdentifier {
+public class NuXmvBinaryLtlExprImpl extends NuXmvExprImpl implements NuXmvBinaryLtlExpr {
 
-    public NuXmvComplexIdentifierImpl(@NotNull ASTNode node) {
+    public NuXmvBinaryLtlExprImpl(@NotNull ASTNode node) {
         super(node);
     }
 
+    @Override
     public void accept(@NotNull NuXmvVisitor visitor) {
-        visitor.visitComplexIdentifier(this);
+        visitor.visitBinaryLtlExpr(this);
     }
 
     @Override
@@ -31,15 +30,15 @@ public class NuXmvComplexIdentifierImpl extends ASTWrapperPsiElement implements 
     }
 
     @Override
-    @Nullable
-    public NuXmvExpr getExpr() {
-        return findChildByClass(NuXmvExpr.class);
+    @NotNull
+    public NuXmvBinaryLtlOp getBinaryLtlOp() {
+        return findNotNullChildByClass(NuXmvBinaryLtlOp.class);
     }
 
     @Override
     @NotNull
-    public List<NuXmvSimpleIdentifier> getSimpleIdentifierList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvSimpleIdentifier.class);
+    public List<NuXmvExpr> getExprList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvExpr.class);
     }
 
 }

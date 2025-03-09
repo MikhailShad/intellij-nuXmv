@@ -10,7 +10,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class NuXmvReferenceBasicExprImpl extends NuXmvBasicExprImpl implements NuXmvReferenceBasicExpr {
+public class NuXmvReferenceBasicExprImpl extends NuXmvExprImpl implements NuXmvReferenceBasicExpr {
 
     public NuXmvReferenceBasicExprImpl(@NotNull ASTNode node) {
         super(node);

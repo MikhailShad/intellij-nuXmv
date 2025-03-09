@@ -7,6 +7,6 @@ import org.jetbrains.annotations.NotNull;
 public interface NuXmvTransConstraint extends PsiElement {
 
     @NotNull
-    NuXmvBasicExpr getBasicExpr();
+    NuXmvExpr getExpr();
 
 }

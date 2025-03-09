@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 public interface NuXmvParameterSynthProblem extends PsiElement {
 
     @NotNull
-    NuXmvIdList getIdList();
+    NuXmvExpr getExpr();
 
     @NotNull
-    NuXmvLtlExpr getLtlExpr();
+    NuXmvIdList getIdList();
 
     @NotNull
     NuXmvSynthOpts getSynthOpts();

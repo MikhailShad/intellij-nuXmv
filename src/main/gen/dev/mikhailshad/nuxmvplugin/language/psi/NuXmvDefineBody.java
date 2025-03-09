@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 public interface NuXmvDefineBody extends PsiElement {
 
     @NotNull
-    NuXmvBasicExpr getBasicExpr();
+    NuXmvComplexIdentifier getComplexIdentifier();
 
     @NotNull
-    NuXmvComplexIdentifier getComplexIdentifier();
+    NuXmvExpr getExpr();
 
 }

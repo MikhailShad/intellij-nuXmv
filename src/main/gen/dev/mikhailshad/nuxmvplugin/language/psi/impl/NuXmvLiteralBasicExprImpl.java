@@ -7,7 +7,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class NuXmvLiteralBasicExprImpl extends NuXmvBasicExprImpl implements NuXmvLiteralBasicExpr {
+public class NuXmvLiteralBasicExprImpl extends NuXmvExprImpl implements NuXmvLiteralBasicExpr {
 
     public NuXmvLiteralBasicExprImpl(@NotNull ASTNode node) {
         super(node);

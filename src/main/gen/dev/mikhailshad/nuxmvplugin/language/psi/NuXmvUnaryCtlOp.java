@@ -3,6 +3,6 @@ package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import com.intellij.psi.PsiElement;
 
-public interface NuXmvBasicExpr extends PsiElement {
+public interface NuXmvUnaryCtlOp extends PsiElement {
 
 }

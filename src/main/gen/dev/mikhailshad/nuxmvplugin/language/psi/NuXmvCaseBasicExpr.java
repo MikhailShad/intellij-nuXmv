@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface NuXmvCaseBasicExpr extends NuXmvBasicExpr {
+public interface NuXmvCaseBasicExpr extends NuXmvExpr {
 
     @NotNull
     List<NuXmvRegularCaseBody> getRegularCaseBodyList();

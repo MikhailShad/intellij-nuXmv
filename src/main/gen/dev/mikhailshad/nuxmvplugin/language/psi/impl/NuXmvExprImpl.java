@@ -1,34 +1,27 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvCtlExpr;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExistGloballyCtlExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public class NuXmvExistGloballyCtlExprImpl extends NuXmvCtlExprImpl implements NuXmvExistGloballyCtlExpr {
+public abstract class NuXmvExprImpl extends ASTWrapperPsiElement implements NuXmvExpr {
 
-    public NuXmvExistGloballyCtlExprImpl(@NotNull ASTNode node) {
+    public NuXmvExprImpl(@NotNull ASTNode node) {
         super(node);
     }
 
-    @Override
     public void accept(@NotNull NuXmvVisitor visitor) {
-        visitor.visitExistGloballyCtlExpr(this);
+        visitor.visitExpr(this);
     }
 
     @Override
     public void accept(@NotNull PsiElementVisitor visitor) {
         if (visitor instanceof NuXmvVisitor) accept((NuXmvVisitor) visitor);
         else super.accept(visitor);
-    }
-
-    @Override
-    @NotNull
-    public NuXmvCtlExpr getCtlExpr() {
-        return findNotNullChildByClass(NuXmvCtlExpr.class);
     }
 
 }

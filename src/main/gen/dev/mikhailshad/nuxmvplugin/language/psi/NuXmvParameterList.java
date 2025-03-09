@@ -9,6 +9,6 @@ import java.util.List;
 public interface NuXmvParameterList extends PsiElement {
 
     @NotNull
-    List<NuXmvBasicExpr> getBasicExprList();
+    List<NuXmvExpr> getExprList();
 
 }

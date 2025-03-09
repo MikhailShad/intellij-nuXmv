@@ -1,21 +1,21 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvBasicExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvComplexIdentifier;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvSimpleAssignExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public class NuXmvSimpleAssignExprImpl extends ASTWrapperPsiElement implements NuXmvSimpleAssignExpr {
+public class NuXmvSimpleAssignExprImpl extends NuXmvExprImpl implements NuXmvSimpleAssignExpr {
 
     public NuXmvSimpleAssignExprImpl(@NotNull ASTNode node) {
         super(node);
     }
 
+    @Override
     public void accept(@NotNull NuXmvVisitor visitor) {
         visitor.visitSimpleAssignExpr(this);
     }
@@ -28,14 +28,14 @@ public class NuXmvSimpleAssignExprImpl extends ASTWrapperPsiElement implements N
 
     @Override
     @NotNull
-    public NuXmvBasicExpr getBasicExpr() {
-        return findNotNullChildByClass(NuXmvBasicExpr.class);
+    public NuXmvComplexIdentifier getComplexIdentifier() {
+        return findNotNullChildByClass(NuXmvComplexIdentifier.class);
     }
 
     @Override
     @NotNull
-    public NuXmvComplexIdentifier getComplexIdentifier() {
-        return findNotNullChildByClass(NuXmvComplexIdentifier.class);
+    public NuXmvExpr getExpr() {
+        return findNotNullChildByClass(NuXmvExpr.class);
     }
 
 }

@@ -3,9 +3,9 @@ package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import org.jetbrains.annotations.Nullable;
 
-public interface NuXmvLogicalNotBasicExpr extends NuXmvBasicExpr {
+public interface NuXmvLogicalNotBasicExpr extends NuXmvExpr {
 
     @Nullable
-    NuXmvBasicExpr getBasicExpr();
+    NuXmvExpr getExpr();
 
 }

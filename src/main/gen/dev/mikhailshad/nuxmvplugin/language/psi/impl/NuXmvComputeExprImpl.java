@@ -1,23 +1,23 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvComputeExpr;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvCtlExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class NuXmvComputeExprImpl extends ASTWrapperPsiElement implements NuXmvComputeExpr {
+public class NuXmvComputeExprImpl extends NuXmvExprImpl implements NuXmvComputeExpr {
 
     public NuXmvComputeExprImpl(@NotNull ASTNode node) {
         super(node);
     }
 
+    @Override
     public void accept(@NotNull NuXmvVisitor visitor) {
         visitor.visitComputeExpr(this);
     }
@@ -30,8 +30,8 @@ public class NuXmvComputeExprImpl extends ASTWrapperPsiElement implements NuXmvC
 
     @Override
     @NotNull
-    public List<NuXmvCtlExpr> getCtlExprList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvCtlExpr.class);
+    public List<NuXmvExpr> getExprList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvExpr.class);
     }
 
 }

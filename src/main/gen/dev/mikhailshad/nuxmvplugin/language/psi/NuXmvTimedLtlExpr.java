@@ -2,10 +2,14 @@
 package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public interface NuXmvLogicalLtlExpr extends NuXmvLtlExpr {
+public interface NuXmvTimedLtlExpr extends NuXmvExpr {
+
+    @Nullable
+    NuXmvExpr getExpr();
 
     @NotNull
-    NuXmvLtlExpr getLtlExpr();
+    NuXmvTimeLtlOp getTimeLtlOp();
 
 }

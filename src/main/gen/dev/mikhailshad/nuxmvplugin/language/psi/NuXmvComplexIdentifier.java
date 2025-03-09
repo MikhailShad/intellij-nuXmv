@@ -10,7 +10,7 @@ import java.util.List;
 public interface NuXmvComplexIdentifier extends PsiElement {
 
     @Nullable
-    NuXmvBasicExpr getBasicExpr();
+    NuXmvExpr getExpr();
 
     @NotNull
     List<NuXmvSimpleIdentifier> getSimpleIdentifierList();

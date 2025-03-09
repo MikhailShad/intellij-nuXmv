@@ -3,9 +3,14 @@ package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface NuXmvForAllGloballyCtlExpr extends NuXmvCtlExpr {
+import java.util.List;
+
+public interface NuXmvBinaryLtlExpr extends NuXmvExpr {
 
     @NotNull
-    NuXmvCtlExpr getCtlExpr();
+    NuXmvBinaryLtlOp getBinaryLtlOp();
+
+    @NotNull
+    List<NuXmvExpr> getExprList();
 
 }

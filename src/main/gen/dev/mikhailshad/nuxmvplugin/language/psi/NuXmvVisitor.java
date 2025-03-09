@@ -8,18 +8,22 @@ import org.jetbrains.annotations.NotNull;
 public class NuXmvVisitor extends PsiElementVisitor {
 
     public void visitAndBasicExpr(@NotNull NuXmvAndBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitAssignConstraint(@NotNull NuXmvAssignConstraint o) {
         visitPsiElement(o);
     }
 
-    public void visitBasicExpr(@NotNull NuXmvBasicExpr o) {
+    public void visitBasicExprList(@NotNull NuXmvBasicExprList o) {
         visitPsiElement(o);
     }
 
-    public void visitBasicExprList(@NotNull NuXmvBasicExprList o) {
+    public void visitBinaryLtlExpr(@NotNull NuXmvBinaryLtlExpr o) {
+        visitExpr(o);
+    }
+
+    public void visitBinaryLtlOp(@NotNull NuXmvBinaryLtlOp o) {
         visitPsiElement(o);
     }
 
@@ -32,7 +36,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitCaseBasicExpr(@NotNull NuXmvCaseBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitCompassionConstraint(@NotNull NuXmvCompassionConstraint o) {
@@ -44,7 +48,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitComputeExpr(@NotNull NuXmvComputeExpr o) {
-        visitPsiElement(o);
+        visitExpr(o);
     }
 
     public void visitComputeSpecification(@NotNull NuXmvComputeSpecification o) {
@@ -52,7 +56,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitConcatBasicExpr(@NotNull NuXmvConcatBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitConstantsBody(@NotNull NuXmvConstantsBody o) {
@@ -60,10 +64,6 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitConstantsDeclaration(@NotNull NuXmvConstantsDeclaration o) {
-        visitPsiElement(o);
-    }
-
-    public void visitCtlExpr(@NotNull NuXmvCtlExpr o) {
         visitPsiElement(o);
     }
 
@@ -80,7 +80,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitDivBasicExpr(@NotNull NuXmvDivBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitEnumerationTypeBody(@NotNull NuXmvEnumerationTypeBody o) {
@@ -92,47 +92,19 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitEqualityBasicExpr(@NotNull NuXmvEqualityBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitEquivalenceBasicExpr(@NotNull NuXmvEquivalenceBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
-    public void visitExistFinallyCtlExpr(@NotNull NuXmvExistFinallyCtlExpr o) {
-        visitCtlExpr(o);
-    }
-
-    public void visitExistGloballyCtlExpr(@NotNull NuXmvExistGloballyCtlExpr o) {
-        visitCtlExpr(o);
-    }
-
-    public void visitExistNextStateCtlExpr(@NotNull NuXmvExistNextStateCtlExpr o) {
-        visitCtlExpr(o);
-    }
-
-    public void visitExistUntilCtlExpr(@NotNull NuXmvExistUntilCtlExpr o) {
-        visitCtlExpr(o);
+    public void visitExpr(@NotNull NuXmvExpr o) {
+        visitPsiElement(o);
     }
 
     public void visitFairnessConstraint(@NotNull NuXmvFairnessConstraint o) {
         visitPsiElement(o);
-    }
-
-    public void visitForAllFinallyCtlExpr(@NotNull NuXmvForAllFinallyCtlExpr o) {
-        visitCtlExpr(o);
-    }
-
-    public void visitForAllGloballyCtlExpr(@NotNull NuXmvForAllGloballyCtlExpr o) {
-        visitCtlExpr(o);
-    }
-
-    public void visitForAllNextStateCtlExpr(@NotNull NuXmvForAllNextStateCtlExpr o) {
-        visitCtlExpr(o);
-    }
-
-    public void visitForAllUntilCtlExpr(@NotNull NuXmvForAllUntilCtlExpr o) {
-        visitCtlExpr(o);
     }
 
     public void visitFrozenVarDeclaration(@NotNull NuXmvFrozenVarDeclaration o) {
@@ -144,7 +116,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitFunctionCallBasicExpr(@NotNull NuXmvFunctionCallBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitFunctionDeclaration(@NotNull NuXmvFunctionDeclaration o) {
@@ -167,16 +139,12 @@ public class NuXmvVisitor extends PsiElementVisitor {
         visitPsiElement(o);
     }
 
-    public void visitFutureLtlExpr(@NotNull NuXmvFutureLtlExpr o) {
-        visitLtlExpr(o);
-    }
-
     public void visitGreaterBasicExpr(@NotNull NuXmvGreaterBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitGreaterEqBasicExpr(@NotNull NuXmvGreaterEqBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitIdList(@NotNull NuXmvIdList o) {
@@ -184,19 +152,19 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitImplicationBasicExpr(@NotNull NuXmvImplicationBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitInBasicExpr(@NotNull NuXmvInBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitIndexBasicExpr(@NotNull NuXmvIndexBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitInitAssignExpr(@NotNull NuXmvInitAssignExpr o) {
-        visitPsiElement(o);
+        visitExpr(o);
     }
 
     public void visitInitConstraint(@NotNull NuXmvInitConstraint o) {
@@ -224,27 +192,19 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitLessBasicExpr(@NotNull NuXmvLessBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitLessEqBasicExpr(@NotNull NuXmvLessEqBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitLiteralBasicExpr(@NotNull NuXmvLiteralBasicExpr o) {
-        visitBasicExpr(o);
-    }
-
-    public void visitLogicalLtlExpr(@NotNull NuXmvLogicalLtlExpr o) {
-        visitLtlExpr(o);
+        visitExpr(o);
     }
 
     public void visitLogicalNotBasicExpr(@NotNull NuXmvLogicalNotBasicExpr o) {
-        visitBasicExpr(o);
-    }
-
-    public void visitLtlExpr(@NotNull NuXmvLtlExpr o) {
-        visitPsiElement(o);
+        visitExpr(o);
     }
 
     public void visitLtlSpecification(@NotNull NuXmvLtlSpecification o) {
@@ -252,7 +212,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitMinusBasicExpr(@NotNull NuXmvMinusBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitMirrorDeclaration(@NotNull NuXmvMirrorDeclaration o) {
@@ -260,7 +220,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitModBasicExpr(@NotNull NuXmvModBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitModuleBody(@NotNull NuXmvModuleBody o) {
@@ -284,19 +244,19 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitMulBasicExpr(@NotNull NuXmvMulBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitNextAssignExpr(@NotNull NuXmvNextAssignExpr o) {
-        visitPsiElement(o);
+        visitExpr(o);
     }
 
     public void visitNotEqualityBasicExpr(@NotNull NuXmvNotEqualityBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitNotXorBasicExpr(@NotNull NuXmvNotXorBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitNuXmvModule(@NotNull NuXmvNuXmvModule o) {
@@ -304,7 +264,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitOrBasicExpr(@NotNull NuXmvOrBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitParameterList(@NotNull NuXmvParameterList o) {
@@ -320,23 +280,11 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitParenthesisBasicExpr(@NotNull NuXmvParenthesisBasicExpr o) {
-        visitBasicExpr(o);
-    }
-
-    public void visitParenthesisCtlExpr(@NotNull NuXmvParenthesisCtlExpr o) {
-        visitCtlExpr(o);
-    }
-
-    public void visitParenthesisLtlExpr(@NotNull NuXmvParenthesisLtlExpr o) {
-        visitLtlExpr(o);
-    }
-
-    public void visitPastLtlExpr(@NotNull NuXmvPastLtlExpr o) {
-        visitLtlExpr(o);
+        visitExpr(o);
     }
 
     public void visitPlusBasicExpr(@NotNull NuXmvPlusBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitPredDeclaration(@NotNull NuXmvPredDeclaration o) {
@@ -352,7 +300,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitReferenceBasicExpr(@NotNull NuXmvReferenceBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitRegularCaseBody(@NotNull NuXmvRegularCaseBody o) {
@@ -360,19 +308,19 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitRtCtlExpr(@NotNull NuXmvRtCtlExpr o) {
-        visitCtlExpr(o);
+        visitExpr(o);
     }
 
     public void visitShiftLeftBasicExpr(@NotNull NuXmvShiftLeftBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitShiftRightBasicExpr(@NotNull NuXmvShiftRightBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitSimpleAssignExpr(@NotNull NuXmvSimpleAssignExpr o) {
-        visitPsiElement(o);
+        visitExpr(o);
     }
 
     public void visitSimpleIdentifier(@NotNull NuXmvSimpleIdentifier o) {
@@ -404,7 +352,15 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitTernaryBasicExpr(@NotNull NuXmvTernaryBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
+    }
+
+    public void visitTimeLtlOp(@NotNull NuXmvTimeLtlOp o) {
+        visitPsiElement(o);
+    }
+
+    public void visitTimedLtlExpr(@NotNull NuXmvTimedLtlExpr o) {
+        visitExpr(o);
     }
 
     public void visitTransConstraint(@NotNull NuXmvTransConstraint o) {
@@ -415,12 +371,36 @@ public class NuXmvVisitor extends PsiElementVisitor {
         visitPsiElement(o);
     }
 
+    public void visitUnaryCtlExpr(@NotNull NuXmvUnaryCtlExpr o) {
+        visitExpr(o);
+    }
+
+    public void visitUnaryCtlOp(@NotNull NuXmvUnaryCtlOp o) {
+        visitPsiElement(o);
+    }
+
+    public void visitUnaryLtlExpr(@NotNull NuXmvUnaryLtlExpr o) {
+        visitExpr(o);
+    }
+
+    public void visitUnaryLtlOp(@NotNull NuXmvUnaryLtlOp o) {
+        visitPsiElement(o);
+    }
+
     public void visitUnaryMinusBasicExpr(@NotNull NuXmvUnaryMinusBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitUnionBasicExpr(@NotNull NuXmvUnionBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
+    }
+
+    public void visitUntilCtlExpr(@NotNull NuXmvUntilCtlExpr o) {
+        visitExpr(o);
+    }
+
+    public void visitUntilCtlOp(@NotNull NuXmvUntilCtlOp o) {
+        visitPsiElement(o);
     }
 
     public void visitVarDeclaration(@NotNull NuXmvVarDeclaration o) {
@@ -444,7 +424,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitXorBasicExpr(@NotNull NuXmvXorBasicExpr o) {
-        visitBasicExpr(o);
+        visitExpr(o);
     }
 
     public void visitPsiElement(@NotNull PsiElement o) {

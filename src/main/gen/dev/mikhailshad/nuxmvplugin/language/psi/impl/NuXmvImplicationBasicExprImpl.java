@@ -4,14 +4,14 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvBasicExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvImplicationBasicExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class NuXmvImplicationBasicExprImpl extends NuXmvBasicExprImpl implements NuXmvImplicationBasicExpr {
+public class NuXmvImplicationBasicExprImpl extends NuXmvExprImpl implements NuXmvImplicationBasicExpr {
 
     public NuXmvImplicationBasicExprImpl(@NotNull ASTNode node) {
         super(node);
@@ -30,8 +30,8 @@ public class NuXmvImplicationBasicExprImpl extends NuXmvBasicExprImpl implements
 
     @Override
     @NotNull
-    public List<NuXmvBasicExpr> getBasicExprList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvBasicExpr.class);
+    public List<NuXmvExpr> getExprList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvExpr.class);
     }
 
 }

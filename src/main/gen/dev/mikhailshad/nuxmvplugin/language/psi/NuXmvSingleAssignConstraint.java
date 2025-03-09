@@ -2,17 +2,11 @@
 package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public interface NuXmvSingleAssignConstraint extends PsiElement {
 
-    @Nullable
-    NuXmvInitAssignExpr getInitAssignExpr();
-
-    @Nullable
-    NuXmvNextAssignExpr getNextAssignExpr();
-
-    @Nullable
-    NuXmvSimpleAssignExpr getSimpleAssignExpr();
+    @NotNull
+    NuXmvExpr getExpr();
 
 }

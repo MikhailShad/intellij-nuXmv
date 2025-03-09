@@ -132,9 +132,7 @@
     EXPONENTIAL_NUMBER = "regexp:([0-9]+|[0-9]+/[0-9]+)[eE](-?[0-9]+)"
   ]
 
-  extends(".+LtlExpr")=LtlExpr
-  extends(".+CtlExpr")=CtlExpr
-  extends(".+BasicExpr")=BasicExpr
+  extends(".*Expr")=Expr
 }
 
 /*
@@ -184,80 +182,14 @@ private module_element_recover ::= !(
     | MODULE
     )
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// CTL SPEC
-///////////////////////////////////////////////////////////////////////////////////////////////////
-CtlSpecification ::= CtlSpecKeyWord CtlNamedSpecification? CtlExpr SEMICOLON? {pin=1}
+CtlSpecification ::= CtlSpecKeyWord CtlNamedSpecification? Expr SEMICOLON? {pin=1}
 private CtlSpecKeyWord ::= CTLSPEC | SPEC
 private CtlNamedSpecification ::=  NAME_KW SimpleIdentifier ASSIGN
 
-CtlExpr ::= TreeCtlExprGroup
-    | PrimaryCtlExprGroup
-
-//ImplicationCtlExpr ::= CtlExpr IMPLICATION CtlExpr {rightAssociative = true}
-//EquivalenceCtlExpr ::= CtlExpr EQUIVALENCE CtlExpr
-//private BooleanOrCtlExprGroup ::= LogicalOrCtlExpr | LogicalXorCtlExpr | LogicalNotXorCtlExpr
-//LogicalOrCtlExpr ::= CtlExpr OR CtlExpr
-//LogicalXorCtlExpr ::= CtlExpr XOR CtlExpr
-//LogicalNotXorCtlExpr ::= CtlExpr NOT_XOR CtlExpr
-//LogicalAndCtlExpr ::= CtlExpr AND CtlExpr
-//LogicalNotCtlExpr ::= NOT CtlExpr
-
-private TreeCtlExprGroup ::= ExistGloballyCtlExpr
-    | ExistNextStateCtlExpr
-    | ExistFinallyCtlExpr
-    | ForAllGloballyCtlExpr
-    | ForAllNextStateCtlExpr
-    | ForAllFinallyCtlExpr
-    | ExistUntilCtlExpr
-    | ForAllUntilCtlExpr
-ExistGloballyCtlExpr ::= "EG" CtlExpr
-ExistNextStateCtlExpr ::= "EX" CtlExpr
-ExistFinallyCtlExpr ::= "EF" CtlExpr
-ForAllGloballyCtlExpr ::= "AG" CtlExpr
-ForAllNextStateCtlExpr ::= "AX" CtlExpr
-ForAllFinallyCtlExpr ::= "AF" CtlExpr
-ExistUntilCtlExpr ::= "E" LBRACKET CtlExpr "U" CtlExpr RBRACKET
-ForAllUntilCtlExpr ::= "A" LBRACKET CtlExpr "U" CtlExpr RBRACKET
-
-private PrimaryCtlExprGroup ::=  SimpleExpr | ParenthesisCtlExpr
-ParenthesisCtlExpr ::= LPAREN CtlExpr RPAREN
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// LTL SPEC
-///////////////////////////////////////////////////////////////////////////////////////////////////
-LtlSpecification ::= LTLSPEC LtlNamedSpecification? LtlExpr SEMICOLON? {pin=1}
+LtlSpecification ::= LTLSPEC LtlNamedSpecification? Expr SEMICOLON? {pin=1}
 private LtlNamedSpecification ::= NAME_KW SimpleIdentifier ASSIGN
-LtlExpr ::= PastLtlExpr
-    | FutureLtlExpr
-    | LogicalLtlExpr
-    | ParenthesisLtlExpr
-    | NextSimpleExpr
-PastLtlExpr ::= "time_since" LPAREN NextSimpleExpr RPAREN
-//    | LtlExpr "@O~" LtlExpr
-//    | LtlExpr "T" LtlExpr
-//    | LtlExpr "S" LtlExpr
-    | "O" LtlExpr
-    | "H" LtlExpr
-    | "Z" LtlExpr
-    | "Y" LtlExpr
-FutureLtlExpr ::= "time_until" LPAREN NextSimpleExpr RPAREN
-//    | LtlExpr "@F~" LtlExpr
-//    | LtlExpr "V" LtlExpr
-//    | LtlExpr "U" LtlExpr
-    | "F" LtlExpr
-    | "G" LtlExpr
-    | "X" LtlExpr
-LogicalLtlExpr ::= NOT LtlExpr
-//    | LtlExpr EQUIVALENCE LtlExpr
-//    | LtlExpr IMPLICATION LtlExpr
-//    | LtlExpr NOT_XOR LtlExpr
-//    | LtlExpr XOR LtlExpr
-//    | LtlExpr OR LtlExpr
-//    | LtlExpr AND LtlExpr
-ParenthesisLtlExpr ::= LPAREN LtlExpr RPAREN
 
-InvarSpecification ::= INVARSPEC NamedInvarSpecification? NextSimpleExpr SEMICOLON? {pin=1}
+InvarSpecification ::= INVARSPEC NamedInvarSpecification? Expr SEMICOLON? {pin=1}
 private NamedInvarSpecification ::= NAME_KW SimpleIdentifier ASSIGN
 
 VarDeclaration ::= VAR SingleVarDeclaration+ {pin=1}
@@ -277,7 +209,7 @@ FunctionTypeSpecifier ::= FunctionArgTypesSpecifier IMPLICATION SimpleTypeSpecif
 FunctionArgTypesSpecifier ::= SimpleTypeSpecifier (MULT SimpleTypeSpecifier)*
 
 DefineDeclaration ::= DEFINE_KW DefineBody+
-DefineBody ::= ComplexIdentifier ASSIGN NextSimpleExpr SEMICOLON {pin=3}
+DefineBody ::= ComplexIdentifier ASSIGN Expr SEMICOLON {pin=3}
 
 ConstantsDeclaration ::= CONSTANTS_KW ConstantsBody SEMICOLON
 ConstantsBody ::= ComplexIdentifier (COMMA ComplexIdentifier)*
@@ -285,40 +217,40 @@ ConstantsBody ::= ComplexIdentifier (COMMA ComplexIdentifier)*
 AssignConstraint ::= ASSIGN_KW SingleAssignConstraint+
 SingleAssignConstraint ::= AssignExpr SEMICOLON
 private AssignExpr ::= InitAssignExpr | NextAssignExpr | SimpleAssignExpr
-SimpleAssignExpr ::= ComplexIdentifier ASSIGN SimpleExpr
-InitAssignExpr ::= INIT_FUN LPAREN ComplexIdentifier RPAREN ASSIGN SimpleExpr
-NextAssignExpr ::= NEXT LPAREN ComplexIdentifier RPAREN ASSIGN NextSimpleExpr
+SimpleAssignExpr ::= ComplexIdentifier ASSIGN Expr
+InitAssignExpr ::= INIT_FUN LPAREN ComplexIdentifier RPAREN ASSIGN Expr
+NextAssignExpr ::= NEXT LPAREN ComplexIdentifier RPAREN ASSIGN Expr
 
-TransConstraint ::= TRANS_KW NextSimpleExpr SEMICOLON?
+TransConstraint ::= TRANS_KW Expr SEMICOLON?
 
-InitConstraint ::= INIT_KW SimpleExpr SEMICOLON?
+InitConstraint ::= INIT_KW Expr SEMICOLON?
 
-InvarConstraint ::= INVAR_KW SimpleExpr (IMPLICATION SimpleExpr)? SEMICOLON?
+InvarConstraint ::= INVAR_KW Expr (IMPLICATION Expr)? SEMICOLON?
 
-FairnessConstraint ::= FAIRNESS_KW SimpleExpr SEMICOLON?
-JusticeConstraint ::= JUSTICE_KW SimpleExpr SEMICOLON?
-CompassionConstraint ::= COMPASSION_KW LPAREN SimpleExpr COMMA SimpleExpr RPAREN SEMICOLON?
+FairnessConstraint ::= FAIRNESS_KW Expr SEMICOLON?
+JusticeConstraint ::= JUSTICE_KW Expr SEMICOLON?
+CompassionConstraint ::= COMPASSION_KW LPAREN Expr COMMA Expr RPAREN SEMICOLON?
 
 IsaDeclaration ::= ISA_KW IDENTIFIER
 
-PredDeclaration ::= PRED_KW SimpleExpr SEMICOLON?
-    | PRED_KW LESS SimpleExpr GREATER ASSIGN SimpleExpr SEMICOLON?
+PredDeclaration ::= PRED_KW Expr SEMICOLON?
+    | PRED_KW LESS Expr GREATER ASSIGN Expr SEMICOLON?
 
 ComputeSpecification ::= COMPUTE_KW ComputeExpr SEMICOLON?
     | COMPUTE_KW NAME_KW identifier ASSIGN ComplexIdentifier SEMICOLON?
 ComputeExpr ::= (MIN_KW | MAX_KW) LBRACKET RtCtlExpr COMMA RtCtlExpr RBRACKET
-RtCtlExpr ::= CtlExpr
+RtCtlExpr ::= Expr
     | ("EBF" | "ABF" | "EBG" | "ABG") INTEGER_NUMBER RANGE INTEGER_NUMBER RtCtlExpr
     | ("A" | "E") LBRACKET RtCtlExpr "BU" RtCtlExpr RBRACKET
 
 // parameter_synth_problem
 ParameterSynthProblemDeclaration ::= PARSYNTH_KW ParameterSynthProblem SEMICOLON?
-ParameterSynthProblem ::= identifier ASSIGN LBRACE IdList OR [VALID_KW | SAT_KW] LtlExpr SynthOpts RBRACE
+ParameterSynthProblem ::= identifier ASSIGN LBRACE IdList OR [VALID_KW | SAT_KW] Expr SynthOpts RBRACE
 IdList ::= identifier (COMMA identifier)*
 SynthOpts ::= SynthOpt (COMMA SynthOpt)*
 SynthOpt ::= MONONEG_KW
     | MONOPOS_KW
-    | (MIN_KW | MAX_KW) LPAREN SimpleExpr RPAREN
+    | (MIN_KW | MAX_KW) LPAREN Expr RPAREN
 
 MirrorDeclaration ::= MIRROR_KW VariableIdentifier SEMICOLON?
 
@@ -342,16 +274,13 @@ SimpleTypeSpecifier ::= BOOLEAN_TYPE
 EnumerationTypeBody ::= EnumerationTypeValue (COMMA EnumerationTypeValue)*
 EnumerationTypeValue ::= WholeNumber | ComplexIdentifier
 ModuleTypeSpecifier ::= SimpleIdentifier ParameterList
-ParameterList ::= LPAREN [SimpleExpr (COMMA SimpleExpr)*] RPAREN
+ParameterList ::= LPAREN [Expr (COMMA Expr)*] RPAREN
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Expressions
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-private SimpleExpr ::= BasicExpr
-private NextSimpleExpr ::= BasicExpr
-
-BasicExpr ::= ImplicationBasicExpr
+Expr ::= ImplicationBasicExpr
     | EquivalenceBasicExpr
     | TernaryBasicExpr
     | BooleanOrBasicExprGroup
@@ -368,56 +297,81 @@ BasicExpr ::= ImplicationBasicExpr
     | IndexBasicExpr
     | CaseBasicExpr
     | FunctionCallBasicExpr
+    | CtlExprGroup
+    | LtlExprGroup
     | PrimaryBasicExprGroup
 
 CaseBasicExpr ::= CASE RegularCaseBody+ ESAC
-RegularCaseBody ::= BasicExpr COLON BasicExpr SEMICOLON
-TernaryBasicExpr ::= BasicExpr QUESTION_MARK BasicExpr COLON BasicExpr
+RegularCaseBody ::= Expr COLON Expr SEMICOLON
+TernaryBasicExpr ::= Expr QUESTION_MARK Expr COLON Expr
 
 private ComparisonBasicExprGroup ::= LessBasicExpr | GreaterBasicExpr | LessEqBasicExpr | GreaterEqBasicExpr | EqualityBasicExpr | NotEqualityBasicExpr
-LessBasicExpr ::= BasicExpr LESS BasicExpr
-GreaterBasicExpr ::= BasicExpr GREATER BasicExpr
-LessEqBasicExpr ::= BasicExpr LESS_EQ BasicExpr
-GreaterEqBasicExpr ::= BasicExpr GREATER_EQ BasicExpr
-EqualityBasicExpr ::= BasicExpr EQUALITY BasicExpr
-NotEqualityBasicExpr ::= BasicExpr NOT_EQUALITY BasicExpr
+LessBasicExpr ::= Expr LESS Expr
+GreaterBasicExpr ::= Expr GREATER Expr
+LessEqBasicExpr ::= Expr LESS_EQ Expr
+GreaterEqBasicExpr ::= Expr GREATER_EQ Expr
+EqualityBasicExpr ::= Expr EQUALITY Expr
+NotEqualityBasicExpr ::= Expr NOT_EQUALITY Expr
 
-ConcatBasicExpr ::= BasicExpr CONCAT BasicExpr
-UnionBasicExpr ::= BasicExpr UNION BasicExpr
-InBasicExpr ::= BasicExpr IN BasicExpr
+ConcatBasicExpr ::= Expr CONCAT Expr
+UnionBasicExpr ::= Expr UNION Expr
+InBasicExpr ::= Expr IN Expr
 
-ImplicationBasicExpr ::= BasicExpr IMPLICATION BasicExpr {rightAssociative = true}
-EquivalenceBasicExpr ::= BasicExpr EQUIVALENCE BasicExpr
+ImplicationBasicExpr ::= Expr IMPLICATION Expr {rightAssociative = true}
+EquivalenceBasicExpr ::= Expr EQUIVALENCE Expr
 private BooleanOrBasicExprGroup ::= OrBasicExpr | XorBasicExpr | NotXorBasicExpr
-OrBasicExpr ::= BasicExpr OR BasicExpr
-XorBasicExpr ::= BasicExpr XOR BasicExpr
-NotXorBasicExpr ::= BasicExpr NOT_XOR BasicExpr
-AndBasicExpr ::= BasicExpr AND BasicExpr
+OrBasicExpr ::= Expr OR Expr
+XorBasicExpr ::= Expr XOR Expr
+NotXorBasicExpr ::= Expr NOT_XOR Expr
+AndBasicExpr ::= Expr AND Expr
 
 private AddBasicExprGroup ::= PlusBasicExpr | MinusBasicExpr
-PlusBasicExpr ::= BasicExpr PLUS BasicExpr
-MinusBasicExpr ::= BasicExpr MINUS BasicExpr
+PlusBasicExpr ::= Expr PLUS Expr
+MinusBasicExpr ::= Expr MINUS Expr
 
 private MulBasicExprGroup ::= MulBasicExpr | DivBasicExpr | ModBasicExpr
-MulBasicExpr ::= BasicExpr MULT BasicExpr
-DivBasicExpr ::= BasicExpr DIV BasicExpr
-ModBasicExpr ::= BasicExpr MOD BasicExpr
+MulBasicExpr ::= Expr MULT Expr
+DivBasicExpr ::= Expr DIV Expr
+ModBasicExpr ::= Expr MOD Expr
 
 private ShiftBasicExprGroup ::= ShiftLeftBasicExpr | ShiftRightBasicExpr
-ShiftLeftBasicExpr ::= BasicExpr SHIFT_LEFT BasicExpr
-ShiftRightBasicExpr ::= BasicExpr SHIFT_RIGHT BasicExpr
+ShiftLeftBasicExpr ::= Expr SHIFT_LEFT Expr
+ShiftRightBasicExpr ::= Expr SHIFT_RIGHT Expr
 
-LogicalNotBasicExpr ::= NOT BasicExpr
-UnaryMinusBasicExpr ::= MINUS BasicExpr
+LogicalNotBasicExpr ::= NOT Expr
+UnaryMinusBasicExpr ::= MINUS Expr
 
-IndexBasicExpr ::= BasicExpr LBRACKET WholeNumber (SEMICOLON WholeNumber)? RBRACKET {pin=2}
+IndexBasicExpr ::= Expr LBRACKET WholeNumber (SEMICOLON WholeNumber)? RBRACKET {pin=2}
 
 FunctionCallBasicExpr ::= FunctionIdentifier LPAREN BasicExprList RPAREN
 FunctionIdentifier ::= INIT_FUN | NEXT | SimpleIdentifier
-BasicExprList ::= BasicExpr (COMMA BasicExpr)*
+BasicExprList ::= Expr (COMMA Expr)*
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// CTL SPEC
+///////////////////////////////////////////////////////////////////////////////////////////////////
+private CtlExprGroup ::= UnaryCtlExpr
+    | UntilCtlExpr
+UnaryCtlExpr ::= UnaryCtlOp Expr
+UnaryCtlOp ::= "EG" | "EX" | "EF" | "AG" | "AX" | "AF"
+UntilCtlExpr ::= UntilCtlOp LBRACKET Expr "U" Expr RBRACKET
+UntilCtlOp ::= "E" | "A"
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// LTL SPEC
+///////////////////////////////////////////////////////////////////////////////////////////////////
+private LtlExprGroup ::= UnaryLtlExpr
+    | BinaryLtlExpr
+    | TimedLtlExpr
+UnaryLtlExpr ::= UnaryLtlOp Expr
+UnaryLtlOp ::= "O" | "H" | "Z" | "Y" | "F" | "G" | "X"
+BinaryLtlExpr ::= Expr BinaryLtlOp Expr
+BinaryLtlOp ::= "@O~" | "@F~" | "T" | "S" | "V" | "U"
+TimedLtlExpr ::= TimeLtlOp LPAREN Expr RPAREN
+TimeLtlOp ::= "time_since" | "time_until"
 
 private PrimaryBasicExprGroup ::= ReferenceBasicExpr | LiteralBasicExpr | ParenthesisBasicExpr
-ParenthesisBasicExpr ::= LPAREN BasicExpr RPAREN
+ParenthesisBasicExpr ::= LPAREN Expr RPAREN
 LiteralBasicExpr ::= BooleanConstant
     | WholeNumber
     | RealNumber
@@ -431,6 +385,6 @@ WholeNumber ::= POSITIVE_INTEGER_NUMBER | INTEGER_NUMBER
 RealNumber ::= FLOAT_NUMBER | FRACTIONAL_NUMBER | EXPONENTIAL_NUMBER
 BuiltInConstant ::= TIME | PI
 ReferenceBasicExpr ::= ComplexIdentifier | SimpleIdentifier
-ComplexIdentifier ::= BaseIdentifier (DOT SimpleIdentifier) * (LBRACKET BasicExpr RBRACKET)?
+ComplexIdentifier ::= BaseIdentifier (DOT SimpleIdentifier) * (LBRACKET Expr RBRACKET)?
 private BaseIdentifier ::= SimpleIdentifier | SELF
 SimpleIdentifier ::= IDENTIFIER

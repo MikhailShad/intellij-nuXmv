@@ -1,24 +1,24 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvBasicExpr;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvCtlExpr;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvParenthesisCtlExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvUnaryLtlExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvUnaryLtlOp;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class NuXmvCtlExprImpl extends ASTWrapperPsiElement implements NuXmvCtlExpr {
+public class NuXmvUnaryLtlExprImpl extends NuXmvExprImpl implements NuXmvUnaryLtlExpr {
 
-    public NuXmvCtlExprImpl(@NotNull ASTNode node) {
+    public NuXmvUnaryLtlExprImpl(@NotNull ASTNode node) {
         super(node);
     }
 
+    @Override
     public void accept(@NotNull NuXmvVisitor visitor) {
-        visitor.visitCtlExpr(this);
+        visitor.visitUnaryLtlExpr(this);
     }
 
     @Override
@@ -29,14 +29,14 @@ public class NuXmvCtlExprImpl extends ASTWrapperPsiElement implements NuXmvCtlEx
 
     @Override
     @Nullable
-    public NuXmvBasicExpr getBasicExpr() {
-        return findChildByClass(NuXmvBasicExpr.class);
+    public NuXmvExpr getExpr() {
+        return findChildByClass(NuXmvExpr.class);
     }
 
     @Override
-    @Nullable
-    public NuXmvParenthesisCtlExpr getParenthesisCtlExpr() {
-        return findChildByClass(NuXmvParenthesisCtlExpr.class);
+    @NotNull
+    public NuXmvUnaryLtlOp getUnaryLtlOp() {
+        return findNotNullChildByClass(NuXmvUnaryLtlOp.class);
     }
 
 }

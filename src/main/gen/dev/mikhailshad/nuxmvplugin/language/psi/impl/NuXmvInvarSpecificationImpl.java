@@ -4,7 +4,7 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvBasicExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvInvarSpecification;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvSimpleIdentifier;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
@@ -29,8 +29,8 @@ public class NuXmvInvarSpecificationImpl extends ASTWrapperPsiElement implements
 
     @Override
     @Nullable
-    public NuXmvBasicExpr getBasicExpr() {
-        return findChildByClass(NuXmvBasicExpr.class);
+    public NuXmvExpr getExpr() {
+        return findChildByClass(NuXmvExpr.class);
     }
 
     @Override

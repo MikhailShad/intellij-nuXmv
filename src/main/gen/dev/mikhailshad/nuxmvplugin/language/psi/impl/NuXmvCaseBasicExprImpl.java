@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class NuXmvCaseBasicExprImpl extends NuXmvBasicExprImpl implements NuXmvCaseBasicExpr {
+public class NuXmvCaseBasicExprImpl extends NuXmvExprImpl implements NuXmvCaseBasicExpr {
 
     public NuXmvCaseBasicExprImpl(@NotNull ASTNode node) {
         super(node);

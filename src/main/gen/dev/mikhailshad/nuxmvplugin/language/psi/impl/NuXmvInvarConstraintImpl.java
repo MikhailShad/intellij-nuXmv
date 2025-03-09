@@ -5,7 +5,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvBasicExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvInvarConstraint;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -30,8 +30,8 @@ public class NuXmvInvarConstraintImpl extends ASTWrapperPsiElement implements Nu
 
     @Override
     @NotNull
-    public List<NuXmvBasicExpr> getBasicExprList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvBasicExpr.class);
+    public List<NuXmvExpr> getExprList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvExpr.class);
     }
 
 }

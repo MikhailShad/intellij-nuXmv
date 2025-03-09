@@ -1,34 +1,27 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvCtlExpr;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvParenthesisCtlExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvUntilCtlOp;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public class NuXmvParenthesisCtlExprImpl extends NuXmvCtlExprImpl implements NuXmvParenthesisCtlExpr {
+public class NuXmvUntilCtlOpImpl extends ASTWrapperPsiElement implements NuXmvUntilCtlOp {
 
-    public NuXmvParenthesisCtlExprImpl(@NotNull ASTNode node) {
+    public NuXmvUntilCtlOpImpl(@NotNull ASTNode node) {
         super(node);
     }
 
-    @Override
     public void accept(@NotNull NuXmvVisitor visitor) {
-        visitor.visitParenthesisCtlExpr(this);
+        visitor.visitUntilCtlOp(this);
     }
 
     @Override
     public void accept(@NotNull PsiElementVisitor visitor) {
         if (visitor instanceof NuXmvVisitor) accept((NuXmvVisitor) visitor);
         else super.accept(visitor);
-    }
-
-    @Override
-    @NotNull
-    public NuXmvCtlExpr getCtlExpr() {
-        return findNotNullChildByClass(NuXmvCtlExpr.class);
     }
 
 }
