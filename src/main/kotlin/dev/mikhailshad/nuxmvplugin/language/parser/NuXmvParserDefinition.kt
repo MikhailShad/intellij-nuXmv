@@ -16,7 +16,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFile
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes
 
 class NuXmvParserDefinition : ParserDefinition {
-    companion object {
+    object Util {
         @JvmStatic
         val FILE: IFileElementType = IFileElementType(NuXmvLanguage)
 
@@ -88,11 +88,11 @@ class NuXmvParserDefinition : ParserDefinition {
 
     override fun createParser(project: Project?): PsiParser = NuXmvParser()
 
-    override fun getFileNodeType(): IFileElementType = FILE
+    override fun getFileNodeType(): IFileElementType = Util.FILE
 
-    override fun getCommentTokens(): TokenSet = COMMENTS
+    override fun getCommentTokens(): TokenSet = Util.COMMENTS
 
-    override fun getStringLiteralElements(): TokenSet = IDENTIFIER
+    override fun getStringLiteralElements(): TokenSet = Util.IDENTIFIER
 
     override fun createElement(node: ASTNode?): PsiElement = NuXmvTypes.Factory.createElement(node)
 

@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase
+import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import dev.mikhailshad.nuxmvplugin.language.lexer.NuXmvLexerAdapter
 import dev.mikhailshad.nuxmvplugin.language.parser.NuXmvParserDefinition
@@ -100,17 +101,20 @@ class NuXmvSyntaxHighlighter : SyntaxHighlighterBase() {
 
     init {
         val tokenTypeToAttribute = HashMap<IElementType, TextAttributesKey>()
-//        fillMap(tokenTypeToAttribute, NuXmvParserDefinition.SEPARATOR, SEPARATOR)
-        fillMap(tokenTypeToAttribute, NuXmvParserDefinition.IDENTIFIER, IDENTIFIER_ATTRIBUTE)
-        fillMap(tokenTypeToAttribute, NuXmvParserDefinition.KEYWORDS, KEYWORD_ATTRIBUTE)
-        fillMap(tokenTypeToAttribute, NuXmvParserDefinition.NUMBERS, NUMBER_ATTRIBUTE)
-        fillMap(tokenTypeToAttribute, NuXmvParserDefinition.OPERATORS, OPERATOR_ATTRIBUTE)
-        fillMap(tokenTypeToAttribute, NuXmvParserDefinition.COMMA, COMMA_ATTRIBUTE)
-        fillMap(tokenTypeToAttribute, NuXmvParserDefinition.COLON, COLON_ATTRIBUTE)
-        fillMap(tokenTypeToAttribute, NuXmvParserDefinition.SEMICOLON, SEMICOLON_ATTRIBUTE)
-        fillMap(tokenTypeToAttribute, NuXmvParserDefinition.BRACES, BRACES_ATTRIBUTE)
-        fillMap(tokenTypeToAttribute, NuXmvParserDefinition.BRACKETS, BRACKETS_ATTRIBUTE)
-        fillMap(tokenTypeToAttribute, NuXmvParserDefinition.PARENTHESES, PARENTHESES_ATTRIBUTE)
+        mapOf(
+            NuXmvParserDefinition.Util.IDENTIFIER to IDENTIFIER_ATTRIBUTE,
+            NuXmvParserDefinition.Util.KEYWORDS to KEYWORD_ATTRIBUTE,
+            NuXmvParserDefinition.Util.NUMBERS to NUMBER_ATTRIBUTE,
+            NuXmvParserDefinition.Util.OPERATORS to OPERATOR_ATTRIBUTE,
+            NuXmvParserDefinition.Util.COMMA to COMMA_ATTRIBUTE,
+            NuXmvParserDefinition.Util.COLON to COLON_ATTRIBUTE,
+            NuXmvParserDefinition.Util.SEMICOLON to SEMICOLON_ATTRIBUTE,
+            NuXmvParserDefinition.Util.BRACES to BRACES_ATTRIBUTE,
+            NuXmvParserDefinition.Util.BRACKETS to BRACKETS_ATTRIBUTE,
+            NuXmvParserDefinition.Util.PARENTHESES to PARENTHESES_ATTRIBUTE,
+        ).forEach {
+            fillMap(tokenTypeToAttribute, it.key, it.value)
+        }
         attributes = tokenTypeToAttribute
     }
 
@@ -124,14 +128,9 @@ class NuXmvSyntaxHighlighter : SyntaxHighlighterBase() {
             NuXmvTypes.VAR_NAME.equals(tokenType) -> pack(VARIABLE_NAME_ATTRIBUTE)
             NuXmvTypes.LINE_COMMENT.equals(tokenType) -> pack(LINE_COMMENT_ATTRIBUTE)
             NuXmvTypes.BLOCK_COMMENT.equals(tokenType) -> pack(BLOCK_COMMENT_ATTRIBUTE)
-            else -> {
-                val attribute = attributes[tokenType]
-                if (attribute == null) {
-                    EMPTY_ATTRIBUTE
-                } else {
-                    pack(attribute)
-                }
-            }
+            attributes.containsKey(tokenType) -> pack(attributes[tokenType])
+            tokenType?.equals(TokenType.BAD_CHARACTER) ?: false -> pack(BAD_CHARACTER)
+            else -> EMPTY_ATTRIBUTE
         }
     }
 }
