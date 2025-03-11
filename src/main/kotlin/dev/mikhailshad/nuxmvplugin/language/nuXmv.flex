@@ -105,9 +105,9 @@ LINE_COMMENT=("--")[^\r\n]*
     "of"             {return ARRAY_OF;}
 
     // State, Input, Frozen Variables
-    "VAR"            {return VAR;}
-    "IVAR"           {return IVAR;}
-    "FROZENVAR"      {return FROZENVAR;}
+    "VAR"            {return VAR_KW;}
+    "IVAR"           {return IVAR_KW;}
+    "FROZENVAR"      {return FROZENVAR_KW;}
 
     // Timed Logic Specific Keywords
     "U"           {return TL_UNTIL;}

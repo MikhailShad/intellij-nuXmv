@@ -1635,7 +1635,7 @@ class _NuXmvLexer implements FlexLexer {
                     case 241:
                         break;
                     case 77: {
-                        return VAR;
+                        return VAR_KW;
                     }
                     // fall through
                     case 242:
@@ -1714,7 +1714,7 @@ class _NuXmvLexer implements FlexLexer {
                     case 254:
                         break;
                     case 90: {
-                        return IVAR;
+                        return IVAR_KW;
                     }
                     // fall through
                     case 255:
@@ -2104,7 +2104,7 @@ class _NuXmvLexer implements FlexLexer {
                     case 319:
                         break;
                     case 155: {
-                        return FROZENVAR;
+                        return FROZENVAR_KW;
                     }
                     // fall through
                     case 320:

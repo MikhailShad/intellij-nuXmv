@@ -72,9 +72,9 @@
     ARRAY_OF            = 'of'
 
     // State, Input, Frozen Variables
-    VAR              = 'VAR'
-    IVAR             = 'IVAR'
-    FROZENVAR        = 'FROZENVAR'
+    VAR_KW           = 'VAR'
+    IVAR_KW          = 'IVAR'
+    FROZENVAR_KW     = 'FROZENVAR'
 
     // Timed Logic Specific Keywords
     TL_UNTIL     = 'U'
@@ -248,7 +248,7 @@ private ModuleElement ::= VarDeclaration
 
 private module_element_recover ::= !(
     SEMICOLON | RBRACKET | RPAREN
-    | VAR | IVAR | FROZENVAR
+    | VAR_KW | IVAR_KW | FROZENVAR_KW
     | DEFINE_KW | CONSTANTS_KW | ASSIGN_KW | TRANS_KW | INIT_KW | INVAR_KW | COMPASSION_KW | FAIRNESS_KW | JUSTICE_KW
     | LTLSPEC | CTLSPEC | SPEC | INVARSPEC
     | COMPUTE_KW | PARSYNTH_KW
@@ -266,13 +266,13 @@ private LtlNamedSpecification ::= NAME_KW SimpleIdentifier ASSIGN
 InvarSpecification ::= INVARSPEC NamedInvarSpecification? Expr SEMICOLON? {pin=1}
 private NamedInvarSpecification ::= NAME_KW SimpleIdentifier ASSIGN
 
-VarDeclaration ::= VAR SingleVarDeclaration+ {pin=1}
+VarDeclaration ::= VAR_KW SingleVarDeclaration+ {pin=1}
 SingleVarDeclaration ::= VarName COLON TypeSpecifier SEMICOLON {pin=3}
 
-IvarDeclaration ::= IVAR SingleIvarDeclaration+ {pin=1}
+IvarDeclaration ::= IVAR_KW SingleIvarDeclaration+ {pin=1}
 SingleIvarDeclaration ::= VarName COLON SimpleTypeSpecifier SEMICOLON {pin=3}
 
-FrozenVarDeclaration ::= FROZENVAR SingleIvarDeclaration {pin=1}
+FrozenVarDeclaration ::= FROZENVAR_KW SingleIvarDeclaration {pin=1}
 VarName ::= ComplexIdentifier
     | "\"" ComplexIdentifier "\""
 

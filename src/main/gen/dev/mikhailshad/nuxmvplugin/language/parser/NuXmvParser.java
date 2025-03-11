@@ -549,13 +549,13 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // FROZENVAR SingleIvarDeclaration
+    // FROZENVAR_KW SingleIvarDeclaration
     public static boolean FrozenVarDeclaration(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "FrozenVarDeclaration")) return false;
-        if (!nextTokenIs(b, FROZENVAR)) return false;
+        if (!nextTokenIs(b, FROZENVAR_KW)) return false;
         boolean r, p;
         Marker m = enter_section_(b, l, _NONE_, FROZEN_VAR_DECLARATION, null);
-        r = consumeToken(b, FROZENVAR);
+        r = consumeToken(b, FROZENVAR_KW);
         p = r; // pin = 1
         r = r && SingleIvarDeclaration(b, l + 1);
         exit_section_(b, l, m, r, p, null);
@@ -867,13 +867,13 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // IVAR SingleIvarDeclaration+
+    // IVAR_KW SingleIvarDeclaration+
     public static boolean IvarDeclaration(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "IvarDeclaration")) return false;
-        if (!nextTokenIs(b, IVAR)) return false;
+        if (!nextTokenIs(b, IVAR_KW)) return false;
         boolean r, p;
         Marker m = enter_section_(b, l, _NONE_, IVAR_DECLARATION, null);
-        r = consumeToken(b, IVAR);
+        r = consumeToken(b, IVAR_KW);
         p = r; // pin = 1
         r = r && IvarDeclaration_1(b, l + 1);
         exit_section_(b, l, m, r, p, null);
@@ -1827,13 +1827,13 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // VAR SingleVarDeclaration+
+    // VAR_KW SingleVarDeclaration+
     public static boolean VarDeclaration(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "VarDeclaration")) return false;
-        if (!nextTokenIs(b, VAR)) return false;
+        if (!nextTokenIs(b, VAR_KW)) return false;
         boolean r, p;
         Marker m = enter_section_(b, l, _NONE_, VAR_DECLARATION, null);
-        r = consumeToken(b, VAR);
+        r = consumeToken(b, VAR_KW);
         p = r; // pin = 1
         r = r && VarDeclaration_1(b, l + 1);
         exit_section_(b, l, m, r, p, null);
@@ -1963,7 +1963,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     /* ********************************************************** */
     // !(
     //     SEMICOLON | RBRACKET | RPAREN
-    //     | VAR | IVAR | FROZENVAR
+    //     | VAR_KW | IVAR_KW | FROZENVAR_KW
     //     | DEFINE_KW | CONSTANTS_KW | ASSIGN_KW | TRANS_KW | INIT_KW | INVAR_KW | COMPASSION_KW | FAIRNESS_KW | JUSTICE_KW
     //     | LTLSPEC | CTLSPEC | SPEC | INVARSPEC
     //     | COMPUTE_KW | PARSYNTH_KW
@@ -1980,7 +1980,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     // SEMICOLON | RBRACKET | RPAREN
-    //     | VAR | IVAR | FROZENVAR
+    //     | VAR_KW | IVAR_KW | FROZENVAR_KW
     //     | DEFINE_KW | CONSTANTS_KW | ASSIGN_KW | TRANS_KW | INIT_KW | INVAR_KW | COMPASSION_KW | FAIRNESS_KW | JUSTICE_KW
     //     | LTLSPEC | CTLSPEC | SPEC | INVARSPEC
     //     | COMPUTE_KW | PARSYNTH_KW
@@ -1992,9 +1992,9 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         r = consumeToken(b, SEMICOLON);
         if (!r) r = consumeToken(b, RBRACKET);
         if (!r) r = consumeToken(b, RPAREN);
-        if (!r) r = consumeToken(b, VAR);
-        if (!r) r = consumeToken(b, IVAR);
-        if (!r) r = consumeToken(b, FROZENVAR);
+        if (!r) r = consumeToken(b, VAR_KW);
+        if (!r) r = consumeToken(b, IVAR_KW);
+        if (!r) r = consumeToken(b, FROZENVAR_KW);
         if (!r) r = consumeToken(b, DEFINE_KW);
         if (!r) r = consumeToken(b, CONSTANTS_KW);
         if (!r) r = consumeToken(b, ASSIGN_KW);

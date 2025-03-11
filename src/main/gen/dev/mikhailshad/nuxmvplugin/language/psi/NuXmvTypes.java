@@ -162,7 +162,7 @@ public interface NuXmvTypes {
     IElementType FLOAT_NUMBER = new NuXmvTokenType("FLOAT_NUMBER");
     IElementType FLOOR_FUN = new NuXmvTokenType("floor");
     IElementType FRACTIONAL_NUMBER = new NuXmvTokenType("FRACTIONAL_NUMBER");
-    IElementType FROZENVAR = new NuXmvTokenType("FROZENVAR");
+    IElementType FROZENVAR_KW = new NuXmvTokenType("FROZENVAR");
     IElementType FUN_KW = new NuXmvTokenType("FUN");
     IElementType GREATER = new NuXmvTokenType(">");
     IElementType GREATER_EQ = new NuXmvTokenType(">=");
@@ -180,7 +180,7 @@ public interface NuXmvTypes {
     IElementType IN_KW = new NuXmvTokenType("IN");
     IElementType ISA_KW = new NuXmvTokenType("ISA");
     IElementType ITYPE_KW = new NuXmvTokenType("ITYPE");
-    IElementType IVAR = new NuXmvTokenType("IVAR");
+    IElementType IVAR_KW = new NuXmvTokenType("IVAR");
     IElementType JUSTICE_KW = new NuXmvTokenType("JUSTICE");
     IElementType LBRACE = new NuXmvTokenType("{");
     IElementType LBRACKET = new NuXmvTokenType("[");
@@ -278,7 +278,7 @@ public interface NuXmvTypes {
     IElementType URGENT_KW = new NuXmvTokenType("URGENT");
     IElementType UWCONST_FUN = new NuXmvTokenType("uwconst");
     IElementType VALID_KW = new NuXmvTokenType("VALID");
-    IElementType VAR = new NuXmvTokenType("VAR");
+    IElementType VAR_KW = new NuXmvTokenType("VAR");
     IElementType WORD_KW = new NuXmvTokenType("Word");
     IElementType WORD_TYPE = new NuXmvTokenType("word");
     IElementType WRITE_FUN = new NuXmvTokenType("WRITE");

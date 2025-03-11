@@ -42,18 +42,72 @@ class NuXmvParserDefinition : ParserDefinition {
         val IDENTIFIER = TokenSet.create(NuXmvTypes.IDENTIFIER)
 
         @JvmStatic
-        val OPERATORS = TokenSet.create(
+        val MATH_OPERATORS = TokenSet.create(
             NuXmvTypes.MINUS,
             NuXmvTypes.PLUS,
             NuXmvTypes.MULT,
             NuXmvTypes.DIV,
             NuXmvTypes.MOD,
+            NuXmvTypes.SHIFT_RIGHT,
+            NuXmvTypes.SHIFT_LEFT,
+        )
+
+        @JvmStatic
+        val BOOL_OPERATORS = TokenSet.create(
+            NuXmvTypes.NOT,
+            NuXmvTypes.AND,
+            NuXmvTypes.OR,
+            NuXmvTypes.XOR,
+            NuXmvTypes.NOT_XOR,
+            NuXmvTypes.IMPLICATION,
+            NuXmvTypes.EQUIVALENCE,
             NuXmvTypes.LESS,
             NuXmvTypes.LESS_EQ,
             NuXmvTypes.GREATER,
             NuXmvTypes.GREATER_EQ,
             NuXmvTypes.EQUALITY,
-            NuXmvTypes.NOT_EQUALITY
+            NuXmvTypes.NOT_EQUALITY,
+        )
+
+        @JvmStatic
+        val TL_OPERATORS = TokenSet.create(
+            NuXmvTypes.TL_UNTIL,
+            NuXmvTypes.LTL_AT_NEXT,
+            NuXmvTypes.LTL_AT_LAST,
+            NuXmvTypes.LTL_NEXT,
+            NuXmvTypes.LTL_GLOBALLY,
+            NuXmvTypes.LTL_FINALLY,
+            NuXmvTypes.LTL_RELEASES,
+            NuXmvTypes.LTL_PREVIOUS,
+            NuXmvTypes.LTL_NOT_PREVIOUS,
+            NuXmvTypes.LTL_HISTORICALLY,
+            NuXmvTypes.LTL_HISTORICALLY,
+            NuXmvTypes.LTL_SINCE,
+            NuXmvTypes.LTL_TRIGGERED,
+            NuXmvTypes.LTL_TIME_SINCE,
+            NuXmvTypes.LTL_TIME_UNTIL,
+            NuXmvTypes.CTL_FORALL,
+            NuXmvTypes.CTL_EXISTS,
+            NuXmvTypes.CTL_EXISTS_GLOBALLY,
+            NuXmvTypes.CTL_EXISTS_NEXT,
+            NuXmvTypes.CTL_EXISTS_FINALLY,
+            NuXmvTypes.CTL_FORALL_GLOBALLY,
+            NuXmvTypes.CTL_FORALL_NEXT,
+            NuXmvTypes.CTL_FORALL_FINALLY,
+            NuXmvTypes.RTCTL_EBF,
+            NuXmvTypes.RTCTL_ABF,
+            NuXmvTypes.RTCTL_EBG,
+            NuXmvTypes.RTCTL_ABG,
+            NuXmvTypes.RTCTL_BU,
+        )
+
+        @JvmStatic
+        val BUILTIN_OPERATORS = TokenSet.create(
+            NuXmvTypes.CONCAT,
+            NuXmvTypes.RANGE,
+            NuXmvTypes.UNION,
+            NuXmvTypes.IN,
+            NuXmvTypes.QUESTION_MARK
         )
 
         @JvmStatic
@@ -65,22 +119,107 @@ class NuXmvParserDefinition : ParserDefinition {
         )
 
         @JvmStatic
+        val CONSTANTS = TokenSet.create(
+            NuXmvTypes.TIME,
+            NuXmvTypes.PI
+        )
+
+        @JvmStatic
         val KEYWORDS =
             TokenSet.create(
+                NuXmvTypes.LTLSPEC,
+                NuXmvTypes.CTLSPEC,
+                NuXmvTypes.SPEC,
+                NuXmvTypes.INVARSPEC,
+
+                NuXmvTypes.INVARSPEC,
+                NuXmvTypes.PSLSPEC,
+                NuXmvTypes.MODULE,
+                NuXmvTypes.SELF,
+                NuXmvTypes.TRUE,
+                NuXmvTypes.FALSE,
+                NuXmvTypes.FUN_KW,
+                NuXmvTypes.DEFINE_KW,
+                NuXmvTypes.CONSTANTS_KW,
+                NuXmvTypes.ASSIGN_KW,
+                NuXmvTypes.INIT_KW,
+                NuXmvTypes.TRANS_KW,
+                NuXmvTypes.VAR_KW,
+                NuXmvTypes.IVAR_KW,
+                NuXmvTypes.FROZENVAR_KW,
+                NuXmvTypes.INVAR_KW,
+                NuXmvTypes.FAIRNESS_KW,
+                NuXmvTypes.JUSTICE_KW,
+                NuXmvTypes.COMPASSION_KW,
+                NuXmvTypes.TIME_DOMAIN_KW,
+                NuXmvTypes.MIRROR_KW,
+                NuXmvTypes.ISA_KW,
+                NuXmvTypes.NAME_KW,
+                NuXmvTypes.COMPUTE_KW,
+                NuXmvTypes.MIN_KW,
+                NuXmvTypes.MAX_KW,
+                NuXmvTypes.PARSYNTH_KW,
+                NuXmvTypes.VALID_KW,
+                NuXmvTypes.SAT_KW,
+                NuXmvTypes.MONOPOS_KW,
+                NuXmvTypes.MONONEG_KW,
                 NuXmvTypes.CASE,
                 NuXmvTypes.ESAC,
-                NuXmvTypes.MODULE,
-                NuXmvTypes.ASSIGN,
-                NuXmvTypes.VAR,
-                NuXmvTypes.IVAR,
-                NuXmvTypes.FROZENVAR,
-                NuXmvTypes.DEFINE_KW,
-                NuXmvTypes.TRUE,
-                NuXmvTypes.FALSE
+                NuXmvTypes.CLOCK_KW,
+                NuXmvTypes.COMPID_KW,
+                NuXmvTypes.COMPWFF_KW,
+                NuXmvTypes.CONSTRAINT_KW,
+                NuXmvTypes.CTLWFF_KW,
+                NuXmvTypes.IN_KW,
+                NuXmvTypes.INTEGER_KW,
+                NuXmvTypes.ITYPE_KW,
+                NuXmvTypes.LTLWFF_KW,
+                NuXmvTypes.MDEFINE_KW,
+                NuXmvTypes.NEXTWFF_KW,
+                NuXmvTypes.NONCONTINUOUS_KW,
+                NuXmvTypes.PREDICATES_KW,
+                NuXmvTypes.REAL_KW,
+                NuXmvTypes.SIMPWFF_KW,
+                NuXmvTypes.URGENT_KW,
+                NuXmvTypes.WORD_KW,
             )
 
         @JvmStatic
-        val COMMENTS = TokenSet.create(NuXmvTypes.LINE_COMMENT, NuXmvTypes.BLOCK_COMMENT)
+        val BUILTIN_FUNCTION_CALLS = TokenSet.create(
+            NuXmvTypes.INIT_FUN,
+            NuXmvTypes.NEXT_FUN,
+            NuXmvTypes.ABS_FUN,
+            NuXmvTypes.MAX_FUN,
+            NuXmvTypes.MIN_FUN,
+            NuXmvTypes.SIN_FUN,
+            NuXmvTypes.COS_FUN,
+            NuXmvTypes.EXP_FUN,
+            NuXmvTypes.TAN_FUN,
+            NuXmvTypes.LN_FUN,
+            NuXmvTypes.POW_FUN,
+            NuXmvTypes.ASIN_FUN,
+            NuXmvTypes.ACOS_FUN,
+            NuXmvTypes.ATAN_FUN,
+            NuXmvTypes.SQRT_FUN,
+            NuXmvTypes.TO_WORD1_FUN,
+            NuXmvTypes.TO_BOOL_FUN,
+            NuXmvTypes.TO_INT_FUN,
+            NuXmvTypes.COUNT_FUN,
+            NuXmvTypes.SWCONST_FUN,
+            NuXmvTypes.UWCONST_FUN,
+            NuXmvTypes.TO_SIGNED_FUN,
+            NuXmvTypes.TO_UNSIGNED_FUN,
+            NuXmvTypes.SIZEOF_FUN,
+            NuXmvTypes.FLOOR_FUN,
+            NuXmvTypes.EXTEND_FUN,
+            NuXmvTypes.RESIZE_FUN,
+        )
+
+        @JvmStatic
+        val COMMENTS = TokenSet.create(
+            NuXmvTypes.LINE_COMMENT,
+            NuXmvTypes.BLOCK_COMMENT
+        )
     }
 
 
