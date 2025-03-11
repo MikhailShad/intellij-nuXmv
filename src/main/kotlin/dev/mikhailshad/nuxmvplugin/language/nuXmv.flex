@@ -50,9 +50,6 @@ LINE_COMMENT=("--")[^\r\n]*
     "/--"                        {yybegin(IN_BLOCK_COMMENT); yypushback(3);}
 
     // Reserved words
-    "LTLSPEC"     { return LTLSPEC; }
-    "CTLSPEC"     { return CTLSPEC; }
-    "SPEC"        { return SPEC; }
     "INVARSPEC"   { return INVARSPEC; }
 
     "MODULE"     {return MODULE;}
@@ -92,21 +89,9 @@ LINE_COMMENT=("--")[^\r\n]*
     ":"          { return COLON; }
     ".."         {return RANGE;}
     "::"         {return CONCAT;}
-    "word1"      {return TO_WORD1;}
-    "bool"       {return TO_BOOL;}
-    "toint"      {return TO_INT;}
-    "signed"     {return TO_SIGNED;}
-    "unsigned"   {return TO_UNSIGNED;}
-    "extend"     {return EXTEND;}
-    "resize"     {return RESIZE;}
     "union"      {return UNION;}
     "in"         {return IN;}
     "?"          {return QUESTION_MARK;}
-    "count"      {return COUNT;}
-    "floor"      {return FLOOR;}
-    "next"       {return NEXT;}
-    "case"       {return CASE;}
-    "esac"       {return ESAC;}
 
     // Type Spcifier
     "boolean"        {return BOOLEAN_TYPE;}
@@ -124,12 +109,85 @@ LINE_COMMENT=("--")[^\r\n]*
     "IVAR"           {return IVAR;}
     "FROZENVAR"      {return FROZENVAR;}
 
-    // Other
+    // Timed Logic Specific Keywords
+    "U"           {return TL_UNTIL;}
+
+    // LTL Specific Keywords
+    "LTLSPEC"     {return LTLSPEC; }
+    "at next"     {return LTL_AT_NEXT;}
+    "@F~"         {return LTL_AT_NEXT;}
+    "at last"     {return LTL_AT_LAST;}
+    "@O~"         {return LTL_AT_LAST;}
+    "X"           {return LTL_NEXT;}
+    "G"           {return LTL_GLOBALLY;}
+    "F"           {return LTL_FINALLY;}
+    "V"           {return LTL_RELEASES;}
+    "Y"           {return LTL_PREVIOUS;}
+    "Z"           {return LTL_NOT_PREVIOUS;}
+    "H"           {return LTL_HISTORICALLY;}
+    "O"           {return LTL_HISTORICALLY;}
+    "S"           {return LTL_SINCE;}
+    "T"           {return LTL_TRIGGERED;}
+    "time_since"  {return LTL_TIME_SINCE;}
+    "time_until"  {return LTL_TIME_UNTIL;}
+
+    // CTL Specific Keywords
+    "CTLSPEC"   {return CTLSPEC;}
+    "SPEC"      {return SPEC;}
+    "A"         {return CTL_FORALL;}
+    "E"         {return CTL_EXISTS;}
+    "EG"        {return CTL_EXISTS_GLOBALLY;}
+    "EX"        {return CTL_EXISTS_NEXT;}
+    "EF"        {return CTL_EXISTS_FINALLY;}
+    "AX"        {return CTL_FORALL_GLOBALLY;}
+    "AG"        {return CTL_FORALL_NEXT;}
+    "AF"        {return CTL_FORALL_FINALLY;}
+    "EBF"       {return RTCTL_EBF;}
+    "ABF"       {return RTCTL_ABF;}
+    "EBG"       {return RTCTL_EBG;}
+    "ABG"       {return RTCTL_ABG;}
+    "BU"        {return RTCTL_BU;}
+
+    // Built-in Functions
+    "init"       {return INIT_FUN;}
+    "next"       {return NEXT_FUN;}
+    "abs"        {return ABS_FUN;}
+    "max"        {return MAX_FUN;}
+    "min"        {return MIN_FUN;}
+    "sin"        {return SIN_FUN;}
+    "cos"        {return COS_FUN;}
+    "exp"        {return EXP_FUN;}
+    "tan"        {return TAN_FUN;}
+    "ln"         {return LN_FUN;}
+    "pow"        {return POW_FUN;}
+    "asin"       {return ASIN_FUN;}
+    "acos"       {return ACOS_FUN;}
+    "atan"       {return ATAN_FUN;}
+    "sqrt"       {return SQRT_FUN;}
+    "word1"      {return TO_WORD1_FUN;}
+    "bool"       {return TO_BOOL_FUN;}
+    "toint"      {return TO_INT_FUN;}
+    "count"      {return COUNT_FUN;}
+    "swconst"    {return SWCONST_FUN;}
+    "uwconst"    {return UWCONST_FUN;}
+    "signed"     {return TO_SIGNED_FUN;}
+    "unsigned"   {return TO_UNSIGNED_FUN;}
+    "sizeof"     {return SIZEOF_FUN;}
+    "floor"      {return FLOOR_FUN;}
+    "extend"     {return EXTEND_FUN;}
+    "resize"     {return RESIZE_FUN;}
+
+    // Other Reserved Keywords
+    "INVARSPEC"      {return INVARSPEC;}
+    "PSLSPEC"        {return PSLSPEC;}
+    "MODULE"         {return MODULE;}
+    "self"           {return SELF;}
+    "TRUE"           {return TRUE;}
+    "FALSE"          {return FALSE;}
     "FUN"            {return FUN_KW;}
     "DEFINE"         {return DEFINE_KW;}
     "CONSTANTS"      {return CONSTANTS_KW;}
     "ASSIGN"         {return ASSIGN_KW;}
-    "init"           {return INIT_FUN;}
     "INIT"           {return INIT_KW;}
     "TRANS"          {return TRANS_KW;}
     "INVAR"          {return INVAR_KW;}
@@ -137,12 +195,36 @@ LINE_COMMENT=("--")[^\r\n]*
     "JUSTICE"        {return JUSTICE_KW;}
     "COMPASSION"     {return COMPASSION_KW;}
     "@TIME DOMAIN"   {return TIME_DOMAIN_KW;}
-    "PRED"           {return PRED_KW;}
     "MIRROR"         {return MIRROR_KW;}
     "ISA"            {return ISA_KW;}
     "NAME"           {return NAME_KW;}
+    "COMPUTE"        {return COMPUTE_KW;}
     "MIN"            {return MIN_KW;}
     "MAX"            {return MAX_KW;}
+    "PARSYNTH"       {return PARSYNTH_KW;}
+    "VALID"          {return VALID_KW;}
+    "SAT"            {return SAT_KW;}
+    "MONOPOS"        {return MONOPOS_KW;}
+    "MONONEG"        {return MONONEG_KW;}
+    "case"           {return CASE;}
+    "esac"           {return ESAC;}
+    "Clock"          {return CLOCK_KW;}
+    "COMPID"         {return COMPID_KW;}
+    "COMPWFF"        {return COMPWFF_KW;}
+    "CONSTRAINT"     {return CONSTRAINT_KW;}
+    "CTLWFF"         {return CTLWFF_KW;}
+    "IN"             {return IN_KW;}
+    "Integer"        {return INTEGER_KW;}
+    "ITYPE"          {return ITYPE_KW;}
+    "LTLWFF"         {return LTLWFF_KW;}
+    "MDEFINE"        {return MDEFINE_KW;}
+    "NEXTWFF"        {return NEXTWFF_KW;}
+    "noncontinuous"  {return NONCONTINUOUS_KW;}
+    "PREDICATES"     {return PREDICATES_KW;}
+    "Real"           {return REAL_KW;}
+    "SIMPWFF"        {return SIMPWFF_KW;}
+    "URGENT"         {return URGENT_KW;}
+    "Word"           {return WORD_KW;}
 
     // Common tokens
     {IDENTIFIER}                 {return IDENTIFIER;}

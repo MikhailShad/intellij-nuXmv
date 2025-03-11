@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvUntilCtlExpr;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvUntilCtlOp;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,12 +32,6 @@ public class NuXmvUntilCtlExprImpl extends NuXmvExprImpl implements NuXmvUntilCt
     @NotNull
     public List<NuXmvExpr> getExprList() {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvExpr.class);
-    }
-
-    @Override
-    @NotNull
-    public NuXmvUntilCtlOp getUntilCtlOp() {
-        return findNotNullChildByClass(NuXmvUntilCtlOp.class);
     }
 
 }

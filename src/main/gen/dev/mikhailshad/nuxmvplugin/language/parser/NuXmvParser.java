@@ -135,17 +135,17 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // "@O~" | "@F~" | "T" | "S" | "V" | "U"
+    // LTL_AT_LAST | LTL_AT_NEXT | LTL_TRIGGERED | LTL_SINCE | LTL_RELEASES | TL_UNTIL
     public static boolean BinaryLtlOp(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "BinaryLtlOp")) return false;
         boolean r;
         Marker m = enter_section_(b, l, _NONE_, BINARY_LTL_OP, "<binary ltl op>");
-        r = consumeToken(b, "@O~");
-        if (!r) r = consumeToken(b, "@F~");
-        if (!r) r = consumeToken(b, "T");
-        if (!r) r = consumeToken(b, "S");
-        if (!r) r = consumeToken(b, "V");
-        if (!r) r = consumeToken(b, "U");
+        r = consumeToken(b, LTL_AT_LAST);
+        if (!r) r = consumeToken(b, LTL_AT_NEXT);
+        if (!r) r = consumeToken(b, LTL_TRIGGERED);
+        if (!r) r = consumeToken(b, LTL_SINCE);
+        if (!r) r = consumeToken(b, LTL_RELEASES);
+        if (!r) r = consumeToken(b, TL_UNTIL);
         exit_section_(b, l, m, r, false, null);
         return r;
     }
@@ -625,13 +625,49 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // INIT_FUN | NEXT | SimpleIdentifier
+    // INIT_FUN|NEXT_FUN|ABS_FUN|MAX_FUN|MIN_FUN|SIN_FUN|COS_FUN
+    //     |EXP_FUN|TAN_FUN|LN_FUN|POW_FUN|ASIN_FUN|ACOS_FUN|ATAN_FUN|SQRT_FUN
+    //     |TO_WORD1_FUN|TO_BOOL_FUN|TO_INT_FUN|COUNT_FUN|SWCONST_FUN|UWCONST_FUN
+    //     |TO_SIGNED_FUN|TO_UNSIGNED_FUN|SIZEOF_FUN|FLOOR_FUN|EXTEND_FUN|RESIZE_FUN
+    //     |TO_SIGNED_WORD_FUN|TO_UNSIGNED_WORD_FUN|READ_FUN|WRITE_FUN|CONSTARRAY_FUN|TYPE_OF_FUN
+    //     | SimpleIdentifier
     public static boolean FunctionIdentifier(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "FunctionIdentifier")) return false;
         boolean r;
         Marker m = enter_section_(b, l, _NONE_, FUNCTION_IDENTIFIER, "<function identifier>");
         r = consumeToken(b, INIT_FUN);
-        if (!r) r = consumeToken(b, NEXT);
+        if (!r) r = consumeToken(b, NEXT_FUN);
+        if (!r) r = consumeToken(b, ABS_FUN);
+        if (!r) r = consumeToken(b, MAX_FUN);
+        if (!r) r = consumeToken(b, MIN_FUN);
+        if (!r) r = consumeToken(b, SIN_FUN);
+        if (!r) r = consumeToken(b, COS_FUN);
+        if (!r) r = consumeToken(b, EXP_FUN);
+        if (!r) r = consumeToken(b, TAN_FUN);
+        if (!r) r = consumeToken(b, LN_FUN);
+        if (!r) r = consumeToken(b, POW_FUN);
+        if (!r) r = consumeToken(b, ASIN_FUN);
+        if (!r) r = consumeToken(b, ACOS_FUN);
+        if (!r) r = consumeToken(b, ATAN_FUN);
+        if (!r) r = consumeToken(b, SQRT_FUN);
+        if (!r) r = consumeToken(b, TO_WORD1_FUN);
+        if (!r) r = consumeToken(b, TO_BOOL_FUN);
+        if (!r) r = consumeToken(b, TO_INT_FUN);
+        if (!r) r = consumeToken(b, COUNT_FUN);
+        if (!r) r = consumeToken(b, SWCONST_FUN);
+        if (!r) r = consumeToken(b, UWCONST_FUN);
+        if (!r) r = consumeToken(b, TO_SIGNED_FUN);
+        if (!r) r = consumeToken(b, TO_UNSIGNED_FUN);
+        if (!r) r = consumeToken(b, SIZEOF_FUN);
+        if (!r) r = consumeToken(b, FLOOR_FUN);
+        if (!r) r = consumeToken(b, EXTEND_FUN);
+        if (!r) r = consumeToken(b, RESIZE_FUN);
+        if (!r) r = consumeToken(b, TO_SIGNED_WORD_FUN);
+        if (!r) r = consumeToken(b, TO_UNSIGNED_WORD_FUN);
+        if (!r) r = consumeToken(b, READ_FUN);
+        if (!r) r = consumeToken(b, WRITE_FUN);
+        if (!r) r = consumeToken(b, CONSTARRAY_FUN);
+        if (!r) r = consumeToken(b, TYPE_OF_FUN);
         if (!r) r = SimpleIdentifier(b, l + 1);
         exit_section_(b, l, m, r, false, null);
         return r;
@@ -1120,13 +1156,13 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // NEXT LPAREN ComplexIdentifier RPAREN ASSIGN Expr
+    // NEXT_FUN LPAREN ComplexIdentifier RPAREN ASSIGN Expr
     public static boolean NextAssignExpr(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "NextAssignExpr")) return false;
-        if (!nextTokenIs(b, NEXT)) return false;
+        if (!nextTokenIs(b, NEXT_FUN)) return false;
         boolean r;
         Marker m = enter_section_(b);
-        r = consumeTokens(b, 0, NEXT, LPAREN);
+        r = consumeTokens(b, 0, NEXT_FUN, LPAREN);
         r = r && ComplexIdentifier(b, l + 1);
         r = r && consumeTokens(b, 0, RPAREN, ASSIGN);
         r = r && Expr(b, l + 1, -1);
@@ -1398,8 +1434,8 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
 
     /* ********************************************************** */
     // Expr
-    //     | ("EBF" | "ABF" | "EBG" | "ABG") INTEGER_NUMBER RANGE INTEGER_NUMBER RtCtlExpr
-    //     | ("A" | "E") LBRACKET RtCtlExpr "BU" RtCtlExpr RBRACKET
+    //     | (RTCTL_EBF | RTCTL_ABF | RTCTL_EBG | RTCTL_ABG) INTEGER_NUMBER RANGE INTEGER_NUMBER RtCtlExpr
+    //     | (CTL_FORALL | CTL_EXISTS) LBRACKET RtCtlExpr RTCTL_BU RtCtlExpr RBRACKET
     public static boolean RtCtlExpr(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "RtCtlExpr")) return false;
         boolean r;
@@ -1411,7 +1447,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         return r;
     }
 
-    // ("EBF" | "ABF" | "EBG" | "ABG") INTEGER_NUMBER RANGE INTEGER_NUMBER RtCtlExpr
+    // (RTCTL_EBF | RTCTL_ABF | RTCTL_EBG | RTCTL_ABG) INTEGER_NUMBER RANGE INTEGER_NUMBER RtCtlExpr
     private static boolean RtCtlExpr_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "RtCtlExpr_1")) return false;
         boolean r;
@@ -1423,18 +1459,18 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         return r;
     }
 
-    // "EBF" | "ABF" | "EBG" | "ABG"
+    // RTCTL_EBF | RTCTL_ABF | RTCTL_EBG | RTCTL_ABG
     private static boolean RtCtlExpr_1_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "RtCtlExpr_1_0")) return false;
         boolean r;
-        r = consumeToken(b, "EBF");
-        if (!r) r = consumeToken(b, "ABF");
-        if (!r) r = consumeToken(b, "EBG");
-        if (!r) r = consumeToken(b, "ABG");
+        r = consumeToken(b, RTCTL_EBF);
+        if (!r) r = consumeToken(b, RTCTL_ABF);
+        if (!r) r = consumeToken(b, RTCTL_EBG);
+        if (!r) r = consumeToken(b, RTCTL_ABG);
         return r;
     }
 
-    // ("A" | "E") LBRACKET RtCtlExpr "BU" RtCtlExpr RBRACKET
+    // (CTL_FORALL | CTL_EXISTS) LBRACKET RtCtlExpr RTCTL_BU RtCtlExpr RBRACKET
     private static boolean RtCtlExpr_2(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "RtCtlExpr_2")) return false;
         boolean r;
@@ -1442,19 +1478,19 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         r = RtCtlExpr_2_0(b, l + 1);
         r = r && consumeToken(b, LBRACKET);
         r = r && RtCtlExpr(b, l + 1);
-        r = r && consumeToken(b, "BU");
+        r = r && consumeToken(b, RTCTL_BU);
         r = r && RtCtlExpr(b, l + 1);
         r = r && consumeToken(b, RBRACKET);
         exit_section_(b, m, null, r);
         return r;
     }
 
-    // "A" | "E"
+    // CTL_FORALL | CTL_EXISTS
     private static boolean RtCtlExpr_2_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "RtCtlExpr_2_0")) return false;
         boolean r;
-        r = consumeToken(b, "A");
-        if (!r) r = consumeToken(b, "E");
+        r = consumeToken(b, CTL_FORALL);
+        if (!r) r = consumeToken(b, CTL_EXISTS);
         return r;
     }
 
@@ -1702,13 +1738,14 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // "time_since" | "time_until"
+    // LTL_TIME_SINCE | LTL_TIME_UNTIL
     public static boolean TimeLtlOp(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "TimeLtlOp")) return false;
+        if (!nextTokenIs(b, "<time ltl op>", LTL_TIME_SINCE, LTL_TIME_UNTIL)) return false;
         boolean r;
         Marker m = enter_section_(b, l, _NONE_, TIME_LTL_OP, "<time ltl op>");
-        r = consumeToken(b, "time_since");
-        if (!r) r = consumeToken(b, "time_until");
+        r = consumeToken(b, LTL_TIME_SINCE);
+        if (!r) r = consumeToken(b, LTL_TIME_UNTIL);
         exit_section_(b, l, m, r, false, null);
         return r;
     }
@@ -1747,47 +1784,45 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // "EG" | "EX" | "EF" | "AG" | "AX" | "AF"
-    public static boolean UnaryCtlOp(PsiBuilder b, int l) {
+    // CTL_EXISTS_GLOBALLY | CTL_EXISTS_NEXT | CTL_EXISTS_FINALLY
+    //     | CTL_FORALL_GLOBALLY | CTL_FORALL_NEXT | CTL_FORALL_FINALLY
+    static boolean UnaryCtlOp(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "UnaryCtlOp")) return false;
         boolean r;
-        Marker m = enter_section_(b, l, _NONE_, UNARY_CTL_OP, "<unary ctl op>");
-        r = consumeToken(b, "EG");
-        if (!r) r = consumeToken(b, "EX");
-        if (!r) r = consumeToken(b, "EF");
-        if (!r) r = consumeToken(b, "AG");
-        if (!r) r = consumeToken(b, "AX");
-        if (!r) r = consumeToken(b, "AF");
-        exit_section_(b, l, m, r, false, null);
+        r = consumeToken(b, CTL_EXISTS_GLOBALLY);
+        if (!r) r = consumeToken(b, CTL_EXISTS_NEXT);
+        if (!r) r = consumeToken(b, CTL_EXISTS_FINALLY);
+        if (!r) r = consumeToken(b, CTL_FORALL_GLOBALLY);
+        if (!r) r = consumeToken(b, CTL_FORALL_NEXT);
+        if (!r) r = consumeToken(b, CTL_FORALL_FINALLY);
         return r;
     }
 
     /* ********************************************************** */
-    // "O" | "H" | "Z" | "Y" | "F" | "G" | "X"
+    // LTL_ONCE | LTL_HISTORICALLY | LTL_NOT_PREVIOUS| LTL_PREVIOUS | LTL_FINALLY | LTL_GLOBALLY | LTL_NEXT
     public static boolean UnaryLtlOp(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "UnaryLtlOp")) return false;
         boolean r;
         Marker m = enter_section_(b, l, _NONE_, UNARY_LTL_OP, "<unary ltl op>");
-        r = consumeToken(b, "O");
-        if (!r) r = consumeToken(b, "H");
-        if (!r) r = consumeToken(b, "Z");
-        if (!r) r = consumeToken(b, "Y");
-        if (!r) r = consumeToken(b, "F");
-        if (!r) r = consumeToken(b, "G");
-        if (!r) r = consumeToken(b, "X");
+        r = consumeToken(b, LTL_ONCE);
+        if (!r) r = consumeToken(b, LTL_HISTORICALLY);
+        if (!r) r = consumeToken(b, LTL_NOT_PREVIOUS);
+        if (!r) r = consumeToken(b, LTL_PREVIOUS);
+        if (!r) r = consumeToken(b, LTL_FINALLY);
+        if (!r) r = consumeToken(b, LTL_GLOBALLY);
+        if (!r) r = consumeToken(b, LTL_NEXT);
         exit_section_(b, l, m, r, false, null);
         return r;
     }
 
     /* ********************************************************** */
-    // "E" | "A"
-    public static boolean UntilCtlOp(PsiBuilder b, int l) {
+    // CTL_EXISTS | CTL_FORALL
+    static boolean UntilCtlOp(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "UntilCtlOp")) return false;
+        if (!nextTokenIs(b, "", CTL_EXISTS, CTL_FORALL)) return false;
         boolean r;
-        Marker m = enter_section_(b, l, _NONE_, UNTIL_CTL_OP, "<until ctl op>");
-        r = consumeToken(b, "E");
-        if (!r) r = consumeToken(b, "A");
-        exit_section_(b, l, m, r, false, null);
+        r = consumeToken(b, CTL_EXISTS);
+        if (!r) r = consumeToken(b, CTL_FORALL);
         return r;
     }
 
@@ -2235,15 +2270,16 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         return r || p;
     }
 
-    // UntilCtlOp LBRACKET Expr "U" Expr RBRACKET
+    // UntilCtlOp LBRACKET Expr TL_UNTIL Expr RBRACKET
     public static boolean UntilCtlExpr(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "UntilCtlExpr")) return false;
+        if (!nextTokenIsSmart(b, CTL_EXISTS, CTL_FORALL)) return false;
         boolean r;
         Marker m = enter_section_(b, l, _NONE_, UNTIL_CTL_EXPR, "<until ctl expr>");
         r = UntilCtlOp(b, l + 1);
         r = r && consumeToken(b, LBRACKET);
         r = r && Expr(b, l + 1, -1);
-        r = r && consumeToken(b, "U");
+        r = r && consumeToken(b, TL_UNTIL);
         r = r && Expr(b, l + 1, -1);
         r = r && consumeToken(b, RBRACKET);
         exit_section_(b, l, m, r, false, null);
@@ -2263,6 +2299,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
 
     public static boolean TimedLtlExpr(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "TimedLtlExpr")) return false;
+        if (!nextTokenIsSmart(b, LTL_TIME_SINCE, LTL_TIME_UNTIL)) return false;
         boolean r, p;
         Marker m = enter_section_(b, l, _NONE_, null);
         r = TimedLtlExpr_0(b, l + 1);

@@ -5,7 +5,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvUnaryCtlExpr;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvUnaryCtlOp;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,12 +30,6 @@ public class NuXmvUnaryCtlExprImpl extends NuXmvExprImpl implements NuXmvUnaryCt
     @Nullable
     public NuXmvExpr getExpr() {
         return findChildByClass(NuXmvExpr.class);
-    }
-
-    @Override
-    @NotNull
-    public NuXmvUnaryCtlOp getUnaryCtlOp() {
-        return findNotNullChildByClass(NuXmvUnaryCtlOp.class);
     }
 
 }

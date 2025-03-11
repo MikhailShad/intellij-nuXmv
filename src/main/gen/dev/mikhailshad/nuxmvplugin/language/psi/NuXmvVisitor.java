@@ -375,10 +375,6 @@ public class NuXmvVisitor extends PsiElementVisitor {
         visitExpr(o);
     }
 
-    public void visitUnaryCtlOp(@NotNull NuXmvUnaryCtlOp o) {
-        visitPsiElement(o);
-    }
-
     public void visitUnaryLtlExpr(@NotNull NuXmvUnaryLtlExpr o) {
         visitExpr(o);
     }
@@ -397,10 +393,6 @@ public class NuXmvVisitor extends PsiElementVisitor {
 
     public void visitUntilCtlExpr(@NotNull NuXmvUntilCtlExpr o) {
         visitExpr(o);
-    }
-
-    public void visitUntilCtlOp(@NotNull NuXmvUntilCtlOp o) {
-        visitPsiElement(o);
     }
 
     public void visitVarDeclaration(@NotNull NuXmvVarDeclaration o) {

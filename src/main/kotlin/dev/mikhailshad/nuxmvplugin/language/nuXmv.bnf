@@ -18,16 +18,6 @@
     BLOCK_COMMENT   = 'regexp:/--(.|\r|\n)*--/'
     LINE_COMMENT    = 'regexp:--[^\r\n]*'
 
-    LTLSPEC         = 'LTLSPEC'
-    CTLSPEC         = 'CTLSPEC'
-    INVARSPEC       = 'INVARSPEC'
-    SPEC            = 'SPEC'
-
-    MODULE          = 'MODULE'
-    SELF            = 'self'
-    TRUE            = 'TRUE'
-    FALSE           = 'FALSE'
-
     NOT             = '!'
     AND             = '&'
     OR              = '|'
@@ -66,21 +56,9 @@
     RANGE           = '..'
     CONCAT          = '::'
 
-    TO_WORD1        = 'word1'
-    TO_BOOL         = 'bool'
-    TO_INT          = 'toint'
-    TO_SIGNED       = 'signed'
-    TO_UNSIGNED     = 'unsigned'
-    EXTEND          = 'extend'
-    RESIZE          = 'resize'
     UNION           = 'union'
     IN              = 'in'
     QUESTION_MARK   = '?'
-    COUNT           = 'count'
-    FLOOR           = 'floor'
-    NEXT            = 'next'
-    CASE            = 'case'
-    ESAC            = 'esac'
 
     // Type Specifier
     BOOLEAN_TYPE        = 'boolean'
@@ -98,31 +76,127 @@
     IVAR             = 'IVAR'
     FROZENVAR        = 'FROZENVAR'
 
-    // Other
-    FUN_KW           = 'FUN'
-    DEFINE_KW        = 'DEFINE'
-    CONSTANTS_KW     = 'CONSTANTS'
-    ASSIGN_KW        = 'ASSIGN'
-    INIT_FUN         = "init"
-    INIT_KW          = "INIT"
-    TRANS_KW         = "TRANS"
-    INVAR_KW         = "INVAR"
-    FAIRNESS_KW      = "FAIRNESS"
-    JUSTICE_KW       = "JUSTICE"
-    COMPASSION_KW    = "COMPASSION"
-    TIME_DOMAIN_KW   = "@TIME DOMAIN"
-    PRED_KW          = "PRED"
-    MIRROR_KW        = "MIRROR"
-    ISA_KW           = "ISA"
-    NAME_KW          = "NAME"
-    COMPUTE_KW       = "COMPUTE"
-    MIN_KW           = "MIN"
-    MAX_KW           = "MAX"
-    PARSYNTH_KW      = "PARSYNTH"
-    VALID_KW         = "VALID"
-    SAT_KW           = "SAT"
-    MONOPOS_KW       = "MONOPOS"
-    MONONEG_KW       = "MONONEG"
+    // Timed Logic Specific Keywords
+    TL_UNTIL     = 'U'
+
+    // LTL Specific Keywords
+    LTLSPEC             = 'LTLSPEC'
+    LTL_AT_NEXT         = '@F~'
+    LTL_AT_LAST         = '@O~'
+    LTL_NEXT            = 'X'
+    LTL_GLOBALLY        = 'G'
+    LTL_FINALLY         = 'F'
+    LTL_RELEASES        = 'V'
+    LTL_PREVIOUS        = 'Y'
+    LTL_NOT_PREVIOUS    = 'Z'
+    LTL_HISTORICALLY    = 'H'
+    LTL_ONCE            = 'O'
+    LTL_SINCE           = 'S'
+    LTL_TRIGGERED       = 'T'
+    LTL_TIME_SINCE      = 'time_since'
+    LTL_TIME_UNTIL      = 'time_until'
+
+    // CTL Specific Keywords
+    CTLSPEC             = 'CTLSPEC'
+    SPEC                = 'SPEC'
+    CTL_FORALL          = 'A'
+    CTL_EXISTS          = 'E'
+    CTL_EXISTS_GLOBALLY = 'EG'
+    CTL_EXISTS_NEXT     = 'EX'
+    CTL_EXISTS_FINALLY  = 'EF'
+    CTL_FORALL_GLOBALLY = 'AX'
+    CTL_FORALL_NEXT     = 'AG'
+    CTL_FORALL_FINALLY  = 'AF'
+    RTCTL_EBF           = 'EBF'
+    RTCTL_ABF           = 'ABF'
+    RTCTL_EBG           = 'EBG'
+    RTCTL_ABG           = 'ABG'
+    RTCTL_BU            = 'BU'
+
+    // Built-in Functions
+    INIT_FUN                = 'init'
+    NEXT_FUN                = 'next'
+    ABS_FUN                 = 'abs'
+    MAX_FUN                 = 'max'
+    MIN_FUN                 = 'min'
+    SIN_FUN                 = 'sin'
+    COS_FUN                 = 'cos'
+    EXP_FUN                 = 'exp'
+    TAN_FUN                 = 'tan'
+    LN_FUN                  = 'ln'
+    POW_FUN                 = 'pow'
+    ASIN_FUN                = 'asin'
+    ACOS_FUN                = 'acos'
+    ATAN_FUN                = 'atan'
+    SQRT_FUN                = 'sqrt'
+    TO_WORD1_FUN            = 'word1'
+    TO_BOOL_FUN             = 'bool'
+    TO_INT_FUN              = 'toint'
+    COUNT_FUN               = 'count'
+    SWCONST_FUN             = 'swconst'
+    UWCONST_FUN             = 'uwconst'
+    TO_SIGNED_FUN           = 'signed'
+    TO_UNSIGNED_FUN         = 'unsigned'
+    SIZEOF_FUN              = 'sizeof'
+    FLOOR_FUN               = 'floor'
+    EXTEND_FUN              = 'extend'
+    RESIZE_FUN              = 'resize'
+    TO_SIGNED_WORD_FUN      = 'signed word[N]'
+    TO_UNSIGNED_WORD_FUN    = 'unsigned word[N]'
+    READ_FUN                = 'READ'
+    WRITE_FUN               = 'WRITE'
+    CONSTARRAY_FUN          = 'CONSTARRAY'
+    TYPE_OF_FUN             = 'typeof'
+
+    // Other Reserved Keywords
+    INVARSPEC           = 'INVARSPEC'
+    PSLSPEC             = 'PSLSPEC'
+    MODULE              = 'MODULE'
+    SELF                = 'self'
+    TRUE                = 'TRUE'
+    FALSE               = 'FALSE'
+    FUN_KW              = 'FUN'
+    DEFINE_KW           = 'DEFINE'
+    CONSTANTS_KW        = 'CONSTANTS'
+    ASSIGN_KW           = 'ASSIGN'
+    INIT_KW             = "INIT"
+    TRANS_KW            = "TRANS"
+    INVAR_KW            = "INVAR"
+    FAIRNESS_KW         = "FAIRNESS"
+    JUSTICE_KW          = "JUSTICE"
+    COMPASSION_KW       = "COMPASSION"
+    TIME_DOMAIN_KW      = "@TIME DOMAIN"
+    PRED_KW             = "PRED"
+    MIRROR_KW           = "MIRROR"
+    ISA_KW              = "ISA"
+    NAME_KW             = "NAME"
+    COMPUTE_KW          = "COMPUTE"
+    MIN_KW              = "MIN"
+    MAX_KW              = "MAX"
+    PARSYNTH_KW         = "PARSYNTH"
+    VALID_KW            = "VALID"
+    SAT_KW              = "SAT"
+    MONOPOS_KW          = "MONOPOS"
+    MONONEG_KW          = "MONONEG"
+    CASE                = 'case'
+    ESAC                = 'esac'
+    CLOCK_KW            = 'Clock'
+    COMPID_KW           = 'COMPID'
+    COMPWFF_KW          = 'COMPWFF'
+    CONSTRAINT_KW       = 'CONSTRAINT'
+    CTLWFF_KW           = 'CTLWFF'
+    IN_KW               = 'IN'
+    INTEGER_KW          = 'Integer'
+    ITYPE_KW            = 'ITYPE'
+    LTLWFF_KW           = 'LTLWFF'
+    MDEFINE_KW          = 'MDEFINE'
+    NEXTWFF_KW          = 'NEXTWFF'
+    NONCONTINUOUS_KW    = 'noncontinuous'
+    PREDICATES_KW       = 'PREDICATES'
+    REAL_KW             = 'Real'
+    SIMPWFF_KW          = 'SIMPWFF'
+    URGENT_KW           = 'URGENT'
+    WORD_KW             = 'Word'
 
     IDENTIFIER = "regexp:[A-Za-z_][A-Za-z_0-9$\-#]*"
     POSITIVE_INTEGER_NUMBER = "regexp:[0-9]+"
@@ -219,7 +293,7 @@ SingleAssignConstraint ::= AssignExpr SEMICOLON
 private AssignExpr ::= InitAssignExpr | NextAssignExpr | SimpleAssignExpr
 SimpleAssignExpr ::= ComplexIdentifier ASSIGN Expr
 InitAssignExpr ::= INIT_FUN LPAREN ComplexIdentifier RPAREN ASSIGN Expr
-NextAssignExpr ::= NEXT LPAREN ComplexIdentifier RPAREN ASSIGN Expr
+NextAssignExpr ::= NEXT_FUN LPAREN ComplexIdentifier RPAREN ASSIGN Expr
 
 TransConstraint ::= TRANS_KW Expr SEMICOLON?
 
@@ -240,8 +314,8 @@ ComputeSpecification ::= COMPUTE_KW ComputeExpr SEMICOLON?
     | COMPUTE_KW NAME_KW identifier ASSIGN ComplexIdentifier SEMICOLON?
 ComputeExpr ::= (MIN_KW | MAX_KW) LBRACKET RtCtlExpr COMMA RtCtlExpr RBRACKET
 RtCtlExpr ::= Expr
-    | ("EBF" | "ABF" | "EBG" | "ABG") INTEGER_NUMBER RANGE INTEGER_NUMBER RtCtlExpr
-    | ("A" | "E") LBRACKET RtCtlExpr "BU" RtCtlExpr RBRACKET
+    | (RTCTL_EBF | RTCTL_ABF | RTCTL_EBG | RTCTL_ABG) INTEGER_NUMBER RANGE INTEGER_NUMBER RtCtlExpr
+    | (CTL_FORALL | CTL_EXISTS) LBRACKET RtCtlExpr RTCTL_BU RtCtlExpr RBRACKET
 
 // parameter_synth_problem
 ParameterSynthProblemDeclaration ::= PARSYNTH_KW ParameterSynthProblem SEMICOLON?
@@ -344,7 +418,12 @@ UnaryMinusBasicExpr ::= MINUS Expr
 IndexBasicExpr ::= Expr LBRACKET WholeNumber (SEMICOLON WholeNumber)? RBRACKET {pin=2}
 
 FunctionCallBasicExpr ::= FunctionIdentifier LPAREN BasicExprList RPAREN
-FunctionIdentifier ::= INIT_FUN | NEXT | SimpleIdentifier
+FunctionIdentifier ::= INIT_FUN|NEXT_FUN|ABS_FUN|MAX_FUN|MIN_FUN|SIN_FUN|COS_FUN
+    |EXP_FUN|TAN_FUN|LN_FUN|POW_FUN|ASIN_FUN|ACOS_FUN|ATAN_FUN|SQRT_FUN
+    |TO_WORD1_FUN|TO_BOOL_FUN|TO_INT_FUN|COUNT_FUN|SWCONST_FUN|UWCONST_FUN
+    |TO_SIGNED_FUN|TO_UNSIGNED_FUN|SIZEOF_FUN|FLOOR_FUN|EXTEND_FUN|RESIZE_FUN
+    |TO_SIGNED_WORD_FUN|TO_UNSIGNED_WORD_FUN|READ_FUN|WRITE_FUN|CONSTARRAY_FUN|TYPE_OF_FUN
+    | SimpleIdentifier
 BasicExprList ::= Expr (COMMA Expr)*
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -353,9 +432,10 @@ BasicExprList ::= Expr (COMMA Expr)*
 private CtlExprGroup ::= UnaryCtlExpr
     | UntilCtlExpr
 UnaryCtlExpr ::= UnaryCtlOp Expr
-UnaryCtlOp ::= "EG" | "EX" | "EF" | "AG" | "AX" | "AF"
-UntilCtlExpr ::= UntilCtlOp LBRACKET Expr "U" Expr RBRACKET
-UntilCtlOp ::= "E" | "A"
+private UnaryCtlOp ::= CTL_EXISTS_GLOBALLY | CTL_EXISTS_NEXT | CTL_EXISTS_FINALLY
+    | CTL_FORALL_GLOBALLY | CTL_FORALL_NEXT | CTL_FORALL_FINALLY
+UntilCtlExpr ::= UntilCtlOp LBRACKET Expr TL_UNTIL Expr RBRACKET
+private UntilCtlOp ::= CTL_EXISTS | CTL_FORALL
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // LTL SPEC
@@ -364,11 +444,11 @@ private LtlExprGroup ::= UnaryLtlExpr
     | BinaryLtlExpr
     | TimedLtlExpr
 UnaryLtlExpr ::= UnaryLtlOp Expr
-UnaryLtlOp ::= "O" | "H" | "Z" | "Y" | "F" | "G" | "X"
+UnaryLtlOp ::= LTL_ONCE | LTL_HISTORICALLY | LTL_NOT_PREVIOUS| LTL_PREVIOUS | LTL_FINALLY | LTL_GLOBALLY | LTL_NEXT
 BinaryLtlExpr ::= Expr BinaryLtlOp Expr
-BinaryLtlOp ::= "@O~" | "@F~" | "T" | "S" | "V" | "U"
+BinaryLtlOp ::= LTL_AT_LAST | LTL_AT_NEXT | LTL_TRIGGERED | LTL_SINCE | LTL_RELEASES | TL_UNTIL
 TimedLtlExpr ::= TimeLtlOp LPAREN Expr RPAREN
-TimeLtlOp ::= "time_since" | "time_until"
+TimeLtlOp ::= LTL_TIME_SINCE | LTL_TIME_UNTIL
 
 private PrimaryBasicExprGroup ::= ReferenceBasicExpr | LiteralBasicExpr | ParenthesisBasicExpr
 ParenthesisBasicExpr ::= LPAREN Expr RPAREN

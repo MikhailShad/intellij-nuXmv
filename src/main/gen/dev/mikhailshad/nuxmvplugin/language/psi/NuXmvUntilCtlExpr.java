@@ -10,7 +10,4 @@ public interface NuXmvUntilCtlExpr extends NuXmvExpr {
     @NotNull
     List<NuXmvExpr> getExprList();
 
-    @NotNull
-    NuXmvUntilCtlOp getUntilCtlOp();
-
 }
