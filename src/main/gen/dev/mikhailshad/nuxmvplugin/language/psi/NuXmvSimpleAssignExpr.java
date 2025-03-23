@@ -2,13 +2,14 @@
 package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface NuXmvSimpleAssignExpr extends NuXmvExpr {
 
     @NotNull
     NuXmvComplexIdentifier getComplexIdentifier();
 
-    @NotNull
+    @Nullable
     NuXmvExpr getExpr();
 
 }

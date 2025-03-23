@@ -4,10 +4,7 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvEnumerationTypeBody;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvSimpleTypeSpecifier;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvWholeNumber;
+import dev.mikhailshad.nuxmvplugin.language.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,6 +28,12 @@ public class NuXmvSimpleTypeSpecifierImpl extends ASTWrapperPsiElement implement
     @Nullable
     public NuXmvEnumerationTypeBody getEnumerationTypeBody() {
         return findChildByClass(NuXmvEnumerationTypeBody.class);
+    }
+
+    @Override
+    @Nullable
+    public NuXmvSimpleIdentifier getSimpleIdentifier() {
+        return findChildByClass(NuXmvSimpleIdentifier.class);
     }
 
     @Override

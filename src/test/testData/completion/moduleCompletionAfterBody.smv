@@ -1,0 +1,4 @@
+MODULE main
+VAR
+    foo: boolean;
+<caret>

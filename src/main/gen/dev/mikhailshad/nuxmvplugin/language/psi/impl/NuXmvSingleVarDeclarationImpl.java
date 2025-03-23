@@ -9,6 +9,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypeSpecifier;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVarName;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class NuXmvSingleVarDeclarationImpl extends ASTWrapperPsiElement implements NuXmvSingleVarDeclaration {
 
@@ -27,9 +28,9 @@ public class NuXmvSingleVarDeclarationImpl extends ASTWrapperPsiElement implemen
     }
 
     @Override
-    @NotNull
+    @Nullable
     public NuXmvTypeSpecifier getTypeSpecifier() {
-        return findNotNullChildByClass(NuXmvTypeSpecifier.class);
+        return findChildByClass(NuXmvTypeSpecifier.class);
     }
 
     @Override

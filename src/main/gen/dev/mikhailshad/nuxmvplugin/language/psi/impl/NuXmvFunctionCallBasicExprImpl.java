@@ -8,6 +8,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFunctionCallBasicExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFunctionIdentifier;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class NuXmvFunctionCallBasicExprImpl extends NuXmvExprImpl implements NuXmvFunctionCallBasicExpr {
 
@@ -27,9 +28,9 @@ public class NuXmvFunctionCallBasicExprImpl extends NuXmvExprImpl implements NuX
     }
 
     @Override
-    @NotNull
+    @Nullable
     public NuXmvBasicExprList getBasicExprList() {
-        return findNotNullChildByClass(NuXmvBasicExprList.class);
+        return findChildByClass(NuXmvBasicExprList.class);
     }
 
     @Override

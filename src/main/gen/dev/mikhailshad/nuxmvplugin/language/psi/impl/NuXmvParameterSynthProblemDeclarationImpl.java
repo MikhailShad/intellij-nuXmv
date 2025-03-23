@@ -8,6 +8,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvParameterSynthProblem;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvParameterSynthProblemDeclaration;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class NuXmvParameterSynthProblemDeclarationImpl extends ASTWrapperPsiElement implements NuXmvParameterSynthProblemDeclaration {
 
@@ -26,9 +27,9 @@ public class NuXmvParameterSynthProblemDeclarationImpl extends ASTWrapperPsiElem
     }
 
     @Override
-    @NotNull
+    @Nullable
     public NuXmvParameterSynthProblem getParameterSynthProblem() {
-        return findNotNullChildByClass(NuXmvParameterSynthProblem.class);
+        return findChildByClass(NuXmvParameterSynthProblem.class);
     }
 
 }

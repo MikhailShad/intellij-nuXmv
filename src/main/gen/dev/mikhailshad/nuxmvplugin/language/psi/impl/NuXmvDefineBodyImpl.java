@@ -9,6 +9,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvDefineBody;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class NuXmvDefineBodyImpl extends ASTWrapperPsiElement implements NuXmvDefineBody {
 
@@ -33,9 +34,9 @@ public class NuXmvDefineBodyImpl extends ASTWrapperPsiElement implements NuXmvDe
     }
 
     @Override
-    @NotNull
+    @Nullable
     public NuXmvExpr getExpr() {
-        return findNotNullChildByClass(NuXmvExpr.class);
+        return findChildByClass(NuXmvExpr.class);
     }
 
 }

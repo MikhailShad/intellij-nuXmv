@@ -8,6 +8,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvConstantsBody;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvConstantsDeclaration;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class NuXmvConstantsDeclarationImpl extends ASTWrapperPsiElement implements NuXmvConstantsDeclaration {
 
@@ -26,9 +27,9 @@ public class NuXmvConstantsDeclarationImpl extends ASTWrapperPsiElement implemen
     }
 
     @Override
-    @NotNull
+    @Nullable
     public NuXmvConstantsBody getConstantsBody() {
-        return findNotNullChildByClass(NuXmvConstantsBody.class);
+        return findChildByClass(NuXmvConstantsBody.class);
     }
 
 }

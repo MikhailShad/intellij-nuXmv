@@ -9,6 +9,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFunctionSpecification;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFunctionTypeSpecifier;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class NuXmvFunctionSpecificationImpl extends ASTWrapperPsiElement implements NuXmvFunctionSpecification {
 
@@ -33,9 +34,9 @@ public class NuXmvFunctionSpecificationImpl extends ASTWrapperPsiElement impleme
     }
 
     @Override
-    @NotNull
+    @Nullable
     public NuXmvFunctionTypeSpecifier getFunctionTypeSpecifier() {
-        return findNotNullChildByClass(NuXmvFunctionTypeSpecifier.class);
+        return findChildByClass(NuXmvFunctionTypeSpecifier.class);
     }
 
 }

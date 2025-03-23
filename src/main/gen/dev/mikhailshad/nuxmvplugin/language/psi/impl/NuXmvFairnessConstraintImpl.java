@@ -8,6 +8,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFairnessConstraint;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class NuXmvFairnessConstraintImpl extends ASTWrapperPsiElement implements NuXmvFairnessConstraint {
 
@@ -26,9 +27,9 @@ public class NuXmvFairnessConstraintImpl extends ASTWrapperPsiElement implements
     }
 
     @Override
-    @NotNull
+    @Nullable
     public NuXmvExpr getExpr() {
-        return findNotNullChildByClass(NuXmvExpr.class);
+        return findChildByClass(NuXmvExpr.class);
     }
 
 }

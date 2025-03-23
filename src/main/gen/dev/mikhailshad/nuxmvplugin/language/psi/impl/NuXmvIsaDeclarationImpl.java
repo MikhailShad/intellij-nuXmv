@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElementVisitor;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvIsaDeclaration;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes.IDENTIFIER;
 
@@ -28,9 +29,9 @@ public class NuXmvIsaDeclarationImpl extends ASTWrapperPsiElement implements NuX
     }
 
     @Override
-    @NotNull
+    @Nullable
     public PsiElement getIdentifier() {
-        return findNotNullChildByType(IDENTIFIER);
+        return findChildByType(IDENTIFIER);
     }
 
 }

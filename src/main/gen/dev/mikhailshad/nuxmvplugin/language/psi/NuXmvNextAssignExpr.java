@@ -1,14 +1,14 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface NuXmvNextAssignExpr extends NuXmvExpr {
 
-    @NotNull
+    @Nullable
     NuXmvComplexIdentifier getComplexIdentifier();
 
-    @NotNull
+    @Nullable
     NuXmvExpr getExpr();
 
 }

@@ -8,6 +8,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvMirrorDeclaration;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVariableIdentifier;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class NuXmvMirrorDeclarationImpl extends ASTWrapperPsiElement implements NuXmvMirrorDeclaration {
 
@@ -26,9 +27,9 @@ public class NuXmvMirrorDeclarationImpl extends ASTWrapperPsiElement implements 
     }
 
     @Override
-    @NotNull
+    @Nullable
     public NuXmvVariableIdentifier getVariableIdentifier() {
-        return findNotNullChildByClass(NuXmvVariableIdentifier.class);
+        return findChildByClass(NuXmvVariableIdentifier.class);
     }
 
 }

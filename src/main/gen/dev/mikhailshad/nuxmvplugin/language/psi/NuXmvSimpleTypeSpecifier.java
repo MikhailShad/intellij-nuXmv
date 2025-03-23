@@ -10,6 +10,9 @@ public interface NuXmvSimpleTypeSpecifier extends PsiElement {
     NuXmvEnumerationTypeBody getEnumerationTypeBody();
 
     @Nullable
+    NuXmvSimpleIdentifier getSimpleIdentifier();
+
+    @Nullable
     NuXmvSimpleTypeSpecifier getSimpleTypeSpecifier();
 
     @Nullable

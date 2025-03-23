@@ -2,10 +2,11 @@
 package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface NuXmvFunctionCallBasicExpr extends NuXmvExpr {
 
-    @NotNull
+    @Nullable
     NuXmvBasicExprList getBasicExprList();
 
     @NotNull

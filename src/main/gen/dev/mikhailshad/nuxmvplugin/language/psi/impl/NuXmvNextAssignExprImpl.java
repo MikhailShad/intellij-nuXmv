@@ -8,6 +8,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNextAssignExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class NuXmvNextAssignExprImpl extends NuXmvExprImpl implements NuXmvNextAssignExpr {
 
@@ -27,15 +28,15 @@ public class NuXmvNextAssignExprImpl extends NuXmvExprImpl implements NuXmvNextA
     }
 
     @Override
-    @NotNull
+    @Nullable
     public NuXmvComplexIdentifier getComplexIdentifier() {
-        return findNotNullChildByClass(NuXmvComplexIdentifier.class);
+        return findChildByClass(NuXmvComplexIdentifier.class);
     }
 
     @Override
-    @NotNull
+    @Nullable
     public NuXmvExpr getExpr() {
-        return findNotNullChildByClass(NuXmvExpr.class);
+        return findChildByClass(NuXmvExpr.class);
     }
 
 }

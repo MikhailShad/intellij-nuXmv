@@ -3,10 +3,11 @@ package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface NuXmvSingleIvarDeclaration extends PsiElement {
 
-    @NotNull
+    @Nullable
     NuXmvSimpleTypeSpecifier getSimpleTypeSpecifier();
 
     @NotNull

@@ -267,66 +267,65 @@ InvarSpecification ::= INVARSPEC NamedInvarSpecification? Expr SEMICOLON? {pin=1
 private NamedInvarSpecification ::= NAME_KW SimpleIdentifier ASSIGN
 
 VarDeclaration ::= VAR_KW SingleVarDeclaration+ {pin=1}
-SingleVarDeclaration ::= VarName COLON TypeSpecifier SEMICOLON {pin=3}
+SingleVarDeclaration ::= VarName COLON TypeSpecifier SEMICOLON {pin=2}
 
 IvarDeclaration ::= IVAR_KW SingleIvarDeclaration+ {pin=1}
-SingleIvarDeclaration ::= VarName COLON SimpleTypeSpecifier SEMICOLON {pin=3}
+SingleIvarDeclaration ::= VarName COLON SimpleTypeSpecifier SEMICOLON {pin=2}
 
 FrozenVarDeclaration ::= FROZENVAR_KW SingleIvarDeclaration {pin=1}
 VarName ::= ComplexIdentifier
     | "\"" ComplexIdentifier "\""
 
-FunctionDeclaration ::= FUN_KW FunctionSpecification+
-FunctionSpecification ::= FunctionName COLON FunctionTypeSpecifier SEMICOLON {pin=3}
+FunctionDeclaration ::= FUN_KW FunctionSpecification+ {pin=1}
+FunctionSpecification ::= FunctionName COLON FunctionTypeSpecifier SEMICOLON {pin=2}
 FunctionName ::= ComplexIdentifier
 FunctionTypeSpecifier ::= FunctionArgTypesSpecifier IMPLICATION SimpleTypeSpecifier
 FunctionArgTypesSpecifier ::= SimpleTypeSpecifier (MULT SimpleTypeSpecifier)*
 
-DefineDeclaration ::= DEFINE_KW DefineBody+
-DefineBody ::= ComplexIdentifier ASSIGN Expr SEMICOLON {pin=3}
+DefineDeclaration ::= DEFINE_KW DefineBody+ {pin=1}
+DefineBody ::= ComplexIdentifier ASSIGN Expr SEMICOLON {pin=2}
 
-ConstantsDeclaration ::= CONSTANTS_KW ConstantsBody SEMICOLON
+ConstantsDeclaration ::= CONSTANTS_KW ConstantsBody SEMICOLON {pin=1}
 ConstantsBody ::= ComplexIdentifier (COMMA ComplexIdentifier)*
 
-AssignConstraint ::= ASSIGN_KW SingleAssignConstraint+
-SingleAssignConstraint ::= AssignExpr SEMICOLON
+AssignConstraint ::= ASSIGN_KW SingleAssignConstraint+ {pin=1}
+SingleAssignConstraint ::= AssignExpr SEMICOLON {pin=1}
 private AssignExpr ::= InitAssignExpr | NextAssignExpr | SimpleAssignExpr
-SimpleAssignExpr ::= ComplexIdentifier ASSIGN Expr
-InitAssignExpr ::= INIT_FUN LPAREN ComplexIdentifier RPAREN ASSIGN Expr
-NextAssignExpr ::= NEXT_FUN LPAREN ComplexIdentifier RPAREN ASSIGN Expr
+SimpleAssignExpr ::= ComplexIdentifier ASSIGN Expr {pin = 1}
+InitAssignExpr ::= INIT_FUN LPAREN ComplexIdentifier RPAREN ASSIGN Expr {pin=1}
+NextAssignExpr ::= NEXT_FUN LPAREN ComplexIdentifier RPAREN ASSIGN Expr {pin=1}
 
-TransConstraint ::= TRANS_KW Expr SEMICOLON?
+TransConstraint ::= TRANS_KW Expr SEMICOLON? {pin=1}
 
-InitConstraint ::= INIT_KW Expr SEMICOLON?
+InitConstraint ::= INIT_KW Expr SEMICOLON? {pin=1}
 
-InvarConstraint ::= INVAR_KW Expr (IMPLICATION Expr)? SEMICOLON?
+InvarConstraint ::= INVAR_KW Expr (IMPLICATION Expr)? SEMICOLON? {pin=1}
 
-FairnessConstraint ::= FAIRNESS_KW Expr SEMICOLON?
-JusticeConstraint ::= JUSTICE_KW Expr SEMICOLON?
-CompassionConstraint ::= COMPASSION_KW LPAREN Expr COMMA Expr RPAREN SEMICOLON?
+FairnessConstraint ::= FAIRNESS_KW Expr SEMICOLON? {pin=1}
+JusticeConstraint ::= JUSTICE_KW Expr SEMICOLON? {pin=1}
+CompassionConstraint ::= COMPASSION_KW LPAREN Expr COMMA Expr RPAREN SEMICOLON? {pin=1}
 
-IsaDeclaration ::= ISA_KW IDENTIFIER
+IsaDeclaration ::= ISA_KW IDENTIFIER {pin=1}
 
-PredDeclaration ::= PRED_KW Expr SEMICOLON?
-    | PRED_KW LESS Expr GREATER ASSIGN Expr SEMICOLON?
+PredDeclaration ::= PRED_KW [LESS Expr GREATER ASSIGN] Expr SEMICOLON? {pin=1}
 
 ComputeSpecification ::= COMPUTE_KW ComputeExpr SEMICOLON?
-    | COMPUTE_KW NAME_KW identifier ASSIGN ComplexIdentifier SEMICOLON?
+    | COMPUTE_KW NAME_KW identifier ASSIGN ComplexIdentifier SEMICOLON? {pin=1}
 ComputeExpr ::= (MIN_KW | MAX_KW) LBRACKET RtCtlExpr COMMA RtCtlExpr RBRACKET
 RtCtlExpr ::= Expr
     | (RTCTL_EBF | RTCTL_ABF | RTCTL_EBG | RTCTL_ABG) INTEGER_NUMBER RANGE INTEGER_NUMBER RtCtlExpr
     | (CTL_FORALL | CTL_EXISTS) LBRACKET RtCtlExpr RTCTL_BU RtCtlExpr RBRACKET
 
 // parameter_synth_problem
-ParameterSynthProblemDeclaration ::= PARSYNTH_KW ParameterSynthProblem SEMICOLON?
+ParameterSynthProblemDeclaration ::= PARSYNTH_KW ParameterSynthProblem SEMICOLON? {pin=1}
 ParameterSynthProblem ::= identifier ASSIGN LBRACE IdList OR [VALID_KW | SAT_KW] Expr SynthOpts RBRACE
 IdList ::= identifier (COMMA identifier)*
 SynthOpts ::= SynthOpt (COMMA SynthOpt)*
 SynthOpt ::= MONONEG_KW
     | MONOPOS_KW
-    | (MIN_KW | MAX_KW) LPAREN Expr RPAREN
+    | (MIN_KW | MAX_KW) LPAREN Expr RPAREN {pin=1}
 
-MirrorDeclaration ::= MIRROR_KW VariableIdentifier SEMICOLON?
+MirrorDeclaration ::= MIRROR_KW VariableIdentifier SEMICOLON? {pin=1}
 
 VariableIdentifier ::= ComplexIdentifier
 
@@ -334,7 +333,7 @@ VariableIdentifier ::= ComplexIdentifier
 // Types
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-TypeSpecifier ::= SimpleTypeSpecifier | ModuleTypeSpecifier
+TypeSpecifier ::= ModuleTypeSpecifier | SimpleTypeSpecifier
 SimpleTypeSpecifier ::= BOOLEAN_TYPE
     | WORD_TYPE LBRACKET WholeNumber RBRACKET
     | UNSIGNED_WORD_TYPE LBRACKET WholeNumber RBRACKET
@@ -345,6 +344,7 @@ SimpleTypeSpecifier ::= BOOLEAN_TYPE
     | LBRACE EnumerationTypeBody RBRACE
     | WholeNumber RANGE WholeNumber
     | ARRAY_TYPE WholeNumber RANGE WholeNumber ARRAY_OF SimpleTypeSpecifier
+    | SimpleIdentifier // TODO: что-то придумать с проверкой, что тип корректный
 EnumerationTypeBody ::= EnumerationTypeValue (COMMA EnumerationTypeValue)*
 EnumerationTypeValue ::= WholeNumber | ComplexIdentifier
 ModuleTypeSpecifier ::= SimpleIdentifier ParameterList
@@ -375,9 +375,9 @@ Expr ::= ImplicationBasicExpr
     | LtlExprGroup
     | PrimaryBasicExprGroup
 
-CaseBasicExpr ::= CASE RegularCaseBody+ ESAC
-RegularCaseBody ::= Expr COLON Expr SEMICOLON
-TernaryBasicExpr ::= Expr QUESTION_MARK Expr COLON Expr
+CaseBasicExpr ::= CASE RegularCaseBody+ ESAC {pin=1}
+RegularCaseBody ::= Expr COLON Expr SEMICOLON {pin=2}
+TernaryBasicExpr ::= Expr QUESTION_MARK Expr COLON Expr {pin=2}
 
 private ComparisonBasicExprGroup ::= LessBasicExpr | GreaterBasicExpr | LessEqBasicExpr | GreaterEqBasicExpr | EqualityBasicExpr | NotEqualityBasicExpr
 LessBasicExpr ::= Expr LESS Expr
@@ -417,14 +417,14 @@ UnaryMinusBasicExpr ::= MINUS Expr
 
 IndexBasicExpr ::= Expr LBRACKET WholeNumber (SEMICOLON WholeNumber)? RBRACKET {pin=2}
 
-FunctionCallBasicExpr ::= FunctionIdentifier LPAREN BasicExprList RPAREN
+FunctionCallBasicExpr ::= FunctionIdentifier LPAREN BasicExprList RPAREN  {pin=2}
 FunctionIdentifier ::= INIT_FUN|NEXT_FUN|ABS_FUN|MAX_FUN|MIN_FUN|SIN_FUN|COS_FUN
     |EXP_FUN|TAN_FUN|LN_FUN|POW_FUN|ASIN_FUN|ACOS_FUN|ATAN_FUN|SQRT_FUN
     |TO_WORD1_FUN|TO_BOOL_FUN|TO_INT_FUN|COUNT_FUN|SWCONST_FUN|UWCONST_FUN
     |TO_SIGNED_FUN|TO_UNSIGNED_FUN|SIZEOF_FUN|FLOOR_FUN|EXTEND_FUN|RESIZE_FUN
     |TO_SIGNED_WORD_FUN|TO_UNSIGNED_WORD_FUN|READ_FUN|WRITE_FUN|CONSTARRAY_FUN|TYPE_OF_FUN
     | SimpleIdentifier
-BasicExprList ::= Expr (COMMA Expr)*
+BasicExprList ::= Expr (COMMA Expr)* {pin(".*")=1}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // CTL SPEC

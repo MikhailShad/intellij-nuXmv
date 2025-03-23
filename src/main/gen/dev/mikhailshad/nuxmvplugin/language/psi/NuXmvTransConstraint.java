@@ -2,11 +2,11 @@
 package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface NuXmvTransConstraint extends PsiElement {
 
-    @NotNull
+    @Nullable
     NuXmvExpr getExpr();
 
 }
