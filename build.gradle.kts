@@ -1,14 +1,20 @@
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.9.25"
-    id("org.jetbrains.intellij") version "1.17.4"
+    id("org.jetbrains.intellij.platform") version "2.4.0"
 }
 
 group = "dev.MikhailShad"
-version = "1.0-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
+
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
 sourceSets {
@@ -19,36 +25,42 @@ sourceSets {
     }
 }
 
-intellij {
-    version.set("2024.1.7")
-    type.set("IC")
+dependencies {
+    intellijPlatform {
+        intellijIdeaCommunity("2024.3.5")
+        bundledPlugin("com.intellij.java")
 
-    /* Plugin Dependencies */
-    plugins.set(listOf("com.intellij.java"))
+        testFramework(TestFrameworkType.Platform)
+    }
+
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
+    testImplementation("junit:junit:4.13.2")
 }
 
-tasks {
-    // Set the JVM compatibility versions
-    withType<JavaCompile> {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
-    }
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
-    }
+intellijPlatform {
+    buildSearchableOptions = true
+    instrumentCode = true
+    projectName = project.name
 
-    patchPluginXml {
-        sinceBuild.set("241")
-        untilBuild.set("243.*")
-    }
+    pluginConfiguration {
+        id = "dev-mikhailshad-nuxmvplugin"
+        name = "IntelliJ-NuXmv"
+        version = project.version.toString()
+        description = "NuXmv plugin for IntelliJ IDEA"
+        changeNotes =
+            """
+                First release
+            """.trimIndent()
 
-    signPlugin {
-        certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
-        privateKey.set(System.getenv("PRIVATE_KEY"))
-        password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
+        ideaVersion {
+            sinceBuild = "243"
+            untilBuild = "243.*"
+        }
     }
+}
 
-    publishPlugin {
-        token.set(System.getenv("PUBLISH_TOKEN"))
+val runIdeWithPsiViewer by intellijPlatformTesting.runIde.registering {
+    plugins {
+        plugin("PsiViewer", "243.7768")
     }
 }
