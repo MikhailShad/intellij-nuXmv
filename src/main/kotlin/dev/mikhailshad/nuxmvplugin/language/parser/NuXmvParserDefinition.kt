@@ -112,6 +112,7 @@ class NuXmvParserDefinition : ParserDefinition {
 
         @JvmStatic
         val NUMBERS = TokenSet.create(
+            NuXmvTypes.POSITIVE_INTEGER_NUMBER,
             NuXmvTypes.INTEGER_NUMBER,
             NuXmvTypes.FLOAT_NUMBER,
             NuXmvTypes.FRACTIONAL_NUMBER,

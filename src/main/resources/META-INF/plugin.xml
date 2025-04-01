@@ -37,14 +37,39 @@
         <lang.syntaxHighlighterFactory
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.language.highlighter.NuXmvSyntaxHighlighterFactory"/>
+        <lang.braceMatcher
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.language.editor.NuXmvBraceMatcher"/>
         <colorSettingsPage
                 implementation="dev.mikhailshad.nuxmvplugin.language.highlighter.NuXmvColourSettingsPage"/>
+        <annotator
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.language.annotator.NuXmvWarningAnnotator"/>
         <codeInsight.lineMarkerProvider
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.language.editor.NuXmvLineMarkerProvider"/>
         <completion.contributor
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.language.completion.NuXmvCompletionContributor"/>
+        <lang.psiStructureViewFactory
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.language.structure.NuXmvStructureViewFactory"/>
+        <psi.referenceContributor
+                language="nuXmv"
+                implementation="dev.mikhailshad.nuxmvplugin.language.reference.NuXmvReferenceContributor"/>
+        <gotoSymbolContributor
+                implementation="dev.mikhailshad.nuxmvplugin.language.navigation.NuXmvNavigationContributor"/>
+        <codeInsight.lineMarkerProvider
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.language.marker.NuXmvLineMarkerProvider"/>
+        <lang.findUsagesProvider
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.language.findusages.NuXmvFindUsagesProvider"/>
+        <lang.documentationProvider
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.language.documentation.NuXmvDocumentationProvider"/>
+        <breadcrumbsInfoProvider
+                implementation="dev.mikhailshad.nuxmvplugin.language.breadcrumbs.NuXmvBreadcrumbsInfoProvider"/>
 
     </extensions>
 </idea-plugin>

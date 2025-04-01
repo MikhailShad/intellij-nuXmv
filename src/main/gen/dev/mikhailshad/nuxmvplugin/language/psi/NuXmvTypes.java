@@ -5,6 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import dev.mikhailshad.nuxmvplugin.language.psi.impl.*;
+import dev.mikhailshad.nuxmvplugin.language.psi.impl.mixin.NuXmvModuleNameMixinImpl;
 
 public interface NuXmvTypes {
 
@@ -396,7 +397,7 @@ public interface NuXmvTypes {
             } else if (type == MODULE_DECLARATION) {
                 return new NuXmvModuleDeclarationImpl(node);
             } else if (type == MODULE_NAME) {
-                return new NuXmvModuleNameImpl(node);
+                return new NuXmvModuleNameMixinImpl(node);
             } else if (type == MODULE_PARAMETERS) {
                 return new NuXmvModuleParametersImpl(node);
             } else if (type == MODULE_TYPE_SPECIFIER) {
