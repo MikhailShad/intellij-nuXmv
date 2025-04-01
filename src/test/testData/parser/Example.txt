@@ -1,5 +1,5 @@
 FILE
-  NuXmvNuXmvModuleImpl(NuXmvElementType.NU_XMV_MODULE)
+  NuXmvModuleImpl(NuXmvElementType.NU_XMV_MODULE)
     NuXmvModuleDeclarationImpl(NuXmvElementType.MODULE_DECLARATION)
       PsiElement(NuXmvTokenType.MODULE)('MODULE')
       PsiWhiteSpace(' ')

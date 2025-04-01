@@ -5,12 +5,12 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import dev.mikhailshad.nuxmvplugin.language.psi.impl.*;
-import dev.mikhailshad.nuxmvplugin.language.psi.impl.mixin.NuXmvModuleNameMixinImpl;
 
 public interface NuXmvTypes {
 
     IElementType AND_BASIC_EXPR = new NuXmvElementType("AND_BASIC_EXPR");
     IElementType ASSIGN_CONSTRAINT = new NuXmvElementType("ASSIGN_CONSTRAINT");
+    IElementType BASE_IDENTIFIER = new NuXmvElementType("BASE_IDENTIFIER");
     IElementType BASIC_EXPR_LIST = new NuXmvElementType("BASIC_EXPR_LIST");
     IElementType BINARY_LTL_EXPR = new NuXmvElementType("BINARY_LTL_EXPR");
     IElementType BINARY_LTL_OP = new NuXmvElementType("BINARY_LTL_OP");
@@ -62,17 +62,17 @@ public interface NuXmvTypes {
     IElementType LTL_SPECIFICATION = new NuXmvElementType("LTL_SPECIFICATION");
     IElementType MINUS_BASIC_EXPR = new NuXmvElementType("MINUS_BASIC_EXPR");
     IElementType MIRROR_DECLARATION = new NuXmvElementType("MIRROR_DECLARATION");
+    IElementType MODULE = new NuXmvElementType("MODULE");
     IElementType MODULE_BODY = new NuXmvElementType("MODULE_BODY");
     IElementType MODULE_DECLARATION = new NuXmvElementType("MODULE_DECLARATION");
     IElementType MODULE_NAME = new NuXmvElementType("MODULE_NAME");
-    IElementType MODULE_PARAMETERS = new NuXmvElementType("MODULE_PARAMETERS");
+    IElementType MODULE_PARAMETER = new NuXmvElementType("MODULE_PARAMETER");
     IElementType MODULE_TYPE_SPECIFIER = new NuXmvElementType("MODULE_TYPE_SPECIFIER");
     IElementType MOD_BASIC_EXPR = new NuXmvElementType("MOD_BASIC_EXPR");
     IElementType MUL_BASIC_EXPR = new NuXmvElementType("MUL_BASIC_EXPR");
     IElementType NEXT_ASSIGN_EXPR = new NuXmvElementType("NEXT_ASSIGN_EXPR");
     IElementType NOT_EQUALITY_BASIC_EXPR = new NuXmvElementType("NOT_EQUALITY_BASIC_EXPR");
     IElementType NOT_XOR_BASIC_EXPR = new NuXmvElementType("NOT_XOR_BASIC_EXPR");
-    IElementType NU_XMV_MODULE = new NuXmvElementType("NU_XMV_MODULE");
     IElementType OR_BASIC_EXPR = new NuXmvElementType("OR_BASIC_EXPR");
     IElementType PARAMETER_LIST = new NuXmvElementType("PARAMETER_LIST");
     IElementType PARAMETER_SYNTH_PROBLEM = new NuXmvElementType("PARAMETER_SYNTH_PROBLEM");
@@ -106,7 +106,6 @@ public interface NuXmvTypes {
     IElementType UNARY_MINUS_BASIC_EXPR = new NuXmvElementType("UNARY_MINUS_BASIC_EXPR");
     IElementType UNION_BASIC_EXPR = new NuXmvElementType("UNION_BASIC_EXPR");
     IElementType UNTIL_CTL_EXPR = new NuXmvElementType("UNTIL_CTL_EXPR");
-    IElementType VARIABLE_IDENTIFIER = new NuXmvElementType("VARIABLE_IDENTIFIER");
     IElementType VAR_DECLARATION = new NuXmvElementType("VAR_DECLARATION");
     IElementType VAR_NAME = new NuXmvElementType("VAR_NAME");
     IElementType WHOLE_NUMBER = new NuXmvElementType("WHOLE_NUMBER");
@@ -124,7 +123,7 @@ public interface NuXmvTypes {
     IElementType ATAN_FUN = new NuXmvTokenType("atan");
     IElementType BLOCK_COMMENT = new NuXmvTokenType("BLOCK_COMMENT");
     IElementType BOOLEAN_TYPE = new NuXmvTokenType("boolean");
-    IElementType CASE = new NuXmvTokenType("case");
+    IElementType CASE_KW = new NuXmvTokenType("case");
     IElementType CLOCK_KW = new NuXmvTokenType("Clock");
     IElementType CLOCK_TYPE = new NuXmvTokenType("clock");
     IElementType COLON = new NuXmvTokenType(":");
@@ -139,7 +138,7 @@ public interface NuXmvTypes {
     IElementType CONSTRAINT_KW = new NuXmvTokenType("CONSTRAINT");
     IElementType COS_FUN = new NuXmvTokenType("cos");
     IElementType COUNT_FUN = new NuXmvTokenType("count");
-    IElementType CTLSPEC = new NuXmvTokenType("CTLSPEC");
+    IElementType CTLSPEC_KW = new NuXmvTokenType("CTLSPEC");
     IElementType CTLWFF_KW = new NuXmvTokenType("CTLWFF");
     IElementType CTL_EXISTS = new NuXmvTokenType("E");
     IElementType CTL_EXISTS_FINALLY = new NuXmvTokenType("EF");
@@ -154,12 +153,12 @@ public interface NuXmvTypes {
     IElementType DOT = new NuXmvTokenType(".");
     IElementType EQUALITY = new NuXmvTokenType("=");
     IElementType EQUIVALENCE = new NuXmvTokenType("<->");
-    IElementType ESAC = new NuXmvTokenType("esac");
+    IElementType ESAC_KW = new NuXmvTokenType("esac");
     IElementType EXPONENTIAL_NUMBER = new NuXmvTokenType("EXPONENTIAL_NUMBER");
     IElementType EXP_FUN = new NuXmvTokenType("exp");
     IElementType EXTEND_FUN = new NuXmvTokenType("extend");
     IElementType FAIRNESS_KW = new NuXmvTokenType("FAIRNESS");
-    IElementType FALSE = new NuXmvTokenType("FALSE");
+    IElementType FALSE_KW = new NuXmvTokenType("FALSE");
     IElementType FLOAT_NUMBER = new NuXmvTokenType("FLOAT_NUMBER");
     IElementType FLOOR_FUN = new NuXmvTokenType("floor");
     IElementType FRACTIONAL_NUMBER = new NuXmvTokenType("FRACTIONAL_NUMBER");
@@ -176,7 +175,7 @@ public interface NuXmvTypes {
     IElementType INTEGER_KW = new NuXmvTokenType("Integer");
     IElementType INTEGER_NUMBER = new NuXmvTokenType("INTEGER_NUMBER");
     IElementType INTEGER_TYPE = new NuXmvTokenType("integer");
-    IElementType INVARSPEC = new NuXmvTokenType("INVARSPEC");
+    IElementType INVARSPEC_KW = new NuXmvTokenType("INVARSPEC");
     IElementType INVAR_KW = new NuXmvTokenType("INVAR");
     IElementType IN_KW = new NuXmvTokenType("IN");
     IElementType ISA_KW = new NuXmvTokenType("ISA");
@@ -190,7 +189,7 @@ public interface NuXmvTypes {
     IElementType LINE_COMMENT = new NuXmvTokenType("LINE_COMMENT");
     IElementType LN_FUN = new NuXmvTokenType("ln");
     IElementType LPAREN = new NuXmvTokenType("(");
-    IElementType LTLSPEC = new NuXmvTokenType("LTLSPEC");
+    IElementType LTLSPEC_KW = new NuXmvTokenType("LTLSPEC");
     IElementType LTLWFF_KW = new NuXmvTokenType("LTLWFF");
     IElementType LTL_AT_LAST = new NuXmvTokenType("@O~");
     IElementType LTL_AT_NEXT = new NuXmvTokenType("@F~");
@@ -214,7 +213,7 @@ public interface NuXmvTypes {
     IElementType MIN_KW = new NuXmvTokenType("MIN");
     IElementType MIRROR_KW = new NuXmvTokenType("MIRROR");
     IElementType MOD = new NuXmvTokenType("mod");
-    IElementType MODULE = new NuXmvTokenType("MODULE");
+    IElementType MODULE_KW = new NuXmvTokenType("MODULE");
     IElementType MONONEG_KW = new NuXmvTokenType("MONONEG");
     IElementType MONOPOS_KW = new NuXmvTokenType("MONOPOS");
     IElementType MULT = new NuXmvTokenType("*");
@@ -233,7 +232,7 @@ public interface NuXmvTypes {
     IElementType POW_FUN = new NuXmvTokenType("pow");
     IElementType PREDICATES_KW = new NuXmvTokenType("PREDICATES");
     IElementType PRED_KW = new NuXmvTokenType("PRED");
-    IElementType PSLSPEC = new NuXmvTokenType("PSLSPEC");
+    IElementType PSLSPEC_KW = new NuXmvTokenType("PSLSPEC");
     IElementType QUESTION_MARK = new NuXmvTokenType("?");
     IElementType RANGE = new NuXmvTokenType("..");
     IElementType RBRACE = new NuXmvTokenType("}");
@@ -249,7 +248,7 @@ public interface NuXmvTypes {
     IElementType RTCTL_EBF = new NuXmvTokenType("EBF");
     IElementType RTCTL_EBG = new NuXmvTokenType("EBG");
     IElementType SAT_KW = new NuXmvTokenType("SAT");
-    IElementType SELF = new NuXmvTokenType("self");
+    IElementType SELF_KW = new NuXmvTokenType("self");
     IElementType SEMICOLON = new NuXmvTokenType(";");
     IElementType SHIFT_LEFT = new NuXmvTokenType("<<");
     IElementType SHIFT_RIGHT = new NuXmvTokenType(">>");
@@ -257,7 +256,7 @@ public interface NuXmvTypes {
     IElementType SIMPWFF_KW = new NuXmvTokenType("SIMPWFF");
     IElementType SIN_FUN = new NuXmvTokenType("sin");
     IElementType SIZEOF_FUN = new NuXmvTokenType("sizeof");
-    IElementType SPEC = new NuXmvTokenType("SPEC");
+    IElementType SPEC_KW = new NuXmvTokenType("SPEC");
     IElementType SQRT_FUN = new NuXmvTokenType("sqrt");
     IElementType SWCONST_FUN = new NuXmvTokenType("swconst");
     IElementType TAN_FUN = new NuXmvTokenType("tan");
@@ -272,7 +271,7 @@ public interface NuXmvTypes {
     IElementType TO_UNSIGNED_WORD_FUN = new NuXmvTokenType("unsigned word[N]");
     IElementType TO_WORD1_FUN = new NuXmvTokenType("word1");
     IElementType TRANS_KW = new NuXmvTokenType("TRANS");
-    IElementType TRUE = new NuXmvTokenType("TRUE");
+    IElementType TRUE_KW = new NuXmvTokenType("TRUE");
     IElementType TYPE_OF_FUN = new NuXmvTokenType("typeof");
     IElementType UNION = new NuXmvTokenType("union");
     IElementType UNSIGNED_WORD_TYPE = new NuXmvTokenType("unsigned word");
@@ -292,6 +291,8 @@ public interface NuXmvTypes {
                 return new NuXmvAndBasicExprImpl(node);
             } else if (type == ASSIGN_CONSTRAINT) {
                 return new NuXmvAssignConstraintImpl(node);
+            } else if (type == BASE_IDENTIFIER) {
+                return new NuXmvBaseIdentifierImpl(node);
             } else if (type == BASIC_EXPR_LIST) {
                 return new NuXmvBasicExprListImpl(node);
             } else if (type == BINARY_LTL_EXPR) {
@@ -392,14 +393,16 @@ public interface NuXmvTypes {
                 return new NuXmvMinusBasicExprImpl(node);
             } else if (type == MIRROR_DECLARATION) {
                 return new NuXmvMirrorDeclarationImpl(node);
+            } else if (type == MODULE) {
+                return new NuXmvModuleImpl(node);
             } else if (type == MODULE_BODY) {
                 return new NuXmvModuleBodyImpl(node);
             } else if (type == MODULE_DECLARATION) {
                 return new NuXmvModuleDeclarationImpl(node);
             } else if (type == MODULE_NAME) {
-                return new NuXmvModuleNameMixinImpl(node);
-            } else if (type == MODULE_PARAMETERS) {
-                return new NuXmvModuleParametersImpl(node);
+                return new NuXmvModuleNameImpl(node);
+            } else if (type == MODULE_PARAMETER) {
+                return new NuXmvModuleParameterImpl(node);
             } else if (type == MODULE_TYPE_SPECIFIER) {
                 return new NuXmvModuleTypeSpecifierImpl(node);
             } else if (type == MOD_BASIC_EXPR) {
@@ -412,8 +415,6 @@ public interface NuXmvTypes {
                 return new NuXmvNotEqualityBasicExprImpl(node);
             } else if (type == NOT_XOR_BASIC_EXPR) {
                 return new NuXmvNotXorBasicExprImpl(node);
-            } else if (type == NU_XMV_MODULE) {
-                return new NuXmvNuXmvModuleImpl(node);
             } else if (type == OR_BASIC_EXPR) {
                 return new NuXmvOrBasicExprImpl(node);
             } else if (type == PARAMETER_LIST) {
@@ -480,8 +481,6 @@ public interface NuXmvTypes {
                 return new NuXmvUnionBasicExprImpl(node);
             } else if (type == UNTIL_CTL_EXPR) {
                 return new NuXmvUntilCtlExprImpl(node);
-            } else if (type == VARIABLE_IDENTIFIER) {
-                return new NuXmvVariableIdentifierImpl(node);
             } else if (type == VAR_DECLARATION) {
                 return new NuXmvVarDeclarationImpl(node);
             } else if (type == VAR_NAME) {

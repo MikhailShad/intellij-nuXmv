@@ -1,16 +1,16 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFunctionIdentifier;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvSimpleIdentifier;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
+import dev.mikhailshad.nuxmvplugin.language.psi.mixin.FunctionIdentifierMixin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class NuXmvFunctionIdentifierImpl extends ASTWrapperPsiElement implements NuXmvFunctionIdentifier {
+public class NuXmvFunctionIdentifierImpl extends FunctionIdentifierMixin implements NuXmvFunctionIdentifier {
 
     public NuXmvFunctionIdentifierImpl(@NotNull ASTNode node) {
         super(node);

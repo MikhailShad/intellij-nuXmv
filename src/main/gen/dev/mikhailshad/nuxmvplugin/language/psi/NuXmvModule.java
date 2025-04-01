@@ -3,10 +3,14 @@ package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public interface NuXmvVariableIdentifier extends PsiElement {
+public interface NuXmvModule extends PsiElement {
+
+    @Nullable
+    NuXmvModuleBody getModuleBody();
 
     @NotNull
-    NuXmvComplexIdentifier getComplexIdentifier();
+    NuXmvModuleDeclaration getModuleDeclaration();
 
 }

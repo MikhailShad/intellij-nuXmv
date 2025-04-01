@@ -49,13 +49,7 @@ LINE_COMMENT=("--")[^\r\n]*
     {LINE_COMMENT}               {return LINE_COMMENT;}
     "/--"                        {yybegin(IN_BLOCK_COMMENT); yypushback(3);}
 
-    // Reserved words
-    "INVARSPEC"   { return INVARSPEC; }
-
-    "MODULE"     {return MODULE;}
-    "self"       {return SELF;}
-    "TRUE"       {return TRUE;}
-    "FALSE"      {return FALSE;}
+    // Reserved operators
     "!"          {return NOT;}
     "&"          {return AND;}
     "|"          {return OR;}
@@ -113,7 +107,7 @@ LINE_COMMENT=("--")[^\r\n]*
     "U"           {return TL_UNTIL;}
 
     // LTL Specific Keywords
-    "LTLSPEC"     {return LTLSPEC; }
+    "LTLSPEC"     {return LTLSPEC_KW; }
     "at next"     {return LTL_AT_NEXT;}
     "@F~"         {return LTL_AT_NEXT;}
     "at last"     {return LTL_AT_LAST;}
@@ -132,8 +126,8 @@ LINE_COMMENT=("--")[^\r\n]*
     "time_until"  {return LTL_TIME_UNTIL;}
 
     // CTL Specific Keywords
-    "CTLSPEC"   {return CTLSPEC;}
-    "SPEC"      {return SPEC;}
+    "CTLSPEC"   {return CTLSPEC_KW;}
+    "SPEC"      {return SPEC_KW;}
     "A"         {return CTL_FORALL;}
     "E"         {return CTL_EXISTS;}
     "EG"        {return CTL_EXISTS_GLOBALLY;}
@@ -178,12 +172,12 @@ LINE_COMMENT=("--")[^\r\n]*
     "resize"     {return RESIZE_FUN;}
 
     // Other Reserved Keywords
-    "INVARSPEC"      {return INVARSPEC;}
-    "PSLSPEC"        {return PSLSPEC;}
-    "MODULE"         {return MODULE;}
-    "self"           {return SELF;}
-    "TRUE"           {return TRUE;}
-    "FALSE"          {return FALSE;}
+    "INVARSPEC"      {return INVARSPEC_KW;}
+    "PSLSPEC"        {return PSLSPEC_KW;}
+    "MODULE"         {return MODULE_KW;}
+    "self"           {return SELF_KW;}
+    "TRUE"           {return TRUE_KW;}
+    "FALSE"          {return FALSE_KW;}
     "FUN"            {return FUN_KW;}
     "DEFINE"         {return DEFINE_KW;}
     "CONSTANTS"      {return CONSTANTS_KW;}
@@ -206,8 +200,8 @@ LINE_COMMENT=("--")[^\r\n]*
     "SAT"            {return SAT_KW;}
     "MONOPOS"        {return MONOPOS_KW;}
     "MONONEG"        {return MONONEG_KW;}
-    "case"           {return CASE;}
-    "esac"           {return ESAC;}
+    "case"           {return CASE_KW;}
+    "esac"           {return ESAC_KW;}
     "Clock"          {return CLOCK_KW;}
     "COMPID"         {return COMPID_KW;}
     "COMPWFF"        {return COMPWFF_KW;}

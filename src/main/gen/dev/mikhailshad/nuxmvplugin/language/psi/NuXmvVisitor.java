@@ -15,6 +15,10 @@ public class NuXmvVisitor extends PsiElementVisitor {
         visitPsiElement(o);
     }
 
+    public void visitBaseIdentifier(@NotNull NuXmvBaseIdentifier o) {
+        visitPsiElement(o);
+    }
+
     public void visitBasicExprList(@NotNull NuXmvBasicExprList o) {
         visitPsiElement(o);
     }
@@ -124,7 +128,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitFunctionIdentifier(@NotNull NuXmvFunctionIdentifier o) {
-        visitPsiElement(o);
+        visitNamedElement(o);
     }
 
     public void visitFunctionName(@NotNull NuXmvFunctionName o) {
@@ -223,6 +227,10 @@ public class NuXmvVisitor extends PsiElementVisitor {
         visitExpr(o);
     }
 
+    public void visitModule(@NotNull NuXmvModule o) {
+        visitPsiElement(o);
+    }
+
     public void visitModuleBody(@NotNull NuXmvModuleBody o) {
         visitPsiElement(o);
     }
@@ -232,11 +240,11 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitModuleName(@NotNull NuXmvModuleName o) {
-        visitPsiElement(o);
+        visitNamedElement(o);
     }
 
-    public void visitModuleParameters(@NotNull NuXmvModuleParameters o) {
-        visitPsiElement(o);
+    public void visitModuleParameter(@NotNull NuXmvModuleParameter o) {
+        visitNamedElement(o);
     }
 
     public void visitModuleTypeSpecifier(@NotNull NuXmvModuleTypeSpecifier o) {
@@ -257,10 +265,6 @@ public class NuXmvVisitor extends PsiElementVisitor {
 
     public void visitNotXorBasicExpr(@NotNull NuXmvNotXorBasicExpr o) {
         visitExpr(o);
-    }
-
-    public void visitNuXmvModule(@NotNull NuXmvNuXmvModule o) {
-        visitPsiElement(o);
     }
 
     public void visitOrBasicExpr(@NotNull NuXmvOrBasicExpr o) {
@@ -400,11 +404,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitVarName(@NotNull NuXmvVarName o) {
-        visitPsiElement(o);
-    }
-
-    public void visitVariableIdentifier(@NotNull NuXmvVariableIdentifier o) {
-        visitPsiElement(o);
+        visitNamedElement(o);
     }
 
     public void visitWholeNumber(@NotNull NuXmvWholeNumber o) {
@@ -417,6 +417,10 @@ public class NuXmvVisitor extends PsiElementVisitor {
 
     public void visitXorBasicExpr(@NotNull NuXmvXorBasicExpr o) {
         visitExpr(o);
+    }
+
+    public void visitNamedElement(@NotNull NuXmvNamedElement o) {
+        visitPsiElement(o);
     }
 
     public void visitPsiElement(@NotNull PsiElement o) {

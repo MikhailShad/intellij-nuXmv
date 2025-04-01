@@ -7,6 +7,6 @@ import org.jetbrains.annotations.Nullable;
 public interface NuXmvMirrorDeclaration extends PsiElement {
 
     @Nullable
-    NuXmvVariableIdentifier getVariableIdentifier();
+    NuXmvVarName getVarName();
 
 }

@@ -1,17 +1,17 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvSingleVarDeclaration;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypeSpecifier;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVarName;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
+import dev.mikhailshad.nuxmvplugin.language.psi.mixin.SingleVarDeclarationMixin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class NuXmvSingleVarDeclarationImpl extends ASTWrapperPsiElement implements NuXmvSingleVarDeclaration {
+public class NuXmvSingleVarDeclarationImpl extends SingleVarDeclarationMixin implements NuXmvSingleVarDeclaration {
 
     public NuXmvSingleVarDeclarationImpl(@NotNull ASTNode node) {
         super(node);

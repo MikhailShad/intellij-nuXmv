@@ -80,7 +80,7 @@
     TL_UNTIL     = 'U'
 
     // LTL Specific Keywords
-    LTLSPEC             = 'LTLSPEC'
+    LTLSPEC_KW          = 'LTLSPEC'
     LTL_AT_NEXT         = '@F~'
     LTL_AT_LAST         = '@O~'
     LTL_NEXT            = 'X'
@@ -97,8 +97,8 @@
     LTL_TIME_UNTIL      = 'time_until'
 
     // CTL Specific Keywords
-    CTLSPEC             = 'CTLSPEC'
-    SPEC                = 'SPEC'
+    CTLSPEC_KW          = 'CTLSPEC'
+    SPEC_KW             = 'SPEC'
     CTL_FORALL          = 'A'
     CTL_EXISTS          = 'E'
     CTL_EXISTS_GLOBALLY = 'EG'
@@ -149,12 +149,12 @@
     TYPE_OF_FUN             = 'typeof'
 
     // Other Reserved Keywords
-    INVARSPEC           = 'INVARSPEC'
-    PSLSPEC             = 'PSLSPEC'
-    MODULE              = 'MODULE'
-    SELF                = 'self'
-    TRUE                = 'TRUE'
-    FALSE               = 'FALSE'
+    INVARSPEC_KW        = 'INVARSPEC'
+    PSLSPEC_KW          = 'PSLSPEC'
+    MODULE_KW           = 'MODULE'
+    SELF_KW             = 'self'
+    TRUE_KW             = 'TRUE'
+    FALSE_KW            = 'FALSE'
     FUN_KW              = 'FUN'
     DEFINE_KW           = 'DEFINE'
     CONSTANTS_KW        = 'CONSTANTS'
@@ -178,8 +178,8 @@
     SAT_KW              = "SAT"
     MONOPOS_KW          = "MONOPOS"
     MONONEG_KW          = "MONONEG"
-    CASE                = 'case'
-    ESAC                = 'esac'
+    CASE_KW             = 'case'
+    ESAC_KW             = 'esac'
     CLOCK_KW            = 'Clock'
     COMPID_KW           = 'COMPID'
     COMPWFF_KW          = 'COMPWFF'
@@ -217,11 +217,20 @@ CODE FORMATTING
 - meta rules and recoverWhile predicates should be in snake_case
  */
 
-NuXmvFile ::= !<<eof>> NuXmvModule+ {pin=1}
-NuXmvModule ::= ModuleDeclaration ModuleBody?
-ModuleDeclaration ::= MODULE ModuleName (LPAREN ModuleParameters RPAREN)? {pin=1}
-ModuleName ::= IDENTIFIER
-ModuleParameters ::= IDENTIFIER (COMMA IDENTIFIER)*
+File ::= !<<eof>> Module+ {pin=1}
+Module ::= ModuleDeclaration ModuleBody?
+ModuleDeclaration ::= MODULE_KW ModuleName (LPAREN ModuleParameter (COMMA ModuleParameter)* RPAREN)? {
+    pin=1
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.ModuleDeclarationMixin"
+}
+ModuleName ::= SimpleIdentifier {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.ModuleNameMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+}
+ModuleParameter ::= SimpleIdentifier {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.ModuleParameterMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+}
 ModuleBody ::= ModuleElement+
 private ModuleElement ::= VarDeclaration
     | IvarDeclaration
@@ -250,31 +259,46 @@ private module_element_recover ::= !(
     SEMICOLON | RBRACKET | RPAREN
     | VAR_KW | IVAR_KW | FROZENVAR_KW
     | DEFINE_KW | CONSTANTS_KW | ASSIGN_KW | TRANS_KW | INIT_KW | INVAR_KW | COMPASSION_KW | FAIRNESS_KW | JUSTICE_KW
-    | LTLSPEC | CTLSPEC | SPEC | INVARSPEC
+    | LTLSPEC_KW | CTLSPEC_KW | SPEC_KW | INVARSPEC_KW
     | COMPUTE_KW | PARSYNTH_KW
     | ISA_KW | PRED_KW | MIRROR_KW
-    | MODULE
+    | MODULE_KW
     )
 
 CtlSpecification ::= CtlSpecKeyWord CtlNamedSpecification? Expr SEMICOLON? {pin=1}
-private CtlSpecKeyWord ::= CTLSPEC | SPEC
-private CtlNamedSpecification ::=  NAME_KW SimpleIdentifier ASSIGN
+private CtlSpecKeyWord ::= CTLSPEC_KW | SPEC_KW
+private CtlNamedSpecification ::=  NAME_KW SimpleIdentifier ASSIGN {
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+}
 
-LtlSpecification ::= LTLSPEC LtlNamedSpecification? Expr SEMICOLON? {pin=1}
-private LtlNamedSpecification ::= NAME_KW SimpleIdentifier ASSIGN
+LtlSpecification ::= LTLSPEC_KW LtlNamedSpecification? Expr SEMICOLON? {pin=1}
+private LtlNamedSpecification ::= NAME_KW SimpleIdentifier ASSIGN {
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+}
 
-InvarSpecification ::= INVARSPEC NamedInvarSpecification? Expr SEMICOLON? {pin=1}
-private NamedInvarSpecification ::= NAME_KW SimpleIdentifier ASSIGN
+InvarSpecification ::= INVARSPEC_KW NamedInvarSpecification? Expr SEMICOLON? {pin=1}
+private NamedInvarSpecification ::= NAME_KW SimpleIdentifier ASSIGN {
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+}
 
 VarDeclaration ::= VAR_KW SingleVarDeclaration+ {pin=1}
-SingleVarDeclaration ::= VarName COLON TypeSpecifier SEMICOLON {pin=2}
+SingleVarDeclaration ::= VarName COLON TypeSpecifier SEMICOLON {
+    pin=2
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.SingleVarDeclarationMixin"
+}
 
 IvarDeclaration ::= IVAR_KW SingleIvarDeclaration+ {pin=1}
-SingleIvarDeclaration ::= VarName COLON SimpleTypeSpecifier SEMICOLON {pin=2}
+SingleIvarDeclaration ::= VarName COLON SimpleTypeSpecifier SEMICOLON {
+    pin=2
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.SingleIvarDeclarationMixin"
+}
 
 FrozenVarDeclaration ::= FROZENVAR_KW SingleIvarDeclaration {pin=1}
 VarName ::= ComplexIdentifier
-    | "\"" ComplexIdentifier "\""
+    | "\"" ComplexIdentifier "\"" {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.VarNameMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+}
 
 FunctionDeclaration ::= FUN_KW FunctionSpecification+ {pin=1}
 FunctionSpecification ::= FunctionName COLON FunctionTypeSpecifier SEMICOLON {pin=2}
@@ -325,9 +349,7 @@ SynthOpt ::= MONONEG_KW
     | MONOPOS_KW
     | (MIN_KW | MAX_KW) LPAREN Expr RPAREN {pin=1}
 
-MirrorDeclaration ::= MIRROR_KW VariableIdentifier SEMICOLON? {pin=1}
-
-VariableIdentifier ::= ComplexIdentifier
+MirrorDeclaration ::= MIRROR_KW VarName SEMICOLON? {pin=1}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Types
@@ -375,7 +397,7 @@ Expr ::= ImplicationBasicExpr
     | LtlExprGroup
     | PrimaryBasicExprGroup
 
-CaseBasicExpr ::= CASE RegularCaseBody+ ESAC {pin=1}
+CaseBasicExpr ::= CASE_KW RegularCaseBody+ ESAC_KW {pin=1}
 RegularCaseBody ::= Expr COLON Expr SEMICOLON {pin=2}
 TernaryBasicExpr ::= Expr QUESTION_MARK Expr COLON Expr {pin=2}
 
@@ -423,7 +445,10 @@ FunctionIdentifier ::= INIT_FUN|NEXT_FUN|ABS_FUN|MAX_FUN|MIN_FUN|SIN_FUN|COS_FUN
     |TO_WORD1_FUN|TO_BOOL_FUN|TO_INT_FUN|COUNT_FUN|SWCONST_FUN|UWCONST_FUN
     |TO_SIGNED_FUN|TO_UNSIGNED_FUN|SIZEOF_FUN|FLOOR_FUN|EXTEND_FUN|RESIZE_FUN
     |TO_SIGNED_WORD_FUN|TO_UNSIGNED_WORD_FUN|READ_FUN|WRITE_FUN|CONSTARRAY_FUN|TYPE_OF_FUN
-    | SimpleIdentifier
+    | SimpleIdentifier {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.FunctionIdentifierMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+}
 BasicExprList ::= Expr (COMMA Expr)* {pin(".*")=1}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -458,7 +483,7 @@ LiteralBasicExpr ::= BooleanConstant
     | WordConstant
     | RangeConstant
     | BuiltInConstant
-BooleanConstant ::= TRUE | FALSE
+BooleanConstant ::= TRUE_KW | FALSE_KW
 WordConstant ::= "0" ("u"|"s")? ["b" | "B"] WholeNumber? "_" HEX_NUMBER
 RangeConstant ::= WholeNumber RANGE WholeNumber
 WholeNumber ::= POSITIVE_INTEGER_NUMBER | INTEGER_NUMBER
@@ -466,5 +491,5 @@ RealNumber ::= FLOAT_NUMBER | FRACTIONAL_NUMBER | EXPONENTIAL_NUMBER
 BuiltInConstant ::= TIME | PI
 ReferenceBasicExpr ::= ComplexIdentifier | SimpleIdentifier
 ComplexIdentifier ::= BaseIdentifier (DOT SimpleIdentifier) * (LBRACKET Expr RBRACKET)?
-private BaseIdentifier ::= SimpleIdentifier | SELF
+BaseIdentifier ::= SimpleIdentifier | SELF_KW
 SimpleIdentifier ::= IDENTIFIER

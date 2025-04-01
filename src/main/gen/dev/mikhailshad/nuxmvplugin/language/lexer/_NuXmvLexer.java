@@ -1732,13 +1732,13 @@ class _NuXmvLexer implements FlexLexer {
                     case 257:
                         break;
                     case 93: {
-                        return SPEC;
+                        return SPEC_KW;
                     }
                     // fall through
                     case 258:
                         break;
                     case 94: {
-                        return TRUE;
+                        return TRUE_KW;
                     }
                     // fall through
                     case 259:
@@ -1774,13 +1774,13 @@ class _NuXmvLexer implements FlexLexer {
                     case 264:
                         break;
                     case 100: {
-                        return CASE;
+                        return CASE_KW;
                     }
                     // fall through
                     case 265:
                         break;
                     case 101: {
-                        return ESAC;
+                        return ESAC_KW;
                     }
                     // fall through
                     case 266:
@@ -1804,7 +1804,7 @@ class _NuXmvLexer implements FlexLexer {
                     case 269:
                         break;
                     case 105: {
-                        return SELF;
+                        return SELF_KW;
                     }
                     // fall through
                     case 270:
@@ -1834,7 +1834,7 @@ class _NuXmvLexer implements FlexLexer {
                     case 274:
                         break;
                     case 110: {
-                        return FALSE;
+                        return FALSE_KW;
                     }
                     // fall through
                     case 275:
@@ -1948,7 +1948,7 @@ class _NuXmvLexer implements FlexLexer {
                     case 293:
                         break;
                     case 129: {
-                        return MODULE;
+                        return MODULE_KW;
                     }
                     // fall through
                     case 294:
@@ -1996,7 +1996,7 @@ class _NuXmvLexer implements FlexLexer {
                     case 301:
                         break;
                     case 137: {
-                        return CTLSPEC;
+                        return CTLSPEC_KW;
                     }
                     // fall through
                     case 302:
@@ -2014,7 +2014,7 @@ class _NuXmvLexer implements FlexLexer {
                     case 304:
                         break;
                     case 140: {
-                        return LTLSPEC;
+                        return LTLSPEC_KW;
                     }
                     // fall through
                     case 305:
@@ -2044,7 +2044,7 @@ class _NuXmvLexer implements FlexLexer {
                     case 309:
                         break;
                     case 145: {
-                        return PSLSPEC;
+                        return PSLSPEC_KW;
                     }
                     // fall through
                     case 310:
@@ -2110,7 +2110,7 @@ class _NuXmvLexer implements FlexLexer {
                     case 320:
                         break;
                     case 156: {
-                        return INVARSPEC;
+                        return INVARSPEC_KW;
                     }
                     // fall through
                     case 321:

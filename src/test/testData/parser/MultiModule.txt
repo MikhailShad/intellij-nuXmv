@@ -1,5 +1,5 @@
 FILE
-  NuXmvNuXmvModuleImpl(NuXmvElementType.NU_XMV_MODULE)
+  NuXmvModuleImpl(NuXmvElementType.NU_XMV_MODULE)
     NuXmvModuleDeclarationImpl(NuXmvElementType.MODULE_DECLARATION)
       PsiElement(NuXmvTokenType.MODULE)('MODULE')
       PsiWhiteSpace(' ')
@@ -92,7 +92,7 @@ FILE
                 NuXmvSimpleIdentifierImpl(NuXmvElementType.SIMPLE_IDENTIFIER)
                   PsiElement(NuXmvTokenType.identifier)('carry_out')
   PsiWhiteSpace('\n\n')
-  NuXmvNuXmvModuleImpl(NuXmvElementType.NU_XMV_MODULE)
+  NuXmvModuleImpl(NuXmvElementType.NU_XMV_MODULE)
     NuXmvModuleDeclarationImpl(NuXmvElementType.MODULE_DECLARATION)
       PsiElement(NuXmvTokenType.MODULE)('MODULE')
       PsiWhiteSpace(' ')

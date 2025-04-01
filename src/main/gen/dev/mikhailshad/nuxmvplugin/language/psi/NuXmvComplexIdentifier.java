@@ -9,6 +9,9 @@ import java.util.List;
 
 public interface NuXmvComplexIdentifier extends PsiElement {
 
+    @NotNull
+    NuXmvBaseIdentifier getBaseIdentifier();
+
     @Nullable
     NuXmvExpr getExpr();
 

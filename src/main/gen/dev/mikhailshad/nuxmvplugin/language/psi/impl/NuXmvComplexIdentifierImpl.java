@@ -5,10 +5,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvComplexIdentifier;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvSimpleIdentifier;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
+import dev.mikhailshad.nuxmvplugin.language.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +25,12 @@ public class NuXmvComplexIdentifierImpl extends ASTWrapperPsiElement implements 
     public void accept(@NotNull PsiElementVisitor visitor) {
         if (visitor instanceof NuXmvVisitor) accept((NuXmvVisitor) visitor);
         else super.accept(visitor);
+    }
+
+    @Override
+    @NotNull
+    public NuXmvBaseIdentifier getBaseIdentifier() {
+        return findNotNullChildByClass(NuXmvBaseIdentifier.class);
     }
 
     @Override

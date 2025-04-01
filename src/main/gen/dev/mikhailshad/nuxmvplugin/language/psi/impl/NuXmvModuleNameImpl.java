@@ -1,17 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModuleName;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvSimpleIdentifier;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
+import dev.mikhailshad.nuxmvplugin.language.psi.mixin.ModuleNameMixin;
 import org.jetbrains.annotations.NotNull;
 
-import static dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes.IDENTIFIER;
-
-public class NuXmvModuleNameImpl extends ASTWrapperPsiElement implements NuXmvModuleName {
+public class NuXmvModuleNameImpl extends ModuleNameMixin implements NuXmvModuleName {
 
     public NuXmvModuleNameImpl(@NotNull ASTNode node) {
         super(node);
@@ -29,8 +27,8 @@ public class NuXmvModuleNameImpl extends ASTWrapperPsiElement implements NuXmvMo
 
     @Override
     @NotNull
-    public PsiElement getIdentifier() {
-        return findNotNullChildByType(IDENTIFIER);
+    public NuXmvSimpleIdentifier getSimpleIdentifier() {
+        return findNotNullChildByClass(NuXmvSimpleIdentifier.class);
     }
 
 }

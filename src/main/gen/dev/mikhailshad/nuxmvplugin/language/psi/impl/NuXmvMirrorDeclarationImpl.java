@@ -5,7 +5,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvMirrorDeclaration;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVariableIdentifier;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVarName;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,8 +28,8 @@ public class NuXmvMirrorDeclarationImpl extends ASTWrapperPsiElement implements 
 
     @Override
     @Nullable
-    public NuXmvVariableIdentifier getVariableIdentifier() {
-        return findChildByClass(NuXmvVariableIdentifier.class);
+    public NuXmvVarName getVarName() {
+        return findChildByClass(NuXmvVarName.class);
     }
 
 }
