@@ -22,13 +22,13 @@ object NuXmvModuleInstanceCompletionProvider : CompletionProvider<CompletionPara
 
         if (file !is NuXmvFile) return
 
-        val modules = PsiTreeUtil.findChildrenOfType(file, NuXmvModuleDeclaration::class.java)
+        val moduleDeclarations = PsiTreeUtil.findChildrenOfType(file, NuXmvModuleDeclaration::class.java)
 
-        modules.forEach { module ->
-            val moduleName = module.moduleName?.text ?: return
+        moduleDeclarations.forEach { module ->
+            val moduleName = module.moduleName?.name ?: return
 
-            val moduleParams = module.moduleParameters
-            val paramList = moduleParams?.text?.let { " $it" } ?: ""
+            val moduleParams = module.moduleParameterList
+            val paramList = moduleParams.let { " $it" }
 
             resultSet.addElement(
                 LookupElementBuilder.create(moduleName)
@@ -38,10 +38,8 @@ object NuXmvModuleInstanceCompletionProvider : CompletionProvider<CompletionPara
                         val document = insertContext.document
                         val offset = insertContext.selectionEndOffset
 
-                        if (moduleParams != null) {
-                            document.insertString(offset, "()")
-                            insertContext.editor.caretModel.moveToOffset(offset + 1)
-                        }
+                        document.insertString(offset, "()")
+                        insertContext.editor.caretModel.moveToOffset(offset + 1)
                     }
             )
         }

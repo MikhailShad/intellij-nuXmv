@@ -9,12 +9,8 @@ import dev.mikhailshad.nuxmvplugin.language.psi.*
 class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
     override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
         // Handle module documentation
-        if (element is NuXmvNuXmvModule || element is NuXmvModuleName) {
-            val module = if (element is NuXmvNuXmvModule) element else PsiTreeUtil.getParentOfType(
-                element,
-                NuXmvNuXmvModule::class.java
-            ) ?: return null
-            return generateModuleDoc(module)
+        if (element is NuXmvModule) {
+            return generateModuleDoc(element)
         }
 
         // Handle variable documentation
@@ -40,8 +36,8 @@ class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
         return null
     }
 
-    private fun generateModuleDoc(module: NuXmvNuXmvModule): String {
-        val moduleName = module.moduleDeclaration.moduleName?.text ?: "unnamed"
+    private fun generateModuleDoc(module: NuXmvModule): String {
+        val moduleName = module.moduleDeclaration.moduleName?.name ?: "module_name"
 
         val builder = StringBuilder()
 
@@ -51,11 +47,9 @@ class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
         builder.append(moduleName)
 
         // Parameters
-        val params = module.moduleDeclaration.moduleParameters
-        if (params != null) {
-            builder.append("(")
-            builder.append(params.text)
-            builder.append(")")
+        val params = module.moduleDeclaration.moduleParameterList
+        if (params.isNotEmpty()) {
+            builder.append(params.map { it.name }.joinToString(", ", "(", ")"))
         }
         builder.append(DocumentationMarkup.DEFINITION_END)
 
@@ -118,7 +112,7 @@ class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
         builder.append("<b>Type:</b> $typeText<br>")
 
         // Find assignments to this variable
-        val module = PsiTreeUtil.getParentOfType(varDecl, NuXmvNuXmvModule::class.java) ?: return builder.toString()
+        val module = PsiTreeUtil.getParentOfType(varDecl, NuXmvModule::class.java) ?: return builder.toString()
         val moduleBody = module.moduleBody ?: return builder.toString()
 
         // Find simple assignments

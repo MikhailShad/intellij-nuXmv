@@ -28,7 +28,7 @@ object NuXmvVariableCompletionProvider : CompletionProvider<CompletionParameters
 
         val defineDeclarations = PsiTreeUtil.findChildrenOfType(file, NuXmvDefineBody::class.java)
 
-        val containingModule = PsiTreeUtil.getParentOfType(position, NuXmvNuXmvModule::class.java) ?: return
+        val containingModule = PsiTreeUtil.getParentOfType(position, NuXmvModule::class.java) ?: return
 
         varDeclarations.forEach { declaration ->
             if (PsiTreeUtil.isAncestor(containingModule, declaration, false)) {

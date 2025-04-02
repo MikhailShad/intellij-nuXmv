@@ -19,7 +19,7 @@ class NuXmvNavigationContributor : ChooseByNameContributor {
         for (virtualFile in nuxmvFiles) {
             val psiFile = PsiManager.getInstance(project).findFile(virtualFile) as? NuXmvFile ?: continue
 
-            val modules = PsiTreeUtil.findChildrenOfType(psiFile, NuXmvNuXmvModule::class.java)
+            val modules = PsiTreeUtil.findChildrenOfType(psiFile, NuXmvModule::class.java)
             for (module in modules) {
                 module.moduleDeclaration.moduleName?.text?.let { result.add(it) }
 
@@ -60,7 +60,7 @@ class NuXmvNavigationContributor : ChooseByNameContributor {
         for (virtualFile in nuxmvFiles) {
             val psiFile = PsiManager.getInstance(project).findFile(virtualFile) as? NuXmvFile ?: continue
 
-            val modules = PsiTreeUtil.findChildrenOfType(psiFile, NuXmvNuXmvModule::class.java)
+            val modules = PsiTreeUtil.findChildrenOfType(psiFile, NuXmvModule::class.java)
             for (module in modules) {
                 if (module.moduleDeclaration.moduleName?.text == name) {
                     result.add(module as NavigationItem)

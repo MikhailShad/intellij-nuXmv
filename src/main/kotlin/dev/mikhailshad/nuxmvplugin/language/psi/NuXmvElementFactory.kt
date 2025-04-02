@@ -7,34 +7,23 @@ import dev.mikhailshad.nuxmvplugin.language.NuXmvFileType
 object NuXmvElementFactory {
     fun createFile(project: Project, text: String): NuXmvFile {
         val name = "dummy.nuXmv"
-        return PsiFileFactory.getInstance(project).createFileFromText(
+        return PsiFileFactory.getInstance(project)
+            .createFileFromText(
             name, NuXmvFileType, text
         ) as NuXmvFile
     }
 
     fun createModuleName(project: Project, name: String): NuXmvModuleName {
-        val file = createFile(project, "MODULE $name\n")
-        return file.firstChild.children[1] as NuXmvModuleName
+        val file = createFile(project, "MODULE $name\nVAR\n")
+        return file.firstChild.firstChild as NuXmvModuleName
     }
 
-    fun createVarName(project: Project, name: String): NuXmvVarName {
-        val file = createFile(project, "MODULE dummy\nVAR $name : boolean;\n")
-        val moduleBody = (file.firstChild as NuXmvNuXmvModule).moduleBody!!
-        val varDecl = moduleBody.children.first { it is NuXmvVarDeclaration }
-        val singleVarDecl = varDecl.children.first { it is NuXmvSingleVarDeclaration }
-        return (singleVarDecl as NuXmvSingleVarDeclaration).varName
-    }
-
-    fun createIdentifier(project: Project, name: String): NuXmvSimpleIdentifier {
-        val file = createFile(project, "MODULE $name\n")
-        return file.firstChild.children[1].children.first { it is NuXmvSimpleIdentifier } as NuXmvSimpleIdentifier
-    }
-
-    fun createDefineIdentifier(project: Project, name: String): NuXmvComplexIdentifier {
-        val file = createFile(project, "MODULE dummy\nDEFINE $name := TRUE;\n")
-        val moduleBody = (file.firstChild as NuXmvNuXmvModule).moduleBody!!
-        val defineDecl = moduleBody.children.first { it is NuXmvDefineDeclaration }
-        val defineBody = defineDecl.children.first { it is NuXmvDefineBody }
-        return (defineBody as NuXmvDefineBody).complexIdentifier
+    fun createIdentifier(project: Project, name: String): NuXmvComplexIdentifier {
+        val file = createFile(project, "MODULE main\nVAR\n$name : boolean;")
+        val varDeclaration = file.findChildByClass(NuXmvModule::class.java)
+            ?.moduleBody?.varDeclarationList?.first()
+        val varName = varDeclaration?.singleVarDeclarationList?.first()?.varName
+        return varName?.complexIdentifier
+            ?: throw IllegalStateException("Could not create identifier")
     }
 }

@@ -20,7 +20,7 @@ class NuXmvFindUsagesProvider : FindUsagesProvider {
     }
 
     override fun canFindUsagesFor(psiElement: PsiElement): Boolean {
-        return psiElement is NuXmvModuleName ||
+        return psiElement is NuXmvModuleDeclaration ||
                 psiElement is NuXmvVarName ||
                 psiElement is NuXmvComplexIdentifier ||
                 psiElement is NuXmvSimpleIdentifier
@@ -32,7 +32,7 @@ class NuXmvFindUsagesProvider : FindUsagesProvider {
 
     override fun getType(element: PsiElement): String {
         return when {
-            element is NuXmvModuleName -> "module"
+            element is NuXmvModuleDeclaration -> "module"
             element is NuXmvVarName -> "variable"
             element.parent is NuXmvDefineBody -> "define"
             element is NuXmvComplexIdentifier && element.parent is NuXmvDefineBody -> "define"
@@ -44,8 +44,7 @@ class NuXmvFindUsagesProvider : FindUsagesProvider {
     override fun getDescriptiveName(element: PsiElement): String {
         return when {
             element is PsiNamedElement -> element.name ?: ""
-            element is NuXmvModuleName -> element.text
-            element is NuXmvVarName -> element.text
+            element is NuXmvNamedElement -> element.name ?: ""
             element is NuXmvComplexIdentifier -> element.text
             element is NuXmvSimpleIdentifier -> element.text
             else -> ""

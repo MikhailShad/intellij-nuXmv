@@ -27,7 +27,7 @@ class NuXmvStructureViewElement(private val element: NavigatablePsiElement) :
     override fun getAlphaSortKey(): String {
         val name = when {
             element is PsiNamedElement -> (element as PsiNamedElement).name ?: ""
-            element is NuXmvNuXmvModule -> {
+            element is NuXmvModule -> {
                 val moduleName = element.moduleDeclaration.moduleName?.text ?: "unnamed"
                 "module_$moduleName"
             }
@@ -73,7 +73,7 @@ class NuXmvStructureViewElement(private val element: NavigatablePsiElement) :
                 )
             }
 
-            is NuXmvNuXmvModule -> {
+            is NuXmvModule -> {
                 val moduleName = element.moduleDeclaration.moduleName?.text ?: "unnamed"
                 PresentationData(
                     "MODULE $moduleName",
@@ -184,7 +184,7 @@ class NuXmvStructureViewElement(private val element: NavigatablePsiElement) :
     }
 
     override fun getChildren(): Array<TreeElement> {
-        if (element !is NuXmvFile && element !is NuXmvNuXmvModule) {
+        if (element !is NuXmvFile && element !is NuXmvModule) {
             return emptyArray()
         }
 
@@ -193,13 +193,13 @@ class NuXmvStructureViewElement(private val element: NavigatablePsiElement) :
         when (element) {
             is NuXmvFile -> {
                 // Get all modules in the file
-                val modules = PsiTreeUtil.findChildrenOfType(element, NuXmvNuXmvModule::class.java)
+                val modules = PsiTreeUtil.findChildrenOfType(element, NuXmvModule::class.java)
                 modules.forEach {
                     result.add(NuXmvStructureViewElement(it as NavigatablePsiElement))
                 }
             }
 
-            is NuXmvNuXmvModule -> {
+            is NuXmvModule -> {
                 // Get module body elements
                 val moduleBody = element.moduleBody
                 if (moduleBody != null) {

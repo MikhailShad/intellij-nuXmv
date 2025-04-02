@@ -12,7 +12,7 @@ class NuXmvBreadcrumbsInfoProvider : BreadcrumbsProvider {
     }
 
     override fun acceptElement(element: PsiElement): Boolean {
-        return element is NuXmvNuXmvModule ||
+        return element is NuXmvModule ||
                 element is NuXmvVarDeclaration ||
                 element is NuXmvIvarDeclaration ||
                 element is NuXmvDefineDeclaration ||
@@ -24,8 +24,8 @@ class NuXmvBreadcrumbsInfoProvider : BreadcrumbsProvider {
 
     override fun getElementInfo(element: PsiElement): String {
         return when (element) {
-            is NuXmvNuXmvModule -> {
-                val moduleName = element.moduleDeclaration.moduleName?.text ?: "unnamed"
+            is NuXmvModule -> {
+                val moduleName = element.moduleDeclaration.moduleName?.name
                 "MODULE $moduleName"
             }
 
@@ -45,8 +45,8 @@ class NuXmvBreadcrumbsInfoProvider : BreadcrumbsProvider {
 
     override fun getElementTooltip(element: PsiElement): String? {
         return when (element) {
-            is NuXmvNuXmvModule -> {
-                val moduleName = element.moduleDeclaration.moduleName?.text ?: "unnamed"
+            is NuXmvModule -> {
+                val moduleName = element.moduleDeclaration.moduleName?.name
                 "Module: $moduleName"
             }
 

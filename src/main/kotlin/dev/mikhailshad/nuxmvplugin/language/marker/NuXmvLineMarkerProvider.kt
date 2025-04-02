@@ -11,9 +11,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import dev.mikhailshad.nuxmvplugin.language.NuXmvFileType
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFile
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModule
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModuleName
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModuleTypeSpecifier
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNuXmvModule
 
 class NuXmvLineMarkerProvider : RelatedItemLineMarkerProvider() {
     override fun collectNavigationMarkers(
@@ -37,17 +37,15 @@ class NuXmvLineMarkerProvider : RelatedItemLineMarkerProvider() {
         // Add markers for module instantiations that can be navigated to the declaration
         if (element is NuXmvModuleTypeSpecifier) {
             val simpleIdentifier = element.simpleIdentifier
-            if (simpleIdentifier != null) {
-                val moduleName = simpleIdentifier.text
-                val target = findModuleDeclaration(element, moduleName)
+            val moduleName = simpleIdentifier.text
+            val target = findModuleDeclaration(element, moduleName)
 
-                if (target != null) {
-                    val builder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementingMethod)
-                        .setTarget(target)
-                        .setTooltipText("Navigate to module declaration")
+            if (target != null) {
+                val builder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementingMethod)
+                    .setTarget(target)
+                    .setTooltipText("Navigate to module declaration")
 
-                    result.add(builder.createLineMarkerInfo(element))
-                }
+                result.add(builder.createLineMarkerInfo(element))
             }
         }
     }
@@ -66,7 +64,7 @@ class NuXmvLineMarkerProvider : RelatedItemLineMarkerProvider() {
             val moduleTypeSpecifiers = PsiTreeUtil.findChildrenOfType(psiFile, NuXmvModuleTypeSpecifier::class.java)
             for (specifier in moduleTypeSpecifiers) {
                 val identifier = specifier.simpleIdentifier
-                if (identifier != null && identifier.text == moduleName) {
+                if (identifier.text == moduleName) {
                     result.add(specifier)
                 }
             }
@@ -85,7 +83,7 @@ class NuXmvLineMarkerProvider : RelatedItemLineMarkerProvider() {
             val psiFile = PsiManager.getInstance(project).findFile(virtualFile) as? NuXmvFile ?: continue
 
             // Find module declarations
-            val modules = PsiTreeUtil.findChildrenOfType(psiFile, NuXmvNuXmvModule::class.java)
+            val modules = PsiTreeUtil.findChildrenOfType(psiFile, NuXmvModule::class.java)
             for (module in modules) {
                 val name = module.moduleDeclaration.moduleName?.text
                 if (name == moduleName) {
