@@ -337,7 +337,7 @@ ComputeSpecification ::= COMPUTE_KW ComputeExpr SEMICOLON?
     | COMPUTE_KW NAME_KW identifier ASSIGN ComplexIdentifier SEMICOLON? {pin=1}
 ComputeExpr ::= (MIN_KW | MAX_KW) LBRACKET RtCtlExpr COMMA RtCtlExpr RBRACKET
 RtCtlExpr ::= Expr
-    | (RTCTL_EBF | RTCTL_ABF | RTCTL_EBG | RTCTL_ABG) INTEGER_NUMBER RANGE INTEGER_NUMBER RtCtlExpr
+    | (RTCTL_EBF | RTCTL_ABF | RTCTL_EBG | RTCTL_ABG) RangeConstant RtCtlExpr
     | (CTL_FORALL | CTL_EXISTS) LBRACKET RtCtlExpr RTCTL_BU RtCtlExpr RBRACKET
 
 // parameter_synth_problem
@@ -357,18 +357,25 @@ MirrorDeclaration ::= MIRROR_KW VarName SEMICOLON? {pin=1}
 
 TypeSpecifier ::= ModuleTypeSpecifier | SimpleTypeSpecifier
 SimpleTypeSpecifier ::= BOOLEAN_TYPE
-    | WORD_TYPE LBRACKET WholeNumber RBRACKET
+    | WordType
     | UNSIGNED_WORD_TYPE LBRACKET WholeNumber RBRACKET
     | SIGNED_WORD_TYPE LBRACKET WholeNumber RBRACKET
-    | INTEGER_TYPE
+    | IntegerType
     | REAL_TYPE
     | CLOCK_TYPE
     | LBRACE EnumerationTypeBody RBRACE
-    | WholeNumber RANGE WholeNumber
-    | ARRAY_TYPE WholeNumber RANGE WholeNumber ARRAY_OF SimpleTypeSpecifier
+    | RangeConstant
+    | ARRAY_TYPE RangeConstant ARRAY_OF SimpleTypeSpecifier
+    | ARRAY_TYPE WordType ARRAY_OF SimpleTypeSpecifier
+    | ARRAY_TYPE IntegerType ARRAY_OF SimpleTypeSpecifier
     | SimpleIdentifier // TODO: что-то придумать с проверкой, что тип корректный
+private WordType ::= WORD_TYPE LBRACKET WholeNumber RBRACKET
+private IntegerType ::= INTEGER_TYPE
 EnumerationTypeBody ::= EnumerationTypeValue (COMMA EnumerationTypeValue)*
-EnumerationTypeValue ::= WholeNumber | ComplexIdentifier
+EnumerationTypeValue ::= WholeNumber | ComplexIdentifier {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvEnumValueMixinImpl"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvEnumValue"
+}
 ModuleTypeSpecifier ::= SimpleIdentifier ParameterList
 ParameterList ::= LPAREN [Expr (COMMA Expr)*] RPAREN
 
@@ -490,6 +497,6 @@ WholeNumber ::= POSITIVE_INTEGER_NUMBER | INTEGER_NUMBER
 RealNumber ::= FLOAT_NUMBER | FRACTIONAL_NUMBER | EXPONENTIAL_NUMBER
 BuiltInConstant ::= TIME | PI
 ReferenceBasicExpr ::= ComplexIdentifier | SimpleIdentifier
-ComplexIdentifier ::= BaseIdentifier (DOT SimpleIdentifier) * (LBRACKET Expr RBRACKET)?
-BaseIdentifier ::= SimpleIdentifier | SELF_KW
-SimpleIdentifier ::= IDENTIFIER
+private ComplexIdentifier ::= BaseIdentifier (DOT SimpleIdentifier) * (LBRACKET Expr RBRACKET)?
+private BaseIdentifier ::= SimpleIdentifier | SELF_KW
+private SimpleIdentifier ::= IDENTIFIER
