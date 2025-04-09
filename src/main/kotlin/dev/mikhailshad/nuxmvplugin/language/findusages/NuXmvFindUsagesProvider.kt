@@ -4,26 +4,26 @@ import com.intellij.lang.cacheBuilder.DefaultWordsScanner
 import com.intellij.lang.cacheBuilder.WordsScanner
 import com.intellij.lang.findUsages.FindUsagesProvider
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.tree.TokenSet
 import dev.mikhailshad.nuxmvplugin.language.lexer.NuXmvLexerAdapter
-import dev.mikhailshad.nuxmvplugin.language.psi.*
+import dev.mikhailshad.nuxmvplugin.language.parser.NuXmvParserDefinition
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvDefineName
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModuleDeclaration
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVarName
 
 class NuXmvFindUsagesProvider : FindUsagesProvider {
     override fun getWordsScanner(): WordsScanner {
         return DefaultWordsScanner(
             NuXmvLexerAdapter(),
-            TokenSet.create(NuXmvTypes.IDENTIFIER),
-            TokenSet.create(NuXmvTypes.LINE_COMMENT, NuXmvTypes.BLOCK_COMMENT),
+            NuXmvParserDefinition.Util.IDENTIFIER,
+            NuXmvParserDefinition.Util.COMMENTS,
             TokenSet.EMPTY
         )
     }
 
     override fun canFindUsagesFor(psiElement: PsiElement): Boolean {
-        return psiElement is NuXmvModuleDeclaration ||
-                psiElement is NuXmvVarName ||
-                psiElement is NuXmvComplexIdentifier ||
-                psiElement is NuXmvSimpleIdentifier
+        return psiElement is NuXmvNamedElement
     }
 
     override fun getHelpId(psiElement: PsiElement): String? {
@@ -31,24 +31,16 @@ class NuXmvFindUsagesProvider : FindUsagesProvider {
     }
 
     override fun getType(element: PsiElement): String {
-        return when {
-            element is NuXmvModuleDeclaration -> "module"
-            element is NuXmvVarName -> "variable"
-            element.parent is NuXmvDefineBody -> "define"
-            element is NuXmvComplexIdentifier && element.parent is NuXmvDefineBody -> "define"
-            element is NuXmvSimpleIdentifier -> "identifier"
-            else -> ""
+        return when (element) {
+            is NuXmvModuleDeclaration -> "module"
+            is NuXmvVarName -> "variable"
+            is NuXmvDefineName -> "define"
+            else -> "identifier"
         }
     }
 
     override fun getDescriptiveName(element: PsiElement): String {
-        return when {
-            element is PsiNamedElement -> element.name ?: ""
-            element is NuXmvNamedElement -> element.name ?: ""
-            element is NuXmvComplexIdentifier -> element.text
-            element is NuXmvSimpleIdentifier -> element.text
-            else -> ""
-        }
+        return (element as NuXmvNamedElement).name ?: ""
     }
 
     override fun getNodeText(element: PsiElement, useFullName: Boolean): String {

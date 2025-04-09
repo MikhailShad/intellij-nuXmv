@@ -28,34 +28,34 @@ class NuXmvStructureViewElement(private val element: NavigatablePsiElement) :
         val name = when {
             element is PsiNamedElement -> (element as PsiNamedElement).name ?: ""
             element is NuXmvModule -> {
-                val moduleName = element.moduleDeclaration.moduleName?.text ?: "unnamed"
+                val moduleName = element.moduleDeclaration.moduleName?.name ?: "unnamed"
                 "module_$moduleName"
             }
 
             element is NuXmvSingleVarDeclaration -> {
-                val varName = element.varName.text ?: "unnamed"
+                val varName = element.varName.name ?: "unnamed"
                 "var_$varName"
             }
 
             element is NuXmvSingleIvarDeclaration -> {
-                val varName = element.varName.text ?: "unnamed"
+                val varName = element.varName.name ?: "unnamed"
                 "ivar_$varName"
             }
 
             element is NuXmvDefineBody -> {
-                val defineName = element.complexIdentifier.text ?: "unnamed"
+                val defineName = element.defineName.name ?: "unnamed"
                 "define_$defineName"
             }
 
-            element is NuXmvInitAssignExpr || element is NuXmvNextAssignExpr || element is NuXmvSimpleAssignExpr -> {
-                val identifier = when (val assignExpr = element as PsiElement) {
-                    is NuXmvInitAssignExpr -> assignExpr.complexIdentifier?.text
-                    is NuXmvNextAssignExpr -> assignExpr.complexIdentifier?.text
-                    is NuXmvSimpleAssignExpr -> assignExpr.complexIdentifier.text
-                    else -> null
-                }
-                "assign_${identifier ?: "unnamed"}"
-            }
+//            element is NuXmvInitAssignExpr || element is NuXmvNextAssignExpr || element is NuXmvSimpleAssignExpr -> {
+//                val identifier = when (val assignExpr = element as PsiElement) {
+//                    is NuXmvInitAssignExpr -> assignExpr.complexIdentifier?.text
+//                    is NuXmvNextAssignExpr -> assignExpr.complexIdentifier?.text
+//                    is NuXmvSimpleAssignExpr -> assignExpr.complexIdentifier.text
+//                    else -> null
+//                }
+//                "assign_${identifier ?: "unnamed"}"
+//            }
 
             else -> element.text.take(20)
         }
@@ -106,7 +106,7 @@ class NuXmvStructureViewElement(private val element: NavigatablePsiElement) :
             }
 
             is NuXmvDefineBody -> {
-                val defineName = element.complexIdentifier.text ?: "unnamed"
+                val defineName = element.defineName.name ?: "unnamed"
                 PresentationData(
                     "$defineName := ...",
                     "Define",
@@ -142,35 +142,35 @@ class NuXmvStructureViewElement(private val element: NavigatablePsiElement) :
                 )
             }
 
-            is NuXmvInitAssignExpr -> {
-                val identifier = element.complexIdentifier?.text ?: "unnamed"
-                PresentationData(
-                    "init($identifier) := ...",
-                    "Init Assignment",
-                    null,
-                    null
-                )
-            }
+//            is NuXmvInitAssignExpr -> {
+//                val identifier = element.complexIdentifier?.text ?: "unnamed"
+//                PresentationData(
+//                    "init($identifier) := ...",
+//                    "Init Assignment",
+//                    null,
+//                    null
+//                )
+//            }
 
-            is NuXmvNextAssignExpr -> {
-                val identifier = element.complexIdentifier?.text ?: "unnamed"
-                PresentationData(
-                    "next($identifier) := ...",
-                    "Next Assignment",
-                    null,
-                    null
-                )
-            }
+//            is NuXmvNextAssignExpr -> {
+//                val identifier = element.complexIdentifier?.text ?: "unnamed"
+//                PresentationData(
+//                    "next($identifier) := ...",
+//                    "Next Assignment",
+//                    null,
+//                    null
+//                )
+//            }
 
-            is NuXmvSimpleAssignExpr -> {
-                val identifier = element.complexIdentifier.text ?: "unnamed"
-                PresentationData(
-                    "$identifier := ...",
-                    "Assignment",
-                    null,
-                    null
-                )
-            }
+//            is NuXmvSimpleAssignExpr -> {
+//                val identifier = element.complexIdentifier.text ?: "unnamed"
+//                PresentationData(
+//                    "$identifier := ...",
+//                    "Assignment",
+//                    null,
+//                    null
+//                )
+//            }
 
             else -> {
                 PresentationData(

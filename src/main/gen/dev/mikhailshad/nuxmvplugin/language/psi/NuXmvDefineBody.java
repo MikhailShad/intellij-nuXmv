@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 public interface NuXmvDefineBody extends PsiElement {
 
     @NotNull
-    NuXmvComplexIdentifier getComplexIdentifier();
+    NuXmvDefineName getDefineName();
 
     @Nullable
     NuXmvExpr getExpr();

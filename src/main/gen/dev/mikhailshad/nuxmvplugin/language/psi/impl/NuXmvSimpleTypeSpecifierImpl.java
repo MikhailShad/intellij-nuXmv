@@ -3,10 +3,13 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import dev.mikhailshad.nuxmvplugin.language.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes.IDENTIFIER;
 
 public class NuXmvSimpleTypeSpecifierImpl extends ASTWrapperPsiElement implements NuXmvSimpleTypeSpecifier {
 
@@ -32,8 +35,8 @@ public class NuXmvSimpleTypeSpecifierImpl extends ASTWrapperPsiElement implement
 
     @Override
     @Nullable
-    public NuXmvSimpleIdentifier getSimpleIdentifier() {
-        return findChildByClass(NuXmvSimpleIdentifier.class);
+    public NuXmvRangeConstant getRangeConstant() {
+        return findChildByClass(NuXmvRangeConstant.class);
     }
 
     @Override
@@ -46,6 +49,12 @@ public class NuXmvSimpleTypeSpecifierImpl extends ASTWrapperPsiElement implement
     @Nullable
     public NuXmvWholeNumber getWholeNumber() {
         return findChildByClass(NuXmvWholeNumber.class);
+    }
+
+    @Override
+    @Nullable
+    public PsiElement getIdentifier() {
+        return findChildByType(IDENTIFIER);
     }
 
 }

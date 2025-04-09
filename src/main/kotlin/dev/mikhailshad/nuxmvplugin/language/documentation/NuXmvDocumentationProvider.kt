@@ -14,23 +14,17 @@ class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
         }
 
         // Handle variable documentation
-        if (element is NuXmvVarName || (element is NuXmvSimpleIdentifier && element.parent is NuXmvVarName)) {
-            val varDecl = PsiTreeUtil.getParentOfType(element, NuXmvSingleVarDeclaration::class.java) ?: return null
-            return generateVarDoc(varDecl)
-        }
-
-        // Handle input variable documentation
-        if (element is NuXmvSimpleIdentifier && element.parent is NuXmvVarName &&
-            PsiTreeUtil.getParentOfType(element, NuXmvSingleIvarDeclaration::class.java) != null
-        ) {
-            val ivarDecl = PsiTreeUtil.getParentOfType(element, NuXmvSingleIvarDeclaration::class.java) ?: return null
-            return generateIvarDoc(ivarDecl)
+        if (element is NuXmvVarName) {
+            return when (element.parent) {
+                is NuXmvSingleVarDeclaration -> generateVarDoc(element.parent as NuXmvSingleVarDeclaration)
+                is NuXmvSingleIvarDeclaration -> generateIvarDoc(element.parent as NuXmvSingleIvarDeclaration)
+                else -> null
+            }
         }
 
         // Handle define documentation
-        if (element is NuXmvComplexIdentifier && element.parent is NuXmvDefineBody) {
-            val defineBody = element.parent as NuXmvDefineBody
-            return generateDefineDoc(defineBody)
+        if (element is NuXmvDefineName) {
+            return generateDefineDoc(element.parent as NuXmvDefineBody)
         }
 
         return null
@@ -85,7 +79,7 @@ class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
         if (defines.isNotEmpty()) {
             builder.append("<b>Defines:</b><br>")
             defines.forEach {
-                val defineName = it.complexIdentifier.text ?: "unnamed"
+                val defineName = it.defineName.name ?: "unnamed"
                 builder.append("$defineName<br>")
             }
         }
@@ -96,7 +90,7 @@ class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
     }
 
     private fun generateVarDoc(varDecl: NuXmvSingleVarDeclaration): String {
-        val varName = varDecl.varName.text ?: "unnamed"
+        val varName = varDecl.varName.name ?: "unnamed"
         val typeText = varDecl.typeSpecifier?.text ?: "unknown type"
 
         val builder = StringBuilder()
@@ -117,20 +111,20 @@ class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
 
         // Find simple assignments
         val simpleAssigns = PsiTreeUtil.findChildrenOfType(moduleBody, NuXmvSimpleAssignExpr::class.java)
-            .filter { it.complexIdentifier.text == varName }
+            .filter { it.firstChild.text == varName }
 
         // Find init assignments
         val initAssigns = PsiTreeUtil.findChildrenOfType(moduleBody, NuXmvInitAssignExpr::class.java)
-            .filter { it.complexIdentifier?.text == varName }
+            .filter { it.firstChild.nextSibling.text == varName }
 
         // Find next assignments
         val nextAssigns = PsiTreeUtil.findChildrenOfType(moduleBody, NuXmvNextAssignExpr::class.java)
-            .filter { it.complexIdentifier?.text == varName }
+            .filter { it.firstChild.firstChild.text == varName }
 
         if (initAssigns.isNotEmpty()) {
             builder.append("<b>Initial Value:</b><br>")
             initAssigns.forEach {
-                builder.append("init($varName) := ${it.expr?.text?.take(50)}<br>")
+                builder.append("init($varName) := ${it.exprList.joinToString { expr -> expr.text }}<br>")
             }
             builder.append("<br>")
         }
@@ -138,7 +132,7 @@ class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
         if (nextAssigns.isNotEmpty()) {
             builder.append("<b>Next Value:</b><br>")
             nextAssigns.forEach {
-                builder.append("next($varName) := ${it.expr?.text?.take(50)}<br>")
+                builder.append("next($varName) := ${it.exprList.joinToString { expr -> expr.text }}<br>")
             }
             builder.append("<br>")
         }
@@ -146,7 +140,7 @@ class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
         if (simpleAssigns.isNotEmpty()) {
             builder.append("<b>Assignments:</b><br>")
             simpleAssigns.forEach {
-                builder.append("$varName := ${it.expr?.text?.take(50)}<br>")
+                builder.append("$varName := ${it.exprList.joinToString { expr -> expr.text }}<br>")
             }
         }
 
@@ -178,7 +172,7 @@ class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
     }
 
     private fun generateDefineDoc(defineBody: NuXmvDefineBody): String {
-        val defineName = defineBody.complexIdentifier.text ?: "unnamed"
+        val defineName = defineBody.defineName.name ?: "unnamed"
         val exprText = defineBody.expr?.text?.take(100) ?: "..."
 
         val builder = StringBuilder()

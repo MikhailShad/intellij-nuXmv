@@ -1,15 +1,16 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvComplexIdentifier;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFunctionName;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
+import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class NuXmvFunctionNameImpl extends ASTWrapperPsiElement implements NuXmvFunctionName {
+public class NuXmvFunctionNameImpl extends NuXmvNamedElementMixin implements NuXmvFunctionName {
 
     public NuXmvFunctionNameImpl(@NotNull ASTNode node) {
         super(node);
@@ -26,9 +27,9 @@ public class NuXmvFunctionNameImpl extends ASTWrapperPsiElement implements NuXmv
     }
 
     @Override
-    @NotNull
-    public NuXmvComplexIdentifier getComplexIdentifier() {
-        return findNotNullChildByClass(NuXmvComplexIdentifier.class);
+    @Nullable
+    public NuXmvExpr getExpr() {
+        return findChildByClass(NuXmvExpr.class);
     }
 
 }

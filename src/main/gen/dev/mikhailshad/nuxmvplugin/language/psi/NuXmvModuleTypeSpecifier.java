@@ -10,6 +10,6 @@ public interface NuXmvModuleTypeSpecifier extends PsiElement {
     NuXmvParameterList getParameterList();
 
     @NotNull
-    NuXmvSimpleIdentifier getSimpleIdentifier();
+    PsiElement getIdentifier();
 
 }

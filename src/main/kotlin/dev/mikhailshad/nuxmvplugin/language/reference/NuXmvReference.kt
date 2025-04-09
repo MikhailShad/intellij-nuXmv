@@ -1,64 +1,77 @@
 package dev.mikhailshad.nuxmvplugin.language.reference
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReferenceBase
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvCachedValuesManager
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvComplexIdentifier
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFile
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModule
+import dev.mikhailshad.nuxmvplugin.language.psi.*
 
-class NuXmvReference(element: NuXmvComplexIdentifier, range: TextRange) :
-    PsiReferenceBase<NuXmvComplexIdentifier>(element, range) {
+class NuXmvReference(element: NuXmvNamedElement, textRange: TextRange) :
+    PsiReferenceBase<NuXmvNamedElement>(element, textRange), PsiPolyVariantReference {
+    private val referenceName = element.text
 
     override fun resolve(): PsiElement? {
-        val file = element.containingFile as? NuXmvFile
-            ?: return null
-
-        val identifierText = element.text
-
-        if (!identifierText.contains('.')) {
-            val currentModule = PsiTreeUtil.getParentOfType(element, NuXmvModule::class.java)
-            return findReferenceInModule(identifierText, currentModule)
+        if (isDeclaration(element)) {
+            return null
         }
 
-        val parts = identifierText.split('.')
-        val modulePath = parts.dropLast(1)
-        val varName = parts.last()
+        val file = element.containingFile
+        val module = PsiTreeUtil.getParentOfType(element, NuXmvModule::class.java) ?: return null
 
-        var currentModule: NuXmvModule? = findModuleByName(file, modulePath.first())
-        for (i in 1 until modulePath.size) {
-            currentModule = findModuleByName(file, modulePath[i], currentModule)
-            if (currentModule == null) return null
-        }
+        // Check variables in current module
+        val varResult = resolveInModule(module, referenceName)
+        if (varResult != null) return varResult
 
-        // Look for the variable in the final module
-        return findReferenceInModule(varName, currentModule)
+        // Check for global modules
+        val modules = findModules(file)
+        val moduleResult = modules.find { it.name == referenceName }
+        return moduleResult
     }
 
-    private fun findModuleByName(file: NuXmvFile, name: String, parentModule: NuXmvModule? = null): NuXmvModule? {
-        if (parentModule == null) {
-            val modulesCache = NuXmvCachedValuesManager.getModulesInFile(file)
-            return modulesCache[name]
-        }
+    private fun resolveInModule(module: NuXmvModule, name: String): PsiElement? {
+        // Check module parameters
+        val parameters = PsiTreeUtil.findChildrenOfType(module, NuXmvModuleParameter::class.java)
+        parameters.find { it.name == name }?.let { return it }
+
+        // Check variable declarations
+        val vars = findVarDeclarations(module)
+        vars.find { it.name == name }?.let { return it }
+
+        // Check define declarations
+        val defines = findDefineDeclarations(module)
+        defines.find { it.text.contains(name) }?.let { return it }
 
         return null
     }
 
-    private fun findReferenceInModule(name: String, module: NuXmvModule?): PsiElement? {
-        if (module == null) return null
+    private fun findModules(file: PsiFile): List<NuXmvModuleName> {
+        return PsiTreeUtil.findChildrenOfType(file, NuXmvModuleName::class.java).toList()
+    }
 
-        val variable = NuXmvCachedValuesManager.getVariablesInModule(module)[name]
-        if (variable != null) {
-            return variable
+    private fun findVarDeclarations(module: NuXmvModule): List<NuXmvVarName> {
+        return PsiTreeUtil.findChildrenOfType(module, NuXmvVarName::class.java).toList()
+    }
+
+    private fun findDefineDeclarations(module: NuXmvModule): List<NuXmvDefineName> {
+        val defineDeclarations = PsiTreeUtil.findChildrenOfType(module, NuXmvDefineDeclaration::class.java)
+        return defineDeclarations.map { PsiTreeUtil.findChildrenOfType(it, NuXmvDefineName::class.java) }
+            .flatten()
+            .toList()
+    }
+
+    override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
+        val result = resolve()
+        return if (result != null) {
+            arrayOf(PsiElementResolveResult(result))
+        } else {
+            ResolveResult.EMPTY_ARRAY
         }
+    }
 
-        val ivar = NuXmvCachedValuesManager.getInvariantsInModule(module)[name]
-        if (ivar != null) {
-            return ivar
-        }
-
-        return null
+    private fun isDeclaration(element: PsiElement): Boolean {
+        val parent = element.parent
+        return parent is NuXmvVarName
+                || parent is NuXmvModuleName
+                || parent is NuXmvModuleParameter
+                || parent is NuXmvDefineName
     }
 }

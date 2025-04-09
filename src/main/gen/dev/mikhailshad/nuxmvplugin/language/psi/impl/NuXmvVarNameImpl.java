@@ -3,11 +3,12 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvComplexIdentifier;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVarName;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import dev.mikhailshad.nuxmvplugin.language.psi.mixin.VarNameMixin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class NuXmvVarNameImpl extends VarNameMixin implements NuXmvVarName {
 
@@ -26,9 +27,9 @@ public class NuXmvVarNameImpl extends VarNameMixin implements NuXmvVarName {
     }
 
     @Override
-    @NotNull
-    public NuXmvComplexIdentifier getComplexIdentifier() {
-        return findNotNullChildByClass(NuXmvComplexIdentifier.class);
+    @Nullable
+    public NuXmvExpr getExpr() {
+        return findChildByClass(NuXmvExpr.class);
     }
 
 }

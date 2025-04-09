@@ -10,7 +10,6 @@ public interface NuXmvTypes {
 
     IElementType AND_BASIC_EXPR = new NuXmvElementType("AND_BASIC_EXPR");
     IElementType ASSIGN_CONSTRAINT = new NuXmvElementType("ASSIGN_CONSTRAINT");
-    IElementType BASE_IDENTIFIER = new NuXmvElementType("BASE_IDENTIFIER");
     IElementType BASIC_EXPR_LIST = new NuXmvElementType("BASIC_EXPR_LIST");
     IElementType BINARY_LTL_EXPR = new NuXmvElementType("BINARY_LTL_EXPR");
     IElementType BINARY_LTL_OP = new NuXmvElementType("BINARY_LTL_OP");
@@ -18,15 +17,16 @@ public interface NuXmvTypes {
     IElementType BUILT_IN_CONSTANT = new NuXmvElementType("BUILT_IN_CONSTANT");
     IElementType CASE_BASIC_EXPR = new NuXmvElementType("CASE_BASIC_EXPR");
     IElementType COMPASSION_CONSTRAINT = new NuXmvElementType("COMPASSION_CONSTRAINT");
-    IElementType COMPLEX_IDENTIFIER = new NuXmvElementType("COMPLEX_IDENTIFIER");
     IElementType COMPUTE_EXPR = new NuXmvElementType("COMPUTE_EXPR");
     IElementType COMPUTE_SPECIFICATION = new NuXmvElementType("COMPUTE_SPECIFICATION");
     IElementType CONCAT_BASIC_EXPR = new NuXmvElementType("CONCAT_BASIC_EXPR");
     IElementType CONSTANTS_BODY = new NuXmvElementType("CONSTANTS_BODY");
     IElementType CONSTANTS_DECLARATION = new NuXmvElementType("CONSTANTS_DECLARATION");
+    IElementType CONSTANT_NAME = new NuXmvElementType("CONSTANT_NAME");
     IElementType CTL_SPECIFICATION = new NuXmvElementType("CTL_SPECIFICATION");
     IElementType DEFINE_BODY = new NuXmvElementType("DEFINE_BODY");
     IElementType DEFINE_DECLARATION = new NuXmvElementType("DEFINE_DECLARATION");
+    IElementType DEFINE_NAME = new NuXmvElementType("DEFINE_NAME");
     IElementType DIV_BASIC_EXPR = new NuXmvElementType("DIV_BASIC_EXPR");
     IElementType ENUMERATION_TYPE_BODY = new NuXmvElementType("ENUMERATION_TYPE_BODY");
     IElementType ENUMERATION_TYPE_VALUE = new NuXmvElementType("ENUMERATION_TYPE_VALUE");
@@ -70,6 +70,7 @@ public interface NuXmvTypes {
     IElementType MODULE_TYPE_SPECIFIER = new NuXmvElementType("MODULE_TYPE_SPECIFIER");
     IElementType MOD_BASIC_EXPR = new NuXmvElementType("MOD_BASIC_EXPR");
     IElementType MUL_BASIC_EXPR = new NuXmvElementType("MUL_BASIC_EXPR");
+    IElementType NAMED_SPECIFICATION = new NuXmvElementType("NAMED_SPECIFICATION");
     IElementType NEXT_ASSIGN_EXPR = new NuXmvElementType("NEXT_ASSIGN_EXPR");
     IElementType NOT_EQUALITY_BASIC_EXPR = new NuXmvElementType("NOT_EQUALITY_BASIC_EXPR");
     IElementType NOT_XOR_BASIC_EXPR = new NuXmvElementType("NOT_XOR_BASIC_EXPR");
@@ -88,7 +89,6 @@ public interface NuXmvTypes {
     IElementType SHIFT_LEFT_BASIC_EXPR = new NuXmvElementType("SHIFT_LEFT_BASIC_EXPR");
     IElementType SHIFT_RIGHT_BASIC_EXPR = new NuXmvElementType("SHIFT_RIGHT_BASIC_EXPR");
     IElementType SIMPLE_ASSIGN_EXPR = new NuXmvElementType("SIMPLE_ASSIGN_EXPR");
-    IElementType SIMPLE_IDENTIFIER = new NuXmvElementType("SIMPLE_IDENTIFIER");
     IElementType SIMPLE_TYPE_SPECIFIER = new NuXmvElementType("SIMPLE_TYPE_SPECIFIER");
     IElementType SINGLE_ASSIGN_CONSTRAINT = new NuXmvElementType("SINGLE_ASSIGN_CONSTRAINT");
     IElementType SINGLE_IVAR_DECLARATION = new NuXmvElementType("SINGLE_IVAR_DECLARATION");
@@ -234,6 +234,7 @@ public interface NuXmvTypes {
     IElementType PRED_KW = new NuXmvTokenType("PRED");
     IElementType PSLSPEC_KW = new NuXmvTokenType("PSLSPEC");
     IElementType QUESTION_MARK = new NuXmvTokenType("?");
+    IElementType QUOTES = new NuXmvTokenType("\"");
     IElementType RANGE = new NuXmvTokenType("..");
     IElementType RBRACE = new NuXmvTokenType("}");
     IElementType RBRACKET = new NuXmvTokenType("]");
@@ -291,8 +292,6 @@ public interface NuXmvTypes {
                 return new NuXmvAndBasicExprImpl(node);
             } else if (type == ASSIGN_CONSTRAINT) {
                 return new NuXmvAssignConstraintImpl(node);
-            } else if (type == BASE_IDENTIFIER) {
-                return new NuXmvBaseIdentifierImpl(node);
             } else if (type == BASIC_EXPR_LIST) {
                 return new NuXmvBasicExprListImpl(node);
             } else if (type == BINARY_LTL_EXPR) {
@@ -307,8 +306,6 @@ public interface NuXmvTypes {
                 return new NuXmvCaseBasicExprImpl(node);
             } else if (type == COMPASSION_CONSTRAINT) {
                 return new NuXmvCompassionConstraintImpl(node);
-            } else if (type == COMPLEX_IDENTIFIER) {
-                return new NuXmvComplexIdentifierImpl(node);
             } else if (type == COMPUTE_EXPR) {
                 return new NuXmvComputeExprImpl(node);
             } else if (type == COMPUTE_SPECIFICATION) {
@@ -319,12 +316,16 @@ public interface NuXmvTypes {
                 return new NuXmvConstantsBodyImpl(node);
             } else if (type == CONSTANTS_DECLARATION) {
                 return new NuXmvConstantsDeclarationImpl(node);
+            } else if (type == CONSTANT_NAME) {
+                return new NuXmvConstantNameImpl(node);
             } else if (type == CTL_SPECIFICATION) {
                 return new NuXmvCtlSpecificationImpl(node);
             } else if (type == DEFINE_BODY) {
                 return new NuXmvDefineBodyImpl(node);
             } else if (type == DEFINE_DECLARATION) {
                 return new NuXmvDefineDeclarationImpl(node);
+            } else if (type == DEFINE_NAME) {
+                return new NuXmvDefineNameImpl(node);
             } else if (type == DIV_BASIC_EXPR) {
                 return new NuXmvDivBasicExprImpl(node);
             } else if (type == ENUMERATION_TYPE_BODY) {
@@ -409,6 +410,8 @@ public interface NuXmvTypes {
                 return new NuXmvModBasicExprImpl(node);
             } else if (type == MUL_BASIC_EXPR) {
                 return new NuXmvMulBasicExprImpl(node);
+            } else if (type == NAMED_SPECIFICATION) {
+                return new NuXmvNamedSpecificationImpl(node);
             } else if (type == NEXT_ASSIGN_EXPR) {
                 return new NuXmvNextAssignExprImpl(node);
             } else if (type == NOT_EQUALITY_BASIC_EXPR) {
@@ -445,8 +448,6 @@ public interface NuXmvTypes {
                 return new NuXmvShiftRightBasicExprImpl(node);
             } else if (type == SIMPLE_ASSIGN_EXPR) {
                 return new NuXmvSimpleAssignExprImpl(node);
-            } else if (type == SIMPLE_IDENTIFIER) {
-                return new NuXmvSimpleIdentifierImpl(node);
             } else if (type == SIMPLE_TYPE_SPECIFIER) {
                 return new NuXmvSimpleTypeSpecifierImpl(node);
             } else if (type == SINGLE_ASSIGN_CONSTRAINT) {

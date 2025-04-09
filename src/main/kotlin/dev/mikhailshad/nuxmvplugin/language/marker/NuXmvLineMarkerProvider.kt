@@ -36,7 +36,7 @@ class NuXmvLineMarkerProvider : RelatedItemLineMarkerProvider() {
 
         // Add markers for module instantiations that can be navigated to the declaration
         if (element is NuXmvModuleTypeSpecifier) {
-            val simpleIdentifier = element.simpleIdentifier
+            val simpleIdentifier = element.firstChild
             val moduleName = simpleIdentifier.text
             val target = findModuleDeclaration(element, moduleName)
 
@@ -63,7 +63,7 @@ class NuXmvLineMarkerProvider : RelatedItemLineMarkerProvider() {
             // Find module type specifiers that reference this module
             val moduleTypeSpecifiers = PsiTreeUtil.findChildrenOfType(psiFile, NuXmvModuleTypeSpecifier::class.java)
             for (specifier in moduleTypeSpecifiers) {
-                val identifier = specifier.simpleIdentifier
+                val identifier = specifier.firstChild
                 if (identifier.text == moduleName) {
                     result.add(specifier)
                 }

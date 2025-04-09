@@ -150,7 +150,7 @@ class NuXmvSyntaxHighlighter : SyntaxHighlighterBase() {
             NuXmvParserDefinition.Util.BRACES to BRACES_ATTRIBUTE,
             NuXmvParserDefinition.Util.BRACKETS to BRACKETS_ATTRIBUTE,
             NuXmvParserDefinition.Util.PARENTHESES to PARENTHESES_ATTRIBUTE,
-            NuXmvParserDefinition.Util.BUILTIN_FUNCTION_CALLS to FUNCTION_CALL_ATTRIBUTE,
+            NuXmvParserDefinition.Util.FUNCTION_CALLS to FUNCTION_CALL_ATTRIBUTE,
         ).forEach {
             fillMap(tokenTypeToAttribute, it.key, it.value)
         }

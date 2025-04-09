@@ -4,6 +4,7 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvRangeConstant;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvRtCtlExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,12 @@ public class NuXmvRtCtlExprImpl extends NuXmvExprImpl implements NuXmvRtCtlExpr 
     @Nullable
     public NuXmvExpr getExpr() {
         return findChildByClass(NuXmvExpr.class);
+    }
+
+    @Override
+    @Nullable
+    public NuXmvRangeConstant getRangeConstant() {
+        return findChildByClass(NuXmvRangeConstant.class);
     }
 
 }

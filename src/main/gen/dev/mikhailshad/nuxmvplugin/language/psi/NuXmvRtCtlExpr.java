@@ -8,4 +8,7 @@ public interface NuXmvRtCtlExpr extends NuXmvExpr {
     @Nullable
     NuXmvExpr getExpr();
 
+    @Nullable
+    NuXmvRangeConstant getRangeConstant();
+
 }

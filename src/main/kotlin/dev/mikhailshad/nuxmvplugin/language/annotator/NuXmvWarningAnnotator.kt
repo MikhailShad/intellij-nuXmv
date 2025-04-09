@@ -30,7 +30,7 @@ class NuXmvWarningAnnotator : Annotator {
     }
 
     private fun checkValidReferences(element: PsiElement, holder: AnnotationHolder) {
-        if (element !is NuXmvComplexIdentifier) {
+        if (element !is NuXmvNamedElement) {
             return
         }
 
@@ -39,12 +39,11 @@ class NuXmvWarningAnnotator : Annotator {
             return
         }
 
-        val range = TextRange(element.textRange.startOffset, element.textRange.endOffset)
         val reference = NuXmvReference(element, TextRange(0, element.text.length))
 
         if (reference.resolve() == null) {
             holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved reference: ${element.text}")
-                .range(range)
+                .range(element)
                 .create()
         }
     }

@@ -6,7 +6,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvCtlSpecification;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvSimpleIdentifier;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedSpecification;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,8 +35,8 @@ public class NuXmvCtlSpecificationImpl extends ASTWrapperPsiElement implements N
 
     @Override
     @Nullable
-    public NuXmvSimpleIdentifier getSimpleIdentifier() {
-        return findChildByClass(NuXmvSimpleIdentifier.class);
+    public NuXmvNamedSpecification getNamedSpecification() {
+        return findChildByClass(NuXmvNamedSpecification.class);
     }
 
 }

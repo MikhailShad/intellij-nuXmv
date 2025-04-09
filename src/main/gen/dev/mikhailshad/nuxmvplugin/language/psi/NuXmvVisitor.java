@@ -15,10 +15,6 @@ public class NuXmvVisitor extends PsiElementVisitor {
         visitPsiElement(o);
     }
 
-    public void visitBaseIdentifier(@NotNull NuXmvBaseIdentifier o) {
-        visitPsiElement(o);
-    }
-
     public void visitBasicExprList(@NotNull NuXmvBasicExprList o) {
         visitPsiElement(o);
     }
@@ -47,10 +43,6 @@ public class NuXmvVisitor extends PsiElementVisitor {
         visitPsiElement(o);
     }
 
-    public void visitComplexIdentifier(@NotNull NuXmvComplexIdentifier o) {
-        visitPsiElement(o);
-    }
-
     public void visitComputeExpr(@NotNull NuXmvComputeExpr o) {
         visitExpr(o);
     }
@@ -61,6 +53,10 @@ public class NuXmvVisitor extends PsiElementVisitor {
 
     public void visitConcatBasicExpr(@NotNull NuXmvConcatBasicExpr o) {
         visitExpr(o);
+    }
+
+    public void visitConstantName(@NotNull NuXmvConstantName o) {
+        visitNamedElement(o);
     }
 
     public void visitConstantsBody(@NotNull NuXmvConstantsBody o) {
@@ -83,6 +79,10 @@ public class NuXmvVisitor extends PsiElementVisitor {
         visitPsiElement(o);
     }
 
+    public void visitDefineName(@NotNull NuXmvDefineName o) {
+        visitNamedElement(o);
+    }
+
     public void visitDivBasicExpr(@NotNull NuXmvDivBasicExpr o) {
         visitExpr(o);
     }
@@ -92,7 +92,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitEnumerationTypeValue(@NotNull NuXmvEnumerationTypeValue o) {
-        visitPsiElement(o);
+        visitNamedElement(o);
     }
 
     public void visitEqualityBasicExpr(@NotNull NuXmvEqualityBasicExpr o) {
@@ -132,7 +132,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitFunctionName(@NotNull NuXmvFunctionName o) {
-        visitPsiElement(o);
+        visitNamedElement(o);
     }
 
     public void visitFunctionSpecification(@NotNull NuXmvFunctionSpecification o) {
@@ -255,6 +255,10 @@ public class NuXmvVisitor extends PsiElementVisitor {
         visitExpr(o);
     }
 
+    public void visitNamedSpecification(@NotNull NuXmvNamedSpecification o) {
+        visitNamedElement(o);
+    }
+
     public void visitNextAssignExpr(@NotNull NuXmvNextAssignExpr o) {
         visitExpr(o);
     }
@@ -305,6 +309,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
 
     public void visitReferenceBasicExpr(@NotNull NuXmvReferenceBasicExpr o) {
         visitExpr(o);
+        // visitNamedElement(o);
     }
 
     public void visitRegularCaseBody(@NotNull NuXmvRegularCaseBody o) {
@@ -325,10 +330,6 @@ public class NuXmvVisitor extends PsiElementVisitor {
 
     public void visitSimpleAssignExpr(@NotNull NuXmvSimpleAssignExpr o) {
         visitExpr(o);
-    }
-
-    public void visitSimpleIdentifier(@NotNull NuXmvSimpleIdentifier o) {
-        visitPsiElement(o);
     }
 
     public void visitSimpleTypeSpecifier(@NotNull NuXmvSimpleTypeSpecifier o) {

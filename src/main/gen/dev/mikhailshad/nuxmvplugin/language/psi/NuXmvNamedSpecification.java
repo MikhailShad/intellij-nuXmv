@@ -4,7 +4,7 @@ package dev.mikhailshad.nuxmvplugin.language.psi;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public interface NuXmvSimpleIdentifier extends PsiElement {
+public interface NuXmvNamedSpecification extends NuXmvNamedElement {
 
     @NotNull
     PsiElement getIdentifier();

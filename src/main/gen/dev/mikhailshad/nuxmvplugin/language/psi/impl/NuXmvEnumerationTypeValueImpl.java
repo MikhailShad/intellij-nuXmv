@@ -1,17 +1,17 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvComplexIdentifier;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvEnumerationTypeValue;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvWholeNumber;
+import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvEnumValueMixin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class NuXmvEnumerationTypeValueImpl extends ASTWrapperPsiElement implements NuXmvEnumerationTypeValue {
+public class NuXmvEnumerationTypeValueImpl extends NuXmvEnumValueMixin implements NuXmvEnumerationTypeValue {
 
     public NuXmvEnumerationTypeValueImpl(@NotNull ASTNode node) {
         super(node);
@@ -29,8 +29,8 @@ public class NuXmvEnumerationTypeValueImpl extends ASTWrapperPsiElement implemen
 
     @Override
     @Nullable
-    public NuXmvComplexIdentifier getComplexIdentifier() {
-        return findChildByClass(NuXmvComplexIdentifier.class);
+    public NuXmvExpr getExpr() {
+        return findChildByClass(NuXmvExpr.class);
     }
 
     @Override

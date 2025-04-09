@@ -38,7 +38,7 @@ class NuXmvNavigationContributor : ChooseByNameContributor {
 
                 val defineDeclarations = PsiTreeUtil.findChildrenOfType(moduleBody, NuXmvDefineBody::class.java)
                 for (defineDecl in defineDeclarations) {
-                    defineDecl.complexIdentifier.text?.let { result.add(it) }
+                    defineDecl.defineName.text?.let { result.add(it) }
                 }
             }
         }
@@ -85,7 +85,7 @@ class NuXmvNavigationContributor : ChooseByNameContributor {
 
                 val defineDeclarations = PsiTreeUtil.findChildrenOfType(moduleBody, NuXmvDefineBody::class.java)
                 for (defineDecl in defineDeclarations) {
-                    if (defineDecl.complexIdentifier.text == name) {
+                    if (defineDecl.defineName.text == name) {
                         result.add(defineDecl as NavigationItem)
                     }
                 }

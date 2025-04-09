@@ -65,7 +65,7 @@ object NuXmvVariableCompletionProvider : CompletionProvider<CompletionParameters
 
         defineDeclarations.forEach { declaration ->
             if (PsiTreeUtil.isAncestor(containingModule, declaration, false)) {
-                val defineName = declaration.complexIdentifier.text
+                val defineName = declaration.defineName.text
                 resultSet.addElement(
                     LookupElementBuilder.create(defineName)
                         .withTypeText("DEFINE")

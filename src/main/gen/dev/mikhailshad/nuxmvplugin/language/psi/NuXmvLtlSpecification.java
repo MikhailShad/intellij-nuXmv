@@ -10,6 +10,6 @@ public interface NuXmvLtlSpecification extends PsiElement {
     NuXmvExpr getExpr();
 
     @Nullable
-    NuXmvSimpleIdentifier getSimpleIdentifier();
+    NuXmvNamedSpecification getNamedSpecification();
 
 }

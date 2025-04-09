@@ -4,9 +4,8 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvComplexIdentifier;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvComputeExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvComputeSpecification;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,14 +28,8 @@ public class NuXmvComputeSpecificationImpl extends ASTWrapperPsiElement implemen
 
     @Override
     @Nullable
-    public NuXmvComplexIdentifier getComplexIdentifier() {
-        return findChildByClass(NuXmvComplexIdentifier.class);
-    }
-
-    @Override
-    @Nullable
-    public NuXmvComputeExpr getComputeExpr() {
-        return findChildByClass(NuXmvComputeExpr.class);
+    public NuXmvExpr getExpr() {
+        return findChildByClass(NuXmvExpr.class);
     }
 
 }

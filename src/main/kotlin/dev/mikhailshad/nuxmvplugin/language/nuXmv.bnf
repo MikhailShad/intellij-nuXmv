@@ -55,6 +55,7 @@
     COLON           = ':'
     RANGE           = '..'
     CONCAT          = '::'
+    QUOTES          = '"'
 
     UNION           = 'union'
     IN              = 'in'
@@ -221,14 +222,13 @@ File ::= !<<eof>> Module+ {pin=1}
 Module ::= ModuleDeclaration ModuleBody?
 ModuleDeclaration ::= MODULE_KW ModuleName (LPAREN ModuleParameter (COMMA ModuleParameter)* RPAREN)? {
     pin=1
-    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.ModuleDeclarationMixin"
 }
 ModuleName ::= SimpleIdentifier {
-    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.ModuleNameMixin"
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
 }
 ModuleParameter ::= SimpleIdentifier {
-    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.ModuleParameterMixin"
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
 }
 ModuleBody ::= ModuleElement+
@@ -265,52 +265,56 @@ private module_element_recover ::= !(
     | MODULE_KW
     )
 
-CtlSpecification ::= CtlSpecKeyWord CtlNamedSpecification? Expr SEMICOLON? {pin=1}
+CtlSpecification ::= CtlSpecKeyWord NamedSpecification? Expr SEMICOLON? {pin=1}
 private CtlSpecKeyWord ::= CTLSPEC_KW | SPEC_KW
-private CtlNamedSpecification ::=  NAME_KW SimpleIdentifier ASSIGN {
-    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
-}
 
-LtlSpecification ::= LTLSPEC_KW LtlNamedSpecification? Expr SEMICOLON? {pin=1}
-private LtlNamedSpecification ::= NAME_KW SimpleIdentifier ASSIGN {
-    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
-}
+LtlSpecification ::= LTLSPEC_KW NamedSpecification? Expr SEMICOLON? {pin=1}
 
-InvarSpecification ::= INVARSPEC_KW NamedInvarSpecification? Expr SEMICOLON? {pin=1}
-private NamedInvarSpecification ::= NAME_KW SimpleIdentifier ASSIGN {
+InvarSpecification ::= INVARSPEC_KW NamedSpecification? Expr SEMICOLON? {pin=1}
+
+NamedSpecification ::=  NAME_KW SimpleIdentifier ASSIGN {
+    mixin ="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NamedSpecificationMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
 }
 
 VarDeclaration ::= VAR_KW SingleVarDeclaration+ {pin=1}
 SingleVarDeclaration ::= VarName COLON TypeSpecifier SEMICOLON {
     pin=2
-    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.SingleVarDeclarationMixin"
 }
 
 IvarDeclaration ::= IVAR_KW SingleIvarDeclaration+ {pin=1}
 SingleIvarDeclaration ::= VarName COLON SimpleTypeSpecifier SEMICOLON {
     pin=2
-    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.SingleIvarDeclarationMixin"
 }
 
 FrozenVarDeclaration ::= FROZENVAR_KW SingleIvarDeclaration {pin=1}
-VarName ::= ComplexIdentifier
-    | "\"" ComplexIdentifier "\"" {
+VarName ::= QUOTES ComplexIdentifier QUOTES | ComplexIdentifier {
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.VarNameMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
 }
 
 FunctionDeclaration ::= FUN_KW FunctionSpecification+ {pin=1}
 FunctionSpecification ::= FunctionName COLON FunctionTypeSpecifier SEMICOLON {pin=2}
-FunctionName ::= ComplexIdentifier
+FunctionName ::= ComplexIdentifier {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+}
 FunctionTypeSpecifier ::= FunctionArgTypesSpecifier IMPLICATION SimpleTypeSpecifier
 FunctionArgTypesSpecifier ::= SimpleTypeSpecifier (MULT SimpleTypeSpecifier)*
 
 DefineDeclaration ::= DEFINE_KW DefineBody+ {pin=1}
-DefineBody ::= ComplexIdentifier ASSIGN Expr SEMICOLON {pin=2}
+DefineBody ::= DefineName ASSIGN Expr SEMICOLON {pin=2}
+DefineName ::= ComplexIdentifier {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+}
 
 ConstantsDeclaration ::= CONSTANTS_KW ConstantsBody SEMICOLON {pin=1}
-ConstantsBody ::= ComplexIdentifier (COMMA ComplexIdentifier)*
+ConstantsBody ::= ConstantName (COMMA ComplexIdentifier)*
+ConstantName ::= ComplexIdentifier {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+}
 
 AssignConstraint ::= ASSIGN_KW SingleAssignConstraint+ {pin=1}
 SingleAssignConstraint ::= AssignExpr SEMICOLON {pin=1}
@@ -373,8 +377,8 @@ private WordType ::= WORD_TYPE LBRACKET WholeNumber RBRACKET
 private IntegerType ::= INTEGER_TYPE
 EnumerationTypeBody ::= EnumerationTypeValue (COMMA EnumerationTypeValue)*
 EnumerationTypeValue ::= WholeNumber | ComplexIdentifier {
-    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvEnumValueMixinImpl"
-    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvEnumValue"
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvEnumValueMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
 }
 ModuleTypeSpecifier ::= SimpleIdentifier ParameterList
 ParameterList ::= LPAREN [Expr (COMMA Expr)*] RPAREN
@@ -453,7 +457,7 @@ FunctionIdentifier ::= INIT_FUN|NEXT_FUN|ABS_FUN|MAX_FUN|MIN_FUN|SIN_FUN|COS_FUN
     |TO_SIGNED_FUN|TO_UNSIGNED_FUN|SIZEOF_FUN|FLOOR_FUN|EXTEND_FUN|RESIZE_FUN
     |TO_SIGNED_WORD_FUN|TO_UNSIGNED_WORD_FUN|READ_FUN|WRITE_FUN|CONSTARRAY_FUN|TYPE_OF_FUN
     | SimpleIdentifier {
-    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.FunctionIdentifierMixin"
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
 }
 BasicExprList ::= Expr (COMMA Expr)* {pin(".*")=1}
@@ -496,7 +500,10 @@ RangeConstant ::= WholeNumber RANGE WholeNumber
 WholeNumber ::= POSITIVE_INTEGER_NUMBER | INTEGER_NUMBER
 RealNumber ::= FLOAT_NUMBER | FRACTIONAL_NUMBER | EXPONENTIAL_NUMBER
 BuiltInConstant ::= TIME | PI
-ReferenceBasicExpr ::= ComplexIdentifier | SimpleIdentifier
+ReferenceBasicExpr ::= ComplexIdentifier | SimpleIdentifier {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+}
 private ComplexIdentifier ::= BaseIdentifier (DOT SimpleIdentifier) * (LBRACKET Expr RBRACKET)?
 private BaseIdentifier ::= SimpleIdentifier | SELF_KW
 private SimpleIdentifier ::= IDENTIFIER

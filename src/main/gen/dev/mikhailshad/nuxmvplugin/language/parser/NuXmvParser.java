@@ -92,14 +92,12 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
 
     /* ********************************************************** */
     // SimpleIdentifier | SELF_KW
-    public static boolean BaseIdentifier(PsiBuilder b, int l) {
+    static boolean BaseIdentifier(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "BaseIdentifier")) return false;
-        if (!nextTokenIs(b, "<base identifier>", IDENTIFIER, SELF_KW)) return false;
+        if (!nextTokenIs(b, "", IDENTIFIER, SELF_KW)) return false;
         boolean r;
-        Marker m = enter_section_(b, l, _NONE_, BASE_IDENTIFIER, "<base identifier>");
         r = SimpleIdentifier(b, l + 1);
         if (!r) r = consumeToken(b, SELF_KW);
-        exit_section_(b, l, m, r, false, null);
         return r;
     }
 
@@ -208,15 +206,15 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
 
     /* ********************************************************** */
     // BaseIdentifier (DOT SimpleIdentifier) * (LBRACKET Expr RBRACKET)?
-    public static boolean ComplexIdentifier(PsiBuilder b, int l) {
+    static boolean ComplexIdentifier(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "ComplexIdentifier")) return false;
-        if (!nextTokenIs(b, "<complex identifier>", IDENTIFIER, SELF_KW)) return false;
+        if (!nextTokenIs(b, "", IDENTIFIER, SELF_KW)) return false;
         boolean r;
-        Marker m = enter_section_(b, l, _NONE_, COMPLEX_IDENTIFIER, "<complex identifier>");
+        Marker m = enter_section_(b);
         r = BaseIdentifier(b, l + 1);
         r = r && ComplexIdentifier_1(b, l + 1);
         r = r && ComplexIdentifier_2(b, l + 1);
-        exit_section_(b, l, m, r, false, null);
+        exit_section_(b, m, null, r);
         return r;
     }
 
@@ -340,13 +338,25 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // ComplexIdentifier (COMMA ComplexIdentifier)*
+    // ComplexIdentifier
+    public static boolean ConstantName(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "ConstantName")) return false;
+        if (!nextTokenIs(b, "<constant name>", IDENTIFIER, SELF_KW)) return false;
+        boolean r;
+        Marker m = enter_section_(b, l, _NONE_, CONSTANT_NAME, "<constant name>");
+        r = ComplexIdentifier(b, l + 1);
+        exit_section_(b, l, m, r, false, null);
+        return r;
+    }
+
+    /* ********************************************************** */
+    // ConstantName (COMMA ComplexIdentifier)*
     public static boolean ConstantsBody(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "ConstantsBody")) return false;
         if (!nextTokenIs(b, "<constants body>", IDENTIFIER, SELF_KW)) return false;
         boolean r;
         Marker m = enter_section_(b, l, _NONE_, CONSTANTS_BODY, "<constants body>");
-        r = ComplexIdentifier(b, l + 1);
+        r = ConstantName(b, l + 1);
         r = r && ConstantsBody_1(b, l + 1);
         exit_section_(b, l, m, r, false, null);
         return r;
@@ -390,20 +400,6 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // NAME_KW SimpleIdentifier ASSIGN
-    static boolean CtlNamedSpecification(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "CtlNamedSpecification")) return false;
-        if (!nextTokenIs(b, NAME_KW)) return false;
-        boolean r;
-        Marker m = enter_section_(b);
-        r = consumeToken(b, NAME_KW);
-        r = r && SimpleIdentifier(b, l + 1);
-        r = r && consumeToken(b, ASSIGN);
-        exit_section_(b, m, null, r);
-        return r;
-    }
-
-    /* ********************************************************** */
     // CTLSPEC_KW | SPEC_KW
     static boolean CtlSpecKeyWord(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "CtlSpecKeyWord")) return false;
@@ -415,7 +411,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // CtlSpecKeyWord CtlNamedSpecification? Expr SEMICOLON?
+    // CtlSpecKeyWord NamedSpecification? Expr SEMICOLON?
     public static boolean CtlSpecification(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "CtlSpecification")) return false;
         if (!nextTokenIs(b, "<ctl specification>", CTLSPEC_KW, SPEC_KW)) return false;
@@ -430,10 +426,10 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         return r || p;
     }
 
-    // CtlNamedSpecification?
+    // NamedSpecification?
     private static boolean CtlSpecification_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "CtlSpecification_1")) return false;
-        CtlNamedSpecification(b, l + 1);
+        NamedSpecification(b, l + 1);
         return true;
     }
 
@@ -445,13 +441,13 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // ComplexIdentifier ASSIGN Expr SEMICOLON
+    // DefineName ASSIGN Expr SEMICOLON
     public static boolean DefineBody(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "DefineBody")) return false;
         if (!nextTokenIs(b, "<define body>", IDENTIFIER, SELF_KW)) return false;
         boolean r, p;
         Marker m = enter_section_(b, l, _NONE_, DEFINE_BODY, "<define body>");
-        r = ComplexIdentifier(b, l + 1);
+        r = DefineName(b, l + 1);
         r = r && consumeToken(b, ASSIGN);
         p = r; // pin = 2
         r = r && report_error_(b, Expr(b, l + 1, -1));
@@ -486,6 +482,18 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
             if (!empty_element_parsed_guard_(b, "DefineDeclaration_1", c)) break;
         }
         exit_section_(b, m, null, r);
+        return r;
+    }
+
+    /* ********************************************************** */
+    // ComplexIdentifier
+    public static boolean DefineName(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "DefineName")) return false;
+        if (!nextTokenIs(b, "<define name>", IDENTIFIER, SELF_KW)) return false;
+        boolean r;
+        Marker m = enter_section_(b, l, _NONE_, DEFINE_NAME, "<define name>");
+        r = ComplexIdentifier(b, l + 1);
+        exit_section_(b, l, m, r, false, null);
         return r;
     }
 
@@ -835,6 +843,12 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
+    // INTEGER_TYPE
+    static boolean IntegerType(PsiBuilder b, int l) {
+        return consumeToken(b, INTEGER_TYPE);
+    }
+
+    /* ********************************************************** */
     // INVAR_KW Expr (IMPLICATION Expr)? SEMICOLON?
     public static boolean InvarConstraint(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "InvarConstraint")) return false;
@@ -876,7 +890,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // INVARSPEC_KW NamedInvarSpecification? Expr SEMICOLON?
+    // INVARSPEC_KW NamedSpecification? Expr SEMICOLON?
     public static boolean InvarSpecification(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "InvarSpecification")) return false;
         if (!nextTokenIs(b, INVARSPEC_KW)) return false;
@@ -891,10 +905,10 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         return r || p;
     }
 
-    // NamedInvarSpecification?
+    // NamedSpecification?
     private static boolean InvarSpecification_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "InvarSpecification_1")) return false;
-        NamedInvarSpecification(b, l + 1);
+        NamedSpecification(b, l + 1);
         return true;
     }
 
@@ -970,21 +984,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // NAME_KW SimpleIdentifier ASSIGN
-    static boolean LtlNamedSpecification(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "LtlNamedSpecification")) return false;
-        if (!nextTokenIs(b, NAME_KW)) return false;
-        boolean r;
-        Marker m = enter_section_(b);
-        r = consumeToken(b, NAME_KW);
-        r = r && SimpleIdentifier(b, l + 1);
-        r = r && consumeToken(b, ASSIGN);
-        exit_section_(b, m, null, r);
-        return r;
-    }
-
-    /* ********************************************************** */
-    // LTLSPEC_KW LtlNamedSpecification? Expr SEMICOLON?
+    // LTLSPEC_KW NamedSpecification? Expr SEMICOLON?
     public static boolean LtlSpecification(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "LtlSpecification")) return false;
         if (!nextTokenIs(b, LTLSPEC_KW)) return false;
@@ -999,10 +999,10 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         return r || p;
     }
 
-    // LtlNamedSpecification?
+    // NamedSpecification?
     private static boolean LtlSpecification_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "LtlSpecification_1")) return false;
-        LtlNamedSpecification(b, l + 1);
+        NamedSpecification(b, l + 1);
         return true;
     }
 
@@ -1218,15 +1218,15 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
 
     /* ********************************************************** */
     // NAME_KW SimpleIdentifier ASSIGN
-    static boolean NamedInvarSpecification(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "NamedInvarSpecification")) return false;
+    public static boolean NamedSpecification(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "NamedSpecification")) return false;
         if (!nextTokenIs(b, NAME_KW)) return false;
         boolean r;
         Marker m = enter_section_(b);
         r = consumeToken(b, NAME_KW);
         r = r && SimpleIdentifier(b, l + 1);
         r = r && consumeToken(b, ASSIGN);
-        exit_section_(b, m, null, r);
+        exit_section_(b, m, NAMED_SPECIFICATION, r);
         return r;
     }
 
@@ -1442,7 +1442,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
 
     /* ********************************************************** */
     // Expr
-    //     | (RTCTL_EBF | RTCTL_ABF | RTCTL_EBG | RTCTL_ABG) INTEGER_NUMBER RANGE INTEGER_NUMBER RtCtlExpr
+    //     | (RTCTL_EBF | RTCTL_ABF | RTCTL_EBG | RTCTL_ABG) RangeConstant RtCtlExpr
     //     | (CTL_FORALL | CTL_EXISTS) LBRACKET RtCtlExpr RTCTL_BU RtCtlExpr RBRACKET
     public static boolean RtCtlExpr(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "RtCtlExpr")) return false;
@@ -1455,13 +1455,13 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         return r;
     }
 
-    // (RTCTL_EBF | RTCTL_ABF | RTCTL_EBG | RTCTL_ABG) INTEGER_NUMBER RANGE INTEGER_NUMBER RtCtlExpr
+    // (RTCTL_EBF | RTCTL_ABF | RTCTL_EBG | RTCTL_ABG) RangeConstant RtCtlExpr
     private static boolean RtCtlExpr_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "RtCtlExpr_1")) return false;
         boolean r;
         Marker m = enter_section_(b);
         r = RtCtlExpr_1_0(b, l + 1);
-        r = r && consumeTokens(b, 0, INTEGER_NUMBER, RANGE, INTEGER_NUMBER);
+        r = r && RangeConstant(b, l + 1);
         r = r && RtCtlExpr(b, l + 1);
         exit_section_(b, m, null, r);
         return r;
@@ -1508,7 +1508,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         if (!recursion_guard_(b, l, "SimpleAssignExpr")) return false;
         if (!nextTokenIs(b, "<simple assign expr>", IDENTIFIER, SELF_KW)) return false;
         boolean r, p;
-        Marker m = enter_section_(b, l, _NONE_, SIMPLE_ASSIGN_EXPR, "<simple assign expr>");
+        Marker m = enter_section_(b, l, _COLLAPSE_, SIMPLE_ASSIGN_EXPR, "<simple assign expr>");
         r = ComplexIdentifier(b, l + 1);
         p = r; // pin = 1
         r = r && report_error_(b, consumeToken(b, ASSIGN));
@@ -1519,56 +1519,42 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
 
     /* ********************************************************** */
     // IDENTIFIER
-    public static boolean SimpleIdentifier(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "SimpleIdentifier")) return false;
-        if (!nextTokenIs(b, IDENTIFIER)) return false;
-        boolean r;
-        Marker m = enter_section_(b);
-        r = consumeToken(b, IDENTIFIER);
-        exit_section_(b, m, SIMPLE_IDENTIFIER, r);
-        return r;
+    static boolean SimpleIdentifier(PsiBuilder b, int l) {
+        return consumeToken(b, IDENTIFIER);
     }
 
     /* ********************************************************** */
     // BOOLEAN_TYPE
-    //     | WORD_TYPE LBRACKET WholeNumber RBRACKET
+    //     | WordType
     //     | UNSIGNED_WORD_TYPE LBRACKET WholeNumber RBRACKET
     //     | SIGNED_WORD_TYPE LBRACKET WholeNumber RBRACKET
-    //     | INTEGER_TYPE
+    //     | IntegerType
     //     | REAL_TYPE
     //     | CLOCK_TYPE
     //     | LBRACE EnumerationTypeBody RBRACE
-    //     | WholeNumber RANGE WholeNumber
-    //     | ARRAY_TYPE WholeNumber RANGE WholeNumber ARRAY_OF SimpleTypeSpecifier
+    //     | RangeConstant
+    //     | ARRAY_TYPE RangeConstant ARRAY_OF SimpleTypeSpecifier
+    //     | ARRAY_TYPE WordType ARRAY_OF SimpleTypeSpecifier
+    //     | ARRAY_TYPE IntegerType ARRAY_OF SimpleTypeSpecifier
     //     | SimpleIdentifier
     public static boolean SimpleTypeSpecifier(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "SimpleTypeSpecifier")) return false;
         boolean r;
         Marker m = enter_section_(b, l, _NONE_, SIMPLE_TYPE_SPECIFIER, "<simple type specifier>");
         r = consumeToken(b, BOOLEAN_TYPE);
-        if (!r) r = SimpleTypeSpecifier_1(b, l + 1);
+        if (!r) r = WordType(b, l + 1);
         if (!r) r = SimpleTypeSpecifier_2(b, l + 1);
         if (!r) r = SimpleTypeSpecifier_3(b, l + 1);
-        if (!r) r = consumeToken(b, INTEGER_TYPE);
+        if (!r) r = IntegerType(b, l + 1);
         if (!r) r = consumeToken(b, REAL_TYPE);
         if (!r) r = consumeToken(b, CLOCK_TYPE);
         if (!r) r = SimpleTypeSpecifier_7(b, l + 1);
-        if (!r) r = SimpleTypeSpecifier_8(b, l + 1);
+        if (!r) r = RangeConstant(b, l + 1);
         if (!r) r = SimpleTypeSpecifier_9(b, l + 1);
+        if (!r) r = SimpleTypeSpecifier_10(b, l + 1);
+        if (!r) r = SimpleTypeSpecifier_11(b, l + 1);
         if (!r) r = SimpleIdentifier(b, l + 1);
         exit_section_(b, l, m, r, false, null);
-        return r;
-    }
-
-    // WORD_TYPE LBRACKET WholeNumber RBRACKET
-    private static boolean SimpleTypeSpecifier_1(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "SimpleTypeSpecifier_1")) return false;
-        boolean r;
-        Marker m = enter_section_(b);
-        r = consumeTokens(b, 0, WORD_TYPE, LBRACKET);
-        r = r && WholeNumber(b, l + 1);
-        r = r && consumeToken(b, RBRACKET);
-        exit_section_(b, m, null, r);
         return r;
     }
 
@@ -1608,27 +1594,39 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         return r;
     }
 
-    // WholeNumber RANGE WholeNumber
-    private static boolean SimpleTypeSpecifier_8(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "SimpleTypeSpecifier_8")) return false;
-        boolean r;
-        Marker m = enter_section_(b);
-        r = WholeNumber(b, l + 1);
-        r = r && consumeToken(b, RANGE);
-        r = r && WholeNumber(b, l + 1);
-        exit_section_(b, m, null, r);
-        return r;
-    }
-
-    // ARRAY_TYPE WholeNumber RANGE WholeNumber ARRAY_OF SimpleTypeSpecifier
+    // ARRAY_TYPE RangeConstant ARRAY_OF SimpleTypeSpecifier
     private static boolean SimpleTypeSpecifier_9(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "SimpleTypeSpecifier_9")) return false;
         boolean r;
         Marker m = enter_section_(b);
         r = consumeToken(b, ARRAY_TYPE);
-        r = r && WholeNumber(b, l + 1);
-        r = r && consumeToken(b, RANGE);
-        r = r && WholeNumber(b, l + 1);
+        r = r && RangeConstant(b, l + 1);
+        r = r && consumeToken(b, ARRAY_OF);
+        r = r && SimpleTypeSpecifier(b, l + 1);
+        exit_section_(b, m, null, r);
+        return r;
+    }
+
+    // ARRAY_TYPE WordType ARRAY_OF SimpleTypeSpecifier
+    private static boolean SimpleTypeSpecifier_10(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "SimpleTypeSpecifier_10")) return false;
+        boolean r;
+        Marker m = enter_section_(b);
+        r = consumeToken(b, ARRAY_TYPE);
+        r = r && WordType(b, l + 1);
+        r = r && consumeToken(b, ARRAY_OF);
+        r = r && SimpleTypeSpecifier(b, l + 1);
+        exit_section_(b, m, null, r);
+        return r;
+    }
+
+    // ARRAY_TYPE IntegerType ARRAY_OF SimpleTypeSpecifier
+    private static boolean SimpleTypeSpecifier_11(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "SimpleTypeSpecifier_11")) return false;
+        boolean r;
+        Marker m = enter_section_(b);
+        r = consumeToken(b, ARRAY_TYPE);
+        r = r && IntegerType(b, l + 1);
         r = r && consumeToken(b, ARRAY_OF);
         r = r && SimpleTypeSpecifier(b, l + 1);
         exit_section_(b, m, null, r);
@@ -1869,26 +1867,25 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // ComplexIdentifier
-    //     | "\"" ComplexIdentifier "\""
+    // QUOTES ComplexIdentifier QUOTES | ComplexIdentifier
     public static boolean VarName(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "VarName")) return false;
         boolean r;
         Marker m = enter_section_(b, l, _NONE_, VAR_NAME, "<var name>");
-        r = ComplexIdentifier(b, l + 1);
-        if (!r) r = VarName_1(b, l + 1);
+        r = VarName_0(b, l + 1);
+        if (!r) r = ComplexIdentifier(b, l + 1);
         exit_section_(b, l, m, r, false, null);
         return r;
     }
 
-    // "\"" ComplexIdentifier "\""
-    private static boolean VarName_1(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "VarName_1")) return false;
+    // QUOTES ComplexIdentifier QUOTES
+    private static boolean VarName_0(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "VarName_0")) return false;
         boolean r;
         Marker m = enter_section_(b);
-        r = consumeToken(b, "\"");
+        r = consumeToken(b, QUOTES);
         r = r && ComplexIdentifier(b, l + 1);
-        r = r && consumeToken(b, "\"");
+        r = r && consumeToken(b, QUOTES);
         exit_section_(b, m, null, r);
         return r;
     }
@@ -1959,6 +1956,20 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         if (!recursion_guard_(b, l, "WordConstant_3")) return false;
         WholeNumber(b, l + 1);
         return true;
+    }
+
+    /* ********************************************************** */
+    // WORD_TYPE LBRACKET WholeNumber RBRACKET
+    static boolean WordType(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "WordType")) return false;
+        if (!nextTokenIs(b, WORD_TYPE)) return false;
+        boolean r;
+        Marker m = enter_section_(b);
+        r = consumeTokens(b, 0, WORD_TYPE, LBRACKET);
+        r = r && WholeNumber(b, l + 1);
+        r = r && consumeToken(b, RBRACKET);
+        exit_section_(b, m, null, r);
+        return r;
     }
 
     /* ********************************************************** */
@@ -2329,7 +2340,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         if (!recursion_guard_(b, l, "ReferenceBasicExpr")) return false;
         if (!nextTokenIsSmart(b, IDENTIFIER, SELF_KW)) return false;
         boolean r;
-        Marker m = enter_section_(b, l, _NONE_, REFERENCE_BASIC_EXPR, "<reference basic expr>");
+        Marker m = enter_section_(b, l, _COLLAPSE_, REFERENCE_BASIC_EXPR, "<reference basic expr>");
         r = ComplexIdentifier(b, l + 1);
         if (!r) r = SimpleIdentifier(b, l + 1);
         exit_section_(b, l, m, r, false, null);
