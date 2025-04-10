@@ -187,7 +187,7 @@ class NuXmvParserDefinition : ParserDefinition {
 
         @JvmStatic
         val FUNCTION_CALLS = TokenSet.create(
-            NuXmvTypes.FUNCTION_IDENTIFIER,
+            NuXmvTypes.FUNCTION_NAME_USAGE,
             NuXmvTypes.INIT_FUN,
             NuXmvTypes.NEXT_FUN,
             NuXmvTypes.ABS_FUN,

@@ -289,7 +289,7 @@ SingleIvarDeclaration ::= VarName COLON SimpleTypeSpecifier SEMICOLON {
 
 FrozenVarDeclaration ::= FROZENVAR_KW SingleIvarDeclaration {pin=1}
 VarName ::= QUOTES ComplexIdentifier QUOTES | ComplexIdentifier {
-    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.VarNameMixin"
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvVarNameMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
 }
 
@@ -310,7 +310,7 @@ DefineName ::= ComplexIdentifier {
 }
 
 ConstantsDeclaration ::= CONSTANTS_KW ConstantsBody SEMICOLON {pin=1}
-ConstantsBody ::= ConstantName (COMMA ComplexIdentifier)*
+ConstantsBody ::= ConstantName (COMMA ConstantName)*
 ConstantName ::= ComplexIdentifier {
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
@@ -319,9 +319,9 @@ ConstantName ::= ComplexIdentifier {
 AssignConstraint ::= ASSIGN_KW SingleAssignConstraint+ {pin=1}
 SingleAssignConstraint ::= AssignExpr SEMICOLON {pin=1}
 private AssignExpr ::= InitAssignExpr | NextAssignExpr | SimpleAssignExpr
-SimpleAssignExpr ::= ComplexIdentifier ASSIGN Expr {pin = 1}
-InitAssignExpr ::= INIT_FUN LPAREN ComplexIdentifier RPAREN ASSIGN Expr {pin=1}
-NextAssignExpr ::= NEXT_FUN LPAREN ComplexIdentifier RPAREN ASSIGN Expr {pin=1}
+SimpleAssignExpr ::= IdentifierUsage ASSIGN Expr {pin = 1}
+InitAssignExpr ::= INIT_FUN LPAREN IdentifierUsage RPAREN ASSIGN Expr {pin=1}
+NextAssignExpr ::= NEXT_FUN LPAREN IdentifierUsage RPAREN ASSIGN Expr {pin=1}
 
 TransConstraint ::= TRANS_KW Expr SEMICOLON? {pin=1}
 
@@ -450,15 +450,14 @@ UnaryMinusBasicExpr ::= MINUS Expr
 
 IndexBasicExpr ::= Expr LBRACKET WholeNumber (SEMICOLON WholeNumber)? RBRACKET {pin=2}
 
-FunctionCallBasicExpr ::= FunctionIdentifier LPAREN BasicExprList RPAREN  {pin=2}
-FunctionIdentifier ::= INIT_FUN|NEXT_FUN|ABS_FUN|MAX_FUN|MIN_FUN|SIN_FUN|COS_FUN
+FunctionCallBasicExpr ::= FunctionNameUsage LPAREN BasicExprList RPAREN  {pin=2}
+FunctionNameUsage ::= INIT_FUN|NEXT_FUN|ABS_FUN|MAX_FUN|MIN_FUN|SIN_FUN|COS_FUN
     |EXP_FUN|TAN_FUN|LN_FUN|POW_FUN|ASIN_FUN|ACOS_FUN|ATAN_FUN|SQRT_FUN
     |TO_WORD1_FUN|TO_BOOL_FUN|TO_INT_FUN|COUNT_FUN|SWCONST_FUN|UWCONST_FUN
     |TO_SIGNED_FUN|TO_UNSIGNED_FUN|SIZEOF_FUN|FLOOR_FUN|EXTEND_FUN|RESIZE_FUN
     |TO_SIGNED_WORD_FUN|TO_UNSIGNED_WORD_FUN|READ_FUN|WRITE_FUN|CONSTARRAY_FUN|TYPE_OF_FUN
     | SimpleIdentifier {
-    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
-    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvFunctionNameUsageMixin"
 }
 BasicExprList ::= Expr (COMMA Expr)* {pin(".*")=1}
 
@@ -500,9 +499,9 @@ RangeConstant ::= WholeNumber RANGE WholeNumber
 WholeNumber ::= POSITIVE_INTEGER_NUMBER | INTEGER_NUMBER
 RealNumber ::= FLOAT_NUMBER | FRACTIONAL_NUMBER | EXPONENTIAL_NUMBER
 BuiltInConstant ::= TIME | PI
-ReferenceBasicExpr ::= ComplexIdentifier | SimpleIdentifier {
-    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
-    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+ReferenceBasicExpr ::= IdentifierUsage
+IdentifierUsage ::= ComplexIdentifier | SimpleIdentifier {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvIdentifierUsageMixin"
 }
 private ComplexIdentifier ::= BaseIdentifier (DOT SimpleIdentifier) * (LBRACKET Expr RBRACKET)?
 private BaseIdentifier ::= SimpleIdentifier | SELF_KW

@@ -24,7 +24,6 @@ object NuXmvElementFactory {
         val varDeclaration = file.findChildByClass(NuXmvModule::class.java)
             ?.moduleBody?.varDeclarationList?.first()
         val varName = varDeclaration?.singleVarDeclarationList?.first()?.varName
-        return varName?.firstChild
-            ?: throw IllegalStateException("Could not create identifier")
+        return varName ?: throw IllegalStateException("Could not create identifier")
     }
 }

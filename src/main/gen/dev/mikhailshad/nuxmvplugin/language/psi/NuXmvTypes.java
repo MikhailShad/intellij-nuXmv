@@ -38,12 +38,13 @@ public interface NuXmvTypes {
     IElementType FUNCTION_ARG_TYPES_SPECIFIER = new NuXmvElementType("FUNCTION_ARG_TYPES_SPECIFIER");
     IElementType FUNCTION_CALL_BASIC_EXPR = new NuXmvElementType("FUNCTION_CALL_BASIC_EXPR");
     IElementType FUNCTION_DECLARATION = new NuXmvElementType("FUNCTION_DECLARATION");
-    IElementType FUNCTION_IDENTIFIER = new NuXmvElementType("FUNCTION_IDENTIFIER");
     IElementType FUNCTION_NAME = new NuXmvElementType("FUNCTION_NAME");
+    IElementType FUNCTION_NAME_USAGE = new NuXmvElementType("FUNCTION_NAME_USAGE");
     IElementType FUNCTION_SPECIFICATION = new NuXmvElementType("FUNCTION_SPECIFICATION");
     IElementType FUNCTION_TYPE_SPECIFIER = new NuXmvElementType("FUNCTION_TYPE_SPECIFIER");
     IElementType GREATER_BASIC_EXPR = new NuXmvElementType("GREATER_BASIC_EXPR");
     IElementType GREATER_EQ_BASIC_EXPR = new NuXmvElementType("GREATER_EQ_BASIC_EXPR");
+    IElementType IDENTIFIER_USAGE = new NuXmvElementType("IDENTIFIER_USAGE");
     IElementType ID_LIST = new NuXmvElementType("ID_LIST");
     IElementType IMPLICATION_BASIC_EXPR = new NuXmvElementType("IMPLICATION_BASIC_EXPR");
     IElementType INDEX_BASIC_EXPR = new NuXmvElementType("INDEX_BASIC_EXPR");
@@ -346,10 +347,10 @@ public interface NuXmvTypes {
                 return new NuXmvFunctionCallBasicExprImpl(node);
             } else if (type == FUNCTION_DECLARATION) {
                 return new NuXmvFunctionDeclarationImpl(node);
-            } else if (type == FUNCTION_IDENTIFIER) {
-                return new NuXmvFunctionIdentifierImpl(node);
             } else if (type == FUNCTION_NAME) {
                 return new NuXmvFunctionNameImpl(node);
+            } else if (type == FUNCTION_NAME_USAGE) {
+                return new NuXmvFunctionNameUsageImpl(node);
             } else if (type == FUNCTION_SPECIFICATION) {
                 return new NuXmvFunctionSpecificationImpl(node);
             } else if (type == FUNCTION_TYPE_SPECIFIER) {
@@ -358,6 +359,8 @@ public interface NuXmvTypes {
                 return new NuXmvGreaterBasicExprImpl(node);
             } else if (type == GREATER_EQ_BASIC_EXPR) {
                 return new NuXmvGreaterEqBasicExprImpl(node);
+            } else if (type == IDENTIFIER_USAGE) {
+                return new NuXmvIdentifierUsageImpl(node);
             } else if (type == ID_LIST) {
                 return new NuXmvIdListImpl(node);
             } else if (type == IMPLICATION_BASIC_EXPR) {

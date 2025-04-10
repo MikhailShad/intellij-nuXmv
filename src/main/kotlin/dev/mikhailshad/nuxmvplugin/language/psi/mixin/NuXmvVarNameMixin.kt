@@ -6,7 +6,7 @@ import com.intellij.psi.util.elementType
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVarName
 
-abstract class VarNameMixin(node: ASTNode) : NuXmvNamedElementMixin(node), NuXmvVarName {
+abstract class NuXmvVarNameMixin(node: ASTNode) : NuXmvNamedElementMixin(node), NuXmvVarName {
     override fun getNameIdentifier(): PsiElement? {
         return if (firstChild.elementType == NuXmvTypes.IDENTIFIER) {
             // ComplexIdentifier

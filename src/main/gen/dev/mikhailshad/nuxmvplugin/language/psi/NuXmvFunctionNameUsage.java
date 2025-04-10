@@ -4,7 +4,7 @@ package dev.mikhailshad.nuxmvplugin.language.psi;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
-public interface NuXmvFunctionIdentifier extends NuXmvNamedElement {
+public interface NuXmvFunctionNameUsage extends PsiElement {
 
     @Nullable
     PsiElement getIdentifier();

@@ -9,9 +9,6 @@ import java.util.List;
 public interface NuXmvConstantsBody extends PsiElement {
 
     @NotNull
-    NuXmvConstantName getConstantName();
-
-    @NotNull
-    List<NuXmvExpr> getExprList();
+    List<NuXmvConstantName> getConstantNameList();
 
 }

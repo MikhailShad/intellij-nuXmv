@@ -10,6 +10,6 @@ public interface NuXmvFunctionCallBasicExpr extends NuXmvExpr {
     NuXmvBasicExprList getBasicExprList();
 
     @NotNull
-    NuXmvFunctionIdentifier getFunctionIdentifier();
+    NuXmvFunctionNameUsage getFunctionNameUsage();
 
 }

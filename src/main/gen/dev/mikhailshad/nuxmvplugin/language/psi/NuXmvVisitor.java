@@ -127,12 +127,12 @@ public class NuXmvVisitor extends PsiElementVisitor {
         visitPsiElement(o);
     }
 
-    public void visitFunctionIdentifier(@NotNull NuXmvFunctionIdentifier o) {
+    public void visitFunctionName(@NotNull NuXmvFunctionName o) {
         visitNamedElement(o);
     }
 
-    public void visitFunctionName(@NotNull NuXmvFunctionName o) {
-        visitNamedElement(o);
+    public void visitFunctionNameUsage(@NotNull NuXmvFunctionNameUsage o) {
+        visitPsiElement(o);
     }
 
     public void visitFunctionSpecification(@NotNull NuXmvFunctionSpecification o) {
@@ -152,6 +152,10 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitIdList(@NotNull NuXmvIdList o) {
+        visitPsiElement(o);
+    }
+
+    public void visitIdentifierUsage(@NotNull NuXmvIdentifierUsage o) {
         visitPsiElement(o);
     }
 
@@ -309,7 +313,6 @@ public class NuXmvVisitor extends PsiElementVisitor {
 
     public void visitReferenceBasicExpr(@NotNull NuXmvReferenceBasicExpr o) {
         visitExpr(o);
-        // visitNamedElement(o);
     }
 
     public void visitRegularCaseBody(@NotNull NuXmvRegularCaseBody o) {

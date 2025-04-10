@@ -124,7 +124,7 @@ class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
         if (initAssigns.isNotEmpty()) {
             builder.append("<b>Initial Value:</b><br>")
             initAssigns.forEach {
-                builder.append("init($varName) := ${it.exprList.joinToString { expr -> expr.text }}<br>")
+                builder.append("init($varName) := ${it.expr?.text}}<br>")
             }
             builder.append("<br>")
         }
@@ -132,7 +132,7 @@ class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
         if (nextAssigns.isNotEmpty()) {
             builder.append("<b>Next Value:</b><br>")
             nextAssigns.forEach {
-                builder.append("next($varName) := ${it.exprList.joinToString { expr -> expr.text }}<br>")
+                builder.append("next($varName) := ${it.expr?.text}}<br>")
             }
             builder.append("<br>")
         }
@@ -140,7 +140,7 @@ class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
         if (simpleAssigns.isNotEmpty()) {
             builder.append("<b>Assignments:</b><br>")
             simpleAssigns.forEach {
-                builder.append("$varName := ${it.exprList.joinToString { expr -> expr.text }}<br>")
+                builder.append("$varName := ${it.expr?.text}}<br>")
             }
         }
 

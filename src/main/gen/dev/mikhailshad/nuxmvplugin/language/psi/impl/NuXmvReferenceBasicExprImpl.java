@@ -3,19 +3,18 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvIdentifierUsage;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvReferenceBasicExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class NuXmvReferenceBasicExprImpl extends NuXmvNamedElementMixin implements NuXmvReferenceBasicExpr {
+public class NuXmvReferenceBasicExprImpl extends NuXmvExprImpl implements NuXmvReferenceBasicExpr {
 
     public NuXmvReferenceBasicExprImpl(@NotNull ASTNode node) {
         super(node);
     }
 
+    @Override
     public void accept(@NotNull NuXmvVisitor visitor) {
         visitor.visitReferenceBasicExpr(this);
     }
@@ -27,9 +26,9 @@ public class NuXmvReferenceBasicExprImpl extends NuXmvNamedElementMixin implemen
     }
 
     @Override
-    @Nullable
-    public NuXmvExpr getExpr() {
-        return findChildByClass(NuXmvExpr.class);
+    @NotNull
+    public NuXmvIdentifierUsage getIdentifierUsage() {
+        return findNotNullChildByClass(NuXmvIdentifierUsage.class);
     }
 
 }

@@ -5,7 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvBasicExprList;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFunctionCallBasicExpr;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFunctionIdentifier;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFunctionNameUsage;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,8 +35,8 @@ public class NuXmvFunctionCallBasicExprImpl extends NuXmvExprImpl implements NuX
 
     @Override
     @NotNull
-    public NuXmvFunctionIdentifier getFunctionIdentifier() {
-        return findNotNullChildByClass(NuXmvFunctionIdentifier.class);
+    public NuXmvFunctionNameUsage getFunctionNameUsage() {
+        return findNotNullChildByClass(NuXmvFunctionNameUsage.class);
     }
 
 }

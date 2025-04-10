@@ -4,22 +4,22 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFunctionIdentifier;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFunctionNameUsage;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin;
+import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvFunctionNameUsageMixin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes.IDENTIFIER;
 
-public class NuXmvFunctionIdentifierImpl extends NuXmvNamedElementMixin implements NuXmvFunctionIdentifier {
+public class NuXmvFunctionNameUsageImpl extends NuXmvFunctionNameUsageMixin implements NuXmvFunctionNameUsage {
 
-    public NuXmvFunctionIdentifierImpl(@NotNull ASTNode node) {
+    public NuXmvFunctionNameUsageImpl(@NotNull ASTNode node) {
         super(node);
     }
 
     public void accept(@NotNull NuXmvVisitor visitor) {
-        visitor.visitFunctionIdentifier(this);
+        visitor.visitFunctionNameUsage(this);
     }
 
     @Override
