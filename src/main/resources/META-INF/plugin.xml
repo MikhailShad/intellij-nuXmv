@@ -57,6 +57,9 @@
         <psi.referenceContributor
                 language="nuXmv"
                 implementation="dev.mikhailshad.nuxmvplugin.language.reference.NuXmvReferenceContributor"/>
+        <lang.refactoringSupport
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.language.refactoring.NuxmvRefactoringSupportProvider"/>
         <gotoSymbolContributor
                 implementation="dev.mikhailshad.nuxmvplugin.language.navigation.NuXmvNavigationContributor"/>
         <codeInsight.lineMarkerProvider
