@@ -119,7 +119,7 @@ class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
 
         // Find next assignments
         val nextAssigns = PsiTreeUtil.findChildrenOfType(moduleBody, NuXmvNextAssignExpr::class.java)
-            .filter { it.firstChild.firstChild.text == varName }
+            .filter { it.firstChild.nextSibling.text == varName }
 
         if (initAssigns.isNotEmpty()) {
             builder.append("<b>Initial Value:</b><br>")

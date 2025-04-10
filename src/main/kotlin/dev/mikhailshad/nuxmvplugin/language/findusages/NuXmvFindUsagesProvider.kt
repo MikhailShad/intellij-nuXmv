@@ -7,10 +7,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import dev.mikhailshad.nuxmvplugin.language.lexer.NuXmvLexerAdapter
 import dev.mikhailshad.nuxmvplugin.language.parser.NuXmvParserDefinition
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvDefineName
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModuleDeclaration
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVarName
+import dev.mikhailshad.nuxmvplugin.language.psi.*
 
 class NuXmvFindUsagesProvider : FindUsagesProvider {
     override fun getWordsScanner(): WordsScanner {
@@ -33,8 +30,13 @@ class NuXmvFindUsagesProvider : FindUsagesProvider {
     override fun getType(element: PsiElement): String {
         return when (element) {
             is NuXmvModuleDeclaration -> "module"
+            is NuXmvModuleParameter -> "module parameter"
             is NuXmvVarName -> "variable"
+            is NuXmvNamedSpecification -> "spec"
             is NuXmvDefineName -> "define"
+            is NuXmvFunctionName -> "function"
+            is NuXmvConstantName -> "constant"
+            is NuXmvEnumerationTypeValue -> "enum value"
             else -> "identifier"
         }
     }
