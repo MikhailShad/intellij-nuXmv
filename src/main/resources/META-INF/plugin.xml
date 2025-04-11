@@ -75,5 +75,20 @@
         <breadcrumbsInfoProvider
                 implementation="dev.mikhailshad.nuxmvplugin.language.breadcrumbs.NuXmvBreadcrumbsInfoProvider"/>
 
+        <!-- Settings -->
+        <applicationConfigurable
+                parentId="build.tools"
+                instance="dev.mikhailshad.nuxmvplugin.language.configuration.NuXmvSettingsConfigurable"
+                id="dev.mikhailshad.nuxmvplugin.settings.NuXmvSettingsConfigurable"
+                displayName="nuXmv"/>
+        <applicationService
+                serviceImplementation="dev.mikhailshad.nuxmvplugin.language.configuration.NuXmvSettingsState"/>
+
+        <!-- Run Configuration -->
+        <configurationType
+                implementation="dev.mikhailshad.nuxmvplugin.language.configuration.NuXmvConfigurationType"/>
+        <runConfigurationProducer
+                implementation="dev.mikhailshad.nuxmvplugin.language.configuration.NuXmvRunConfigurationProducer"/>
+
     </extensions>
 </idea-plugin>

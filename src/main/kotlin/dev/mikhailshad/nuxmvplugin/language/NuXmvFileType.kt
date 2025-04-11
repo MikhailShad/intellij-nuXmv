@@ -8,7 +8,7 @@ object NuXmvFileType : LanguageFileType(NuXmvLanguage) {
 
     override fun getDescription(): String = "NuXmv language file"
 
-    override fun getDefaultExtension(): String = "nuxmv"
+    override fun getDefaultExtension(): String = "smv"
 
     override fun getIcon(): Icon = NuXmvIcons.FILE
 }
