@@ -6,6 +6,7 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMExternalizerUtil
+import dev.mikhailshad.nuxmvplugin.language.utils.EditorUtils
 import org.jdom.Element
 
 class NuXmvRunConfiguration(
@@ -29,6 +30,16 @@ class NuXmvRunConfiguration(
         set(value) {
             options.commandLineOptions = value
         }
+
+    // Set default model file path for new configurations
+    init {
+        if (options.modelFilePath?.isEmpty() == true) {
+            val openedFile = EditorUtils.getActiveNuXmvFilePath(project)
+            if (openedFile != null) {
+                modelFilePath = openedFile.path
+            }
+        }
+    }
 
     override fun getOptions(): NuXmvRunConfigurationOptions {
         return super.getOptions() as NuXmvRunConfigurationOptions

@@ -77,7 +77,7 @@
 
         <!-- Settings -->
         <applicationConfigurable
-                parentId="build.tools"
+                parentId="tools"
                 instance="dev.mikhailshad.nuxmvplugin.language.configuration.NuXmvSettingsConfigurable"
                 id="dev.mikhailshad.nuxmvplugin.settings.NuXmvSettingsConfigurable"
                 displayName="nuXmv"/>
