@@ -88,7 +88,7 @@ class NuXmvIdentifierReference(element: NuXmvIdentifierUsage) :
             PsiTreeUtil.findChildrenOfType(scope, NuXmvDefineName::class.java)
                 .filter { it.text == name })
         result.addAll(
-            PsiTreeUtil.findChildrenOfType(scope, NuXmvConstantName::class.java)
+            PsiTreeUtil.findChildrenOfType(scope, NuXmvConstant::class.java)
                 .filter { it.text == name })
         result.addAll(
             PsiTreeUtil.findChildrenOfType(scope, NuXmvEnumerationTypeValue::class.java)

@@ -14,8 +14,8 @@ class NuXmvWarningAnnotator : Annotator {
             return
         }
 
-        checkValidReferences(element, holder)
-        checkValidTypes(element, holder)
+//        checkValidReferences(element, holder)
+//        checkValidTypes(element, holder)
     }
 
     private fun checkValidTypes(element: PsiElement, holder: AnnotationHolder) {

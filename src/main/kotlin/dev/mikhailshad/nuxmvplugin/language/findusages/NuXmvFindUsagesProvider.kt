@@ -35,7 +35,7 @@ class NuXmvFindUsagesProvider : FindUsagesProvider {
             is NuXmvNamedSpecification -> "spec"
             is NuXmvDefineName -> "define"
             is NuXmvFunctionName -> "function"
-            is NuXmvConstantName -> "constant"
+            is NuXmvConstant -> "constant"
             is NuXmvEnumerationTypeValue -> "enum value"
             else -> "identifier"
         }

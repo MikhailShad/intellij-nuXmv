@@ -339,53 +339,18 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
 
     /* ********************************************************** */
     // ComplexIdentifier
-    public static boolean ConstantName(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "ConstantName")) return false;
-        if (!nextTokenIs(b, "<constant name>", IDENTIFIER, SELF_KW)) return false;
+    public static boolean Constant(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "Constant")) return false;
+        if (!nextTokenIs(b, "<constant>", IDENTIFIER, SELF_KW)) return false;
         boolean r;
-        Marker m = enter_section_(b, l, _NONE_, CONSTANT_NAME, "<constant name>");
+        Marker m = enter_section_(b, l, _NONE_, CONSTANT, "<constant>");
         r = ComplexIdentifier(b, l + 1);
         exit_section_(b, l, m, r, false, null);
         return r;
     }
 
     /* ********************************************************** */
-    // ConstantName (COMMA ConstantName)*
-    public static boolean ConstantsBody(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "ConstantsBody")) return false;
-        if (!nextTokenIs(b, "<constants body>", IDENTIFIER, SELF_KW)) return false;
-        boolean r;
-        Marker m = enter_section_(b, l, _NONE_, CONSTANTS_BODY, "<constants body>");
-        r = ConstantName(b, l + 1);
-        r = r && ConstantsBody_1(b, l + 1);
-        exit_section_(b, l, m, r, false, null);
-        return r;
-    }
-
-    // (COMMA ConstantName)*
-    private static boolean ConstantsBody_1(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "ConstantsBody_1")) return false;
-        while (true) {
-            int c = current_position_(b);
-            if (!ConstantsBody_1_0(b, l + 1)) break;
-            if (!empty_element_parsed_guard_(b, "ConstantsBody_1", c)) break;
-        }
-        return true;
-    }
-
-    // COMMA ConstantName
-    private static boolean ConstantsBody_1_0(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "ConstantsBody_1_0")) return false;
-        boolean r;
-        Marker m = enter_section_(b);
-        r = consumeToken(b, COMMA);
-        r = r && ConstantName(b, l + 1);
-        exit_section_(b, m, null, r);
-        return r;
-    }
-
-    /* ********************************************************** */
-    // CONSTANTS_KW ConstantsBody SEMICOLON
+    // CONSTANTS_KW Constant (COMMA Constant)* SEMICOLON
     public static boolean ConstantsDeclaration(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "ConstantsDeclaration")) return false;
         if (!nextTokenIs(b, CONSTANTS_KW)) return false;
@@ -393,10 +358,33 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         Marker m = enter_section_(b, l, _NONE_, CONSTANTS_DECLARATION, null);
         r = consumeToken(b, CONSTANTS_KW);
         p = r; // pin = 1
-        r = r && report_error_(b, ConstantsBody(b, l + 1));
+        r = r && report_error_(b, Constant(b, l + 1));
+        r = p && report_error_(b, ConstantsDeclaration_2(b, l + 1)) && r;
         r = p && consumeToken(b, SEMICOLON) && r;
         exit_section_(b, l, m, r, p, null);
         return r || p;
+    }
+
+    // (COMMA Constant)*
+    private static boolean ConstantsDeclaration_2(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "ConstantsDeclaration_2")) return false;
+        while (true) {
+            int c = current_position_(b);
+            if (!ConstantsDeclaration_2_0(b, l + 1)) break;
+            if (!empty_element_parsed_guard_(b, "ConstantsDeclaration_2", c)) break;
+        }
+        return true;
+    }
+
+    // COMMA Constant
+    private static boolean ConstantsDeclaration_2_0(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "ConstantsDeclaration_2_0")) return false;
+        boolean r;
+        Marker m = enter_section_(b);
+        r = consumeToken(b, COMMA);
+        r = r && Constant(b, l + 1);
+        exit_section_(b, m, null, r);
+        return r;
     }
 
     /* ********************************************************** */
@@ -604,7 +592,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // FROZENVAR_KW SingleIvarDeclaration
+    // FROZENVAR_KW SingleIvarDeclaration+
     public static boolean FrozenVarDeclaration(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "FrozenVarDeclaration")) return false;
         if (!nextTokenIs(b, FROZENVAR_KW)) return false;
@@ -612,9 +600,24 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         Marker m = enter_section_(b, l, _NONE_, FROZEN_VAR_DECLARATION, null);
         r = consumeToken(b, FROZENVAR_KW);
         p = r; // pin = 1
-        r = r && SingleIvarDeclaration(b, l + 1);
+        r = r && FrozenVarDeclaration_1(b, l + 1);
         exit_section_(b, l, m, r, p, null);
         return r || p;
+    }
+
+    // SingleIvarDeclaration+
+    private static boolean FrozenVarDeclaration_1(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "FrozenVarDeclaration_1")) return false;
+        boolean r;
+        Marker m = enter_section_(b);
+        r = SingleIvarDeclaration(b, l + 1);
+        while (r) {
+            int c = current_position_(b);
+            if (!SingleIvarDeclaration(b, l + 1)) break;
+            if (!empty_element_parsed_guard_(b, "FrozenVarDeclaration_1", c)) break;
+        }
+        exit_section_(b, m, null, r);
+        return r;
     }
 
     /* ********************************************************** */

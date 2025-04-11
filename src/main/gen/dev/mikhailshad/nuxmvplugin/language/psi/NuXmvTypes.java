@@ -20,9 +20,8 @@ public interface NuXmvTypes {
     IElementType COMPUTE_EXPR = new NuXmvElementType("COMPUTE_EXPR");
     IElementType COMPUTE_SPECIFICATION = new NuXmvElementType("COMPUTE_SPECIFICATION");
     IElementType CONCAT_BASIC_EXPR = new NuXmvElementType("CONCAT_BASIC_EXPR");
-    IElementType CONSTANTS_BODY = new NuXmvElementType("CONSTANTS_BODY");
+    IElementType CONSTANT = new NuXmvElementType("CONSTANT");
     IElementType CONSTANTS_DECLARATION = new NuXmvElementType("CONSTANTS_DECLARATION");
-    IElementType CONSTANT_NAME = new NuXmvElementType("CONSTANT_NAME");
     IElementType CTL_SPECIFICATION = new NuXmvElementType("CTL_SPECIFICATION");
     IElementType DEFINE_BODY = new NuXmvElementType("DEFINE_BODY");
     IElementType DEFINE_DECLARATION = new NuXmvElementType("DEFINE_DECLARATION");
@@ -313,12 +312,10 @@ public interface NuXmvTypes {
                 return new NuXmvComputeSpecificationImpl(node);
             } else if (type == CONCAT_BASIC_EXPR) {
                 return new NuXmvConcatBasicExprImpl(node);
-            } else if (type == CONSTANTS_BODY) {
-                return new NuXmvConstantsBodyImpl(node);
+            } else if (type == CONSTANT) {
+                return new NuXmvConstantImpl(node);
             } else if (type == CONSTANTS_DECLARATION) {
                 return new NuXmvConstantsDeclarationImpl(node);
-            } else if (type == CONSTANT_NAME) {
-                return new NuXmvConstantNameImpl(node);
             } else if (type == CTL_SPECIFICATION) {
                 return new NuXmvCtlSpecificationImpl(node);
             } else if (type == DEFINE_BODY) {

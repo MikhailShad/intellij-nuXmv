@@ -55,12 +55,9 @@ public class NuXmvVisitor extends PsiElementVisitor {
         visitExpr(o);
     }
 
-    public void visitConstantName(@NotNull NuXmvConstantName o) {
+    public void visitConstant(@NotNull NuXmvConstant o) {
         visitNamedElement(o);
-    }
-
-    public void visitConstantsBody(@NotNull NuXmvConstantsBody o) {
-        visitPsiElement(o);
+        // visitPresentableElement(o);
     }
 
     public void visitConstantsDeclaration(@NotNull NuXmvConstantsDeclaration o) {
@@ -68,11 +65,11 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitCtlSpecification(@NotNull NuXmvCtlSpecification o) {
-        visitPsiElement(o);
+        visitPresentableElement(o);
     }
 
     public void visitDefineBody(@NotNull NuXmvDefineBody o) {
-        visitPsiElement(o);
+        visitPresentableElement(o);
     }
 
     public void visitDefineDeclaration(@NotNull NuXmvDefineDeclaration o) {
@@ -184,7 +181,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitInvarSpecification(@NotNull NuXmvInvarSpecification o) {
-        visitPsiElement(o);
+        visitPresentableElement(o);
     }
 
     public void visitIsaDeclaration(@NotNull NuXmvIsaDeclaration o) {
@@ -216,7 +213,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitLtlSpecification(@NotNull NuXmvLtlSpecification o) {
-        visitPsiElement(o);
+        visitPresentableElement(o);
     }
 
     public void visitMinusBasicExpr(@NotNull NuXmvMinusBasicExpr o) {
@@ -344,11 +341,11 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitSingleIvarDeclaration(@NotNull NuXmvSingleIvarDeclaration o) {
-        visitPsiElement(o);
+        visitPresentableElement(o);
     }
 
     public void visitSingleVarDeclaration(@NotNull NuXmvSingleVarDeclaration o) {
-        visitPsiElement(o);
+        visitPresentableElement(o);
     }
 
     public void visitSynthOpt(@NotNull NuXmvSynthOpt o) {
@@ -424,6 +421,10 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitNamedElement(@NotNull NuXmvNamedElement o) {
+        visitPsiElement(o);
+    }
+
+    public void visitPresentableElement(@NotNull NuXmvPresentableElement o) {
         visitPsiElement(o);
     }
 

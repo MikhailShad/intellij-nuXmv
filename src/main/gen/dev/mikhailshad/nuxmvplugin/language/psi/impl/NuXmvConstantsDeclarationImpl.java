@@ -4,11 +4,13 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvConstantsBody;
+import com.intellij.psi.util.PsiTreeUtil;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvConstant;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvConstantsDeclaration;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class NuXmvConstantsDeclarationImpl extends ASTWrapperPsiElement implements NuXmvConstantsDeclaration {
 
@@ -27,9 +29,9 @@ public class NuXmvConstantsDeclarationImpl extends ASTWrapperPsiElement implemen
     }
 
     @Override
-    @Nullable
-    public NuXmvConstantsBody getConstantsBody() {
-        return findChildByClass(NuXmvConstantsBody.class);
+    @NotNull
+    public List<NuXmvConstant> getConstantList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvConstant.class);
     }
 
 }

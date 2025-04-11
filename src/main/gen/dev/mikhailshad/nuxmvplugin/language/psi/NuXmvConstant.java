@@ -3,7 +3,7 @@ package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import org.jetbrains.annotations.Nullable;
 
-public interface NuXmvConstantName extends NuXmvNamedElement {
+public interface NuXmvConstant extends NuXmvNamedElement, NuXmvPresentableElement {
 
     @Nullable
     NuXmvExpr getExpr();

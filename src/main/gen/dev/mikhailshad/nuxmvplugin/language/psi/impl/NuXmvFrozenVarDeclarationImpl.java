@@ -4,11 +4,13 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFrozenVarDeclaration;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvSingleIvarDeclaration;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class NuXmvFrozenVarDeclarationImpl extends ASTWrapperPsiElement implements NuXmvFrozenVarDeclaration {
 
@@ -27,9 +29,9 @@ public class NuXmvFrozenVarDeclarationImpl extends ASTWrapperPsiElement implemen
     }
 
     @Override
-    @Nullable
-    public NuXmvSingleIvarDeclaration getSingleIvarDeclaration() {
-        return findChildByClass(NuXmvSingleIvarDeclaration.class);
+    @NotNull
+    public List<NuXmvSingleIvarDeclaration> getSingleIvarDeclarationList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvSingleIvarDeclaration.class);
     }
 
 }

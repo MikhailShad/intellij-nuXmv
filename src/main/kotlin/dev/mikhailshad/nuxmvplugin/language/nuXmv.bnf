@@ -265,12 +265,24 @@ private module_element_recover ::= !(
     | MODULE_KW
     )
 
-CtlSpecification ::= CtlSpecKeyWord NamedSpecification? Expr SEMICOLON? {pin=1}
+CtlSpecification ::= CtlSpecKeyWord NamedSpecification? Expr SEMICOLON? {
+    pin=1
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvCtlSpecificationMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
+}
 private CtlSpecKeyWord ::= CTLSPEC_KW | SPEC_KW
 
-LtlSpecification ::= LTLSPEC_KW NamedSpecification? Expr SEMICOLON? {pin=1}
+LtlSpecification ::= LTLSPEC_KW NamedSpecification? Expr SEMICOLON? {
+    pin=1
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvLtlSpecificationMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
+}
 
-InvarSpecification ::= INVARSPEC_KW NamedSpecification? Expr SEMICOLON? {pin=1}
+InvarSpecification ::= INVARSPEC_KW NamedSpecification? Expr SEMICOLON? {
+    pin=1
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvInvarSpecificationMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
+}
 
 NamedSpecification ::=  NAME_KW SimpleIdentifier ASSIGN {
     mixin ="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NamedSpecificationMixin"
@@ -280,14 +292,18 @@ NamedSpecification ::=  NAME_KW SimpleIdentifier ASSIGN {
 VarDeclaration ::= VAR_KW SingleVarDeclaration+ {pin=1}
 SingleVarDeclaration ::= VarName COLON TypeSpecifier SEMICOLON {
     pin=2
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvSingleVarDeclarationMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
 }
 
 IvarDeclaration ::= IVAR_KW SingleIvarDeclaration+ {pin=1}
 SingleIvarDeclaration ::= VarName COLON SimpleTypeSpecifier SEMICOLON {
     pin=2
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvSingleIvarDeclarationMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
 }
 
-FrozenVarDeclaration ::= FROZENVAR_KW SingleIvarDeclaration {pin=1}
+FrozenVarDeclaration ::= FROZENVAR_KW SingleIvarDeclaration+ {pin=1}
 VarName ::= QUOTES ComplexIdentifier QUOTES | ComplexIdentifier {
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvVarNameMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
@@ -303,17 +319,23 @@ FunctionTypeSpecifier ::= FunctionArgTypesSpecifier IMPLICATION SimpleTypeSpecif
 FunctionArgTypesSpecifier ::= SimpleTypeSpecifier (MULT SimpleTypeSpecifier)*
 
 DefineDeclaration ::= DEFINE_KW DefineBody+ {pin=1}
-DefineBody ::= DefineName ASSIGN Expr SEMICOLON {pin=2}
+DefineBody ::= DefineName ASSIGN Expr SEMICOLON {
+    pin=2
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvDefineBodyMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
+}
 DefineName ::= ComplexIdentifier {
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
 }
 
-ConstantsDeclaration ::= CONSTANTS_KW ConstantsBody SEMICOLON {pin=1}
-ConstantsBody ::= ConstantName (COMMA ConstantName)*
-ConstantName ::= ComplexIdentifier {
-    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
-    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+ConstantsDeclaration ::= CONSTANTS_KW Constant (COMMA Constant)* SEMICOLON {pin=1}
+Constant ::= ComplexIdentifier {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvConstantMixin"
+    implements=[
+        "dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
+        "dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
+    ]
 }
 
 AssignConstraint ::= ASSIGN_KW SingleAssignConstraint+ {pin=1}

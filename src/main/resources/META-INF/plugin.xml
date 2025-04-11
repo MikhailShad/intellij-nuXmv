@@ -54,6 +54,7 @@
         <lang.psiStructureViewFactory
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.language.structure.NuXmvStructureViewFactory"/>
+        <navbar implementation="dev.mikhailshad.nuxmvplugin.language.structure.NuXmvStructureAwareNavbar"/>
         <psi.referenceContributor
                 language="nuXmv"
                 implementation="dev.mikhailshad.nuxmvplugin.language.reference.NuXmvReferenceContributor"/>

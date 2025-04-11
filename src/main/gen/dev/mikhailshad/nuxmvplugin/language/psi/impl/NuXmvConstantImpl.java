@@ -1,25 +1,23 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvConstantName;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvConstantsBody;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvConstant;
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
+import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvConstantMixin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+public class NuXmvConstantImpl extends NuXmvConstantMixin implements NuXmvConstant {
 
-public class NuXmvConstantsBodyImpl extends ASTWrapperPsiElement implements NuXmvConstantsBody {
-
-    public NuXmvConstantsBodyImpl(@NotNull ASTNode node) {
+    public NuXmvConstantImpl(@NotNull ASTNode node) {
         super(node);
     }
 
     public void accept(@NotNull NuXmvVisitor visitor) {
-        visitor.visitConstantsBody(this);
+        visitor.visitConstant(this);
     }
 
     @Override
@@ -29,9 +27,9 @@ public class NuXmvConstantsBodyImpl extends ASTWrapperPsiElement implements NuXm
     }
 
     @Override
-    @NotNull
-    public List<NuXmvConstantName> getConstantNameList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvConstantName.class);
+    @Nullable
+    public NuXmvExpr getExpr() {
+        return findChildByClass(NuXmvExpr.class);
     }
 
 }

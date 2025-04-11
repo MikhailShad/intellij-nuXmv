@@ -2,11 +2,13 @@
 package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public interface NuXmvConstantsDeclaration extends PsiElement {
 
-    @Nullable
-    NuXmvConstantsBody getConstantsBody();
+    @NotNull
+    List<NuXmvConstant> getConstantList();
 
 }
