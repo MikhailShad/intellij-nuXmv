@@ -9,6 +9,7 @@ import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.diagnostic.Logger
 import java.io.File
+import java.util.*
 
 class NuXmvCommandLineState(
     environment: ExecutionEnvironment,
@@ -23,12 +24,12 @@ class NuXmvCommandLineState(
     override fun startProcess(): ProcessHandler {
         val nuXmvPath = NuXmvSettingsState.getInstance().state.nuXmvExecutablePath
         if (nuXmvPath.isBlank()) {
-            throw ExecutionException("NuXmv executable path is not set. Please configure it in Settings | Build, Execution, Deployment | nuXmv")
+            throw ExecutionException("NuXmv executable path is not set. Please configure it in Settings | Tools | nuXmv")
         }
 
         val nuXmvExecutable = File(nuXmvPath)
         if (!nuXmvExecutable.exists() || !nuXmvExecutable.canExecute()) {
-            throw ExecutionException("Invalid nuXmv executable at: $nuXmvPath. Please check the path in Settings | Build, Execution, Deployment | nuXmv")
+            throw ExecutionException("Invalid nuXmv executable at: $nuXmvPath. Please check the path in Settings | Tools | nuXmv")
         }
 
         val modelFile = File(runConfiguration.modelFilePath)
@@ -36,8 +37,19 @@ class NuXmvCommandLineState(
             throw ExecutionException("Model file does not exist: ${runConfiguration.modelFilePath}")
         }
 
+        val commandLine = buildCommandLine(nuXmvPath, modelFile)
+        LOG.info("Executing: ${commandLine.commandLineString}")
+
+        val processHandler = ColoredProcessHandler(commandLine)
+        ProcessTerminatedListener.attach(processHandler)
+        return processHandler
+    }
+
+    private fun buildCommandLine(nuXmvPath: String, modelFile: File): GeneralCommandLine {
         val commandLine = GeneralCommandLine()
         commandLine.exePath = nuXmvPath
+
+        //commandLine.addParameter("-int")
 
         if (runConfiguration.commandLineOptions.isNotBlank()) {
             runConfiguration.commandLineOptions.split(" ").forEach { option ->
@@ -47,14 +59,43 @@ class NuXmvCommandLineState(
             }
         }
 
+        val scriptFile = createCommandScript()
+        if (scriptFile != null) {
+            commandLine.addParameter("-source")
+            commandLine.addParameter(scriptFile.absolutePath)
+        }
+
         commandLine.addParameter(modelFile.absolutePath)
-
         commandLine.workDirectory = modelFile.parentFile
+        return commandLine
+    }
 
-        LOG.info("Executing: ${commandLine.commandLineString}")
+    private fun createCommandScript(): File? {
+        try {
+            val tempFile = File.createTempFile("nuxmv_script_${UUID.randomUUID()}", ".cmd")
+            tempFile.deleteOnExit()
 
-        val processHandler = ColoredProcessHandler(commandLine)
-        ProcessTerminatedListener.attach(processHandler)
-        return processHandler
+            tempFile.writer().use { writer ->
+                writer.write("go\n")
+                if (runConfiguration.checkCtlSpecifications) {
+                    writer.write("check_ctlspec\n")
+                }
+
+                if (runConfiguration.checkLtlSpecifications) {
+                    writer.write("check_ltlspec\n")
+                }
+
+                if (runConfiguration.checkInvarSpecifications) {
+                    writer.write("check_invar\n")
+                }
+
+                writer.write("quit\n")
+            }
+
+            return tempFile
+        } catch (e: Exception) {
+            LOG.error("Error creating command script", e)
+            return null
+        }
     }
 }

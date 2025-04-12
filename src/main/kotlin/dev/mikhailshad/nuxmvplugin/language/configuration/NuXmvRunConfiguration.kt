@@ -17,10 +17,13 @@ class NuXmvRunConfiguration(
     companion object {
         const val MODEL_FILE_PATH_FIELD = "MODEL_FILE_PATH"
         const val COMMAND_LINE_OPTIONS_FIELD = "COMMAND_LINE_OPTIONS"
+        const val CHECK_CTL_SPECIFICATIONS_FIELD = "CHECK_CTL_SPECIFICATIONS"
+        const val CHECK_LTL_SPECIFICATIONS_FIELD = "CHECK_LTL_SPECIFICATIONS"
+        const val CHECK_INVAR_SPECIFICATIONS_FIELD = "CHECK_INVAR_SPECIFICATIONS"
     }
 
     var modelFilePath: String
-        get() = options.modelFilePath ?: project.projectFile?.path ?: ""
+        get() = options.modelFilePath ?: ""
         set(value) {
             options.modelFilePath = value
         }
@@ -30,6 +33,25 @@ class NuXmvRunConfiguration(
         set(value) {
             options.commandLineOptions = value
         }
+
+    var checkCtlSpecifications: Boolean
+        get() = options.checkCtlSpecifications
+        set(value) {
+            options.checkCtlSpecifications = value
+        }
+
+    var checkLtlSpecifications: Boolean
+        get() = options.checkLtlSpecifications
+        set(value) {
+            options.checkLtlSpecifications = value
+        }
+
+    var checkInvarSpecifications: Boolean
+        get() = options.checkInvarSpecifications
+        set(value) {
+            options.checkInvarSpecifications = value
+        }
+
 
     // Set default model file path for new configurations
     init {
@@ -57,12 +79,21 @@ class NuXmvRunConfiguration(
         super.writeExternal(element)
         JDOMExternalizerUtil.writeField(element, MODEL_FILE_PATH_FIELD, modelFilePath)
         JDOMExternalizerUtil.writeField(element, COMMAND_LINE_OPTIONS_FIELD, commandLineOptions)
+        JDOMExternalizerUtil.writeField(element, CHECK_CTL_SPECIFICATIONS_FIELD, checkCtlSpecifications.toString())
+        JDOMExternalizerUtil.writeField(element, CHECK_LTL_SPECIFICATIONS_FIELD, checkLtlSpecifications.toString())
+        JDOMExternalizerUtil.writeField(element, CHECK_INVAR_SPECIFICATIONS_FIELD, checkInvarSpecifications.toString())
     }
 
     override fun readExternal(element: Element) {
         super.readExternal(element)
         modelFilePath = JDOMExternalizerUtil.readField(element, MODEL_FILE_PATH_FIELD) ?: ""
         commandLineOptions = JDOMExternalizerUtil.readField(element, COMMAND_LINE_OPTIONS_FIELD) ?: ""
+        checkCtlSpecifications =
+            JDOMExternalizerUtil.readField(element, CHECK_CTL_SPECIFICATIONS_FIELD)?.toBoolean() ?: false
+        checkLtlSpecifications =
+            JDOMExternalizerUtil.readField(element, CHECK_LTL_SPECIFICATIONS_FIELD)?.toBoolean() ?: false
+        checkInvarSpecifications =
+            JDOMExternalizerUtil.readField(element, CHECK_INVAR_SPECIFICATIONS_FIELD)?.toBoolean() ?: false
     }
 
     override fun checkConfiguration() {
