@@ -36,59 +36,59 @@
                 implementationClass="dev.mikhailshad.nuxmvplugin.language.parser.NuXmvParserDefinition"/>
         <lang.syntaxHighlighterFactory
                 language="nuXmv"
-                implementationClass="dev.mikhailshad.nuxmvplugin.language.highlighter.NuXmvSyntaxHighlighterFactory"/>
+                implementationClass="dev.mikhailshad.nuxmvplugin.ide.highlighter.NuXmvSyntaxHighlighterFactory"/>
         <lang.braceMatcher
                 language="nuXmv"
-                implementationClass="dev.mikhailshad.nuxmvplugin.language.editor.NuXmvBraceMatcher"/>
+                implementationClass="dev.mikhailshad.nuxmvplugin.ide.editor.NuXmvBraceMatcher"/>
         <colorSettingsPage
-                implementation="dev.mikhailshad.nuxmvplugin.language.highlighter.NuXmvColourSettingsPage"/>
+                implementation="dev.mikhailshad.nuxmvplugin.ide.highlighter.NuXmvColourSettingsPage"/>
         <annotator
                 language="nuXmv"
-                implementationClass="dev.mikhailshad.nuxmvplugin.language.annotator.NuXmvWarningAnnotator"/>
+                implementationClass="dev.mikhailshad.nuxmvplugin.ide.annotator.NuXmvWarningAnnotator"/>
         <codeInsight.lineMarkerProvider
                 language="nuXmv"
-                implementationClass="dev.mikhailshad.nuxmvplugin.language.editor.NuXmvLineMarkerProvider"/>
+                implementationClass="dev.mikhailshad.nuxmvplugin.ide.editor.NuXmvLineMarkerProvider"/>
         <completion.contributor
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.language.completion.NuXmvCompletionContributor"/>
         <lang.psiStructureViewFactory
                 language="nuXmv"
-                implementationClass="dev.mikhailshad.nuxmvplugin.language.structure.NuXmvStructureViewFactory"/>
-        <navbar implementation="dev.mikhailshad.nuxmvplugin.language.structure.NuXmvStructureAwareNavbar"/>
+                implementationClass="dev.mikhailshad.nuxmvplugin.ide.structure.NuXmvStructureViewFactory"/>
+        <navbar implementation="dev.mikhailshad.nuxmvplugin.ide.structure.NuXmvStructureAwareNavbar"/>
         <psi.referenceContributor
                 language="nuXmv"
                 implementation="dev.mikhailshad.nuxmvplugin.language.reference.NuXmvReferenceContributor"/>
         <lang.refactoringSupport
                 language="nuXmv"
-                implementationClass="dev.mikhailshad.nuxmvplugin.language.refactoring.NuxmvRefactoringSupportProvider"/>
+                implementationClass="dev.mikhailshad.nuxmvplugin.ide.refactoring.NuxmvRefactoringSupportProvider"/>
         <gotoSymbolContributor
-                implementation="dev.mikhailshad.nuxmvplugin.language.navigation.NuXmvNavigationContributor"/>
+                implementation="dev.mikhailshad.nuxmvplugin.ide.navigation.NuXmvNavigationContributor"/>
         <codeInsight.lineMarkerProvider
                 language="nuXmv"
-                implementationClass="dev.mikhailshad.nuxmvplugin.language.marker.NuXmvLineMarkerProvider"/>
+                implementationClass="dev.mikhailshad.nuxmvplugin.ide.marker.NuXmvLineMarkerProvider"/>
         <lang.findUsagesProvider
                 language="nuXmv"
-                implementationClass="dev.mikhailshad.nuxmvplugin.language.findusages.NuXmvFindUsagesProvider"/>
+                implementationClass="dev.mikhailshad.nuxmvplugin.ide.findusages.NuXmvFindUsagesProvider"/>
         <lang.documentationProvider
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.language.documentation.NuXmvDocumentationProvider"/>
         <breadcrumbsInfoProvider
-                implementation="dev.mikhailshad.nuxmvplugin.language.breadcrumbs.NuXmvBreadcrumbsInfoProvider"/>
+                implementation="dev.mikhailshad.nuxmvplugin.ide.breadcrumbs.NuXmvBreadcrumbsInfoProvider"/>
 
         <!-- Settings -->
         <applicationConfigurable
                 parentId="tools"
-                instance="dev.mikhailshad.nuxmvplugin.language.configuration.NuXmvSettingsConfigurable"
+                instance="dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvSettingsConfigurable"
                 id="dev.mikhailshad.nuxmvplugin.settings.NuXmvSettingsConfigurable"
                 displayName="nuXmv"/>
         <applicationService
-                serviceImplementation="dev.mikhailshad.nuxmvplugin.language.configuration.NuXmvSettingsState"/>
+                serviceImplementation="dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvSettingsState"/>
 
         <!-- Run Configuration -->
         <configurationType
-                implementation="dev.mikhailshad.nuxmvplugin.language.configuration.NuXmvConfigurationType"/>
+                implementation="dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvConfigurationType"/>
         <runConfigurationProducer
-                implementation="dev.mikhailshad.nuxmvplugin.language.configuration.NuXmvRunConfigurationProducer"/>
+                implementation="dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvRunConfigurationProducer"/>
 
     </extensions>
 </idea-plugin>
