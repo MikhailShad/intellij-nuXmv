@@ -3,12 +3,13 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvWholeNumber;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvWordConstant;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import static dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes.WORD;
 
 public class NuXmvWordConstantImpl extends ASTWrapperPsiElement implements NuXmvWordConstant {
 
@@ -27,9 +28,9 @@ public class NuXmvWordConstantImpl extends ASTWrapperPsiElement implements NuXmv
     }
 
     @Override
-    @Nullable
-    public NuXmvWholeNumber getWholeNumber() {
-        return findChildByClass(NuXmvWholeNumber.class);
+    @NotNull
+    public PsiElement getWord() {
+        return findNotNullChildByType(WORD);
     }
 
 }

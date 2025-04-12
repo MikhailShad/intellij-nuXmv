@@ -1920,71 +1920,38 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // "0" ("u"|"s")? ["b" | "B"] WholeNumber? "_" HEX_NUMBER
+    // WORD
     public static boolean WordConstant(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "WordConstant")) return false;
+        if (!nextTokenIs(b, WORD)) return false;
         boolean r;
-        Marker m = enter_section_(b, l, _NONE_, WORD_CONSTANT, "<word constant>");
-        r = consumeToken(b, "0");
-        r = r && WordConstant_1(b, l + 1);
-        r = r && WordConstant_2(b, l + 1);
-        r = r && WordConstant_3(b, l + 1);
-        r = r && consumeToken(b, "_");
-        r = r && consumeToken(b, HEX_NUMBER);
-        exit_section_(b, l, m, r, false, null);
+        Marker m = enter_section_(b);
+        r = consumeToken(b, WORD);
+        exit_section_(b, m, WORD_CONSTANT, r);
         return r;
-    }
-
-    // ("u"|"s")?
-    private static boolean WordConstant_1(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "WordConstant_1")) return false;
-        WordConstant_1_0(b, l + 1);
-        return true;
-    }
-
-    // "u"|"s"
-    private static boolean WordConstant_1_0(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "WordConstant_1_0")) return false;
-        boolean r;
-        r = consumeToken(b, "u");
-        if (!r) r = consumeToken(b, "s");
-        return r;
-    }
-
-    // ["b" | "B"]
-    private static boolean WordConstant_2(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "WordConstant_2")) return false;
-        WordConstant_2_0(b, l + 1);
-        return true;
-    }
-
-    // "b" | "B"
-    private static boolean WordConstant_2_0(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "WordConstant_2_0")) return false;
-        boolean r;
-        r = consumeToken(b, "b");
-        if (!r) r = consumeToken(b, "B");
-        return r;
-    }
-
-    // WholeNumber?
-    private static boolean WordConstant_3(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "WordConstant_3")) return false;
-        WholeNumber(b, l + 1);
-        return true;
     }
 
     /* ********************************************************** */
-    // WORD_TYPE LBRACKET WholeNumber RBRACKET
+    // (WORD_TYPE | UNSIGNED_WORD_TYPE | SIGNED_WORD_TYPE) LBRACKET WholeNumber RBRACKET
     static boolean WordType(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "WordType")) return false;
-        if (!nextTokenIs(b, WORD_TYPE)) return false;
         boolean r;
         Marker m = enter_section_(b);
-        r = consumeTokens(b, 0, WORD_TYPE, LBRACKET);
+        r = WordType_0(b, l + 1);
+        r = r && consumeToken(b, LBRACKET);
         r = r && WholeNumber(b, l + 1);
         r = r && consumeToken(b, RBRACKET);
         exit_section_(b, m, null, r);
+        return r;
+    }
+
+    // WORD_TYPE | UNSIGNED_WORD_TYPE | SIGNED_WORD_TYPE
+    private static boolean WordType_0(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "WordType_0")) return false;
+        boolean r;
+        r = consumeToken(b, WORD_TYPE);
+        if (!r) r = consumeToken(b, UNSIGNED_WORD_TYPE);
+        if (!r) r = consumeToken(b, SIGNED_WORD_TYPE);
         return r;
     }
 

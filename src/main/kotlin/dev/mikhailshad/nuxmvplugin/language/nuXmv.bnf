@@ -200,11 +200,13 @@
     WORD_KW             = 'Word'
 
     IDENTIFIER = "regexp:[A-Za-z_][A-Za-z_0-9$\-#]*"
-    POSITIVE_INTEGER_NUMBER = "regexp:[0-9]+"
+    WORD = "regexp:(0[us][bBdDoOhH][0-9]*_[0-9a-fA-F]+})"
     INTEGER_NUMBER = "regexp:-?[0-9]+"
+    HEX_NUMBER = "regexp:([0-9a-fA-F]+)"
     FLOAT_NUMBER = "regexp:[0-9]+\.[0-9]+"
     FRACTIONAL_NUMBER = "regexp:[fF]'[0-9]+/[0-9]+"
     EXPONENTIAL_NUMBER = "regexp:([0-9]+|[0-9]+/[0-9]+)[eE](-?[0-9]+)"
+    POSITIVE_INTEGER_NUMBER = "regexp:[0-9]+"
   ]
 
   extends(".*Expr")=Expr
@@ -395,7 +397,7 @@ SimpleTypeSpecifier ::= BOOLEAN_TYPE
     | ARRAY_TYPE WordType ARRAY_OF SimpleTypeSpecifier
     | ARRAY_TYPE IntegerType ARRAY_OF SimpleTypeSpecifier
     | SimpleIdentifier // TODO: что-то придумать с проверкой, что тип корректный
-private WordType ::= WORD_TYPE LBRACKET WholeNumber RBRACKET
+private WordType ::= (WORD_TYPE | UNSIGNED_WORD_TYPE | SIGNED_WORD_TYPE) LBRACKET WholeNumber RBRACKET
 private IntegerType ::= INTEGER_TYPE
 EnumerationTypeBody ::= EnumerationTypeValue (COMMA EnumerationTypeValue)*
 EnumerationTypeValue ::= WholeNumber | ComplexIdentifier {
@@ -516,7 +518,7 @@ LiteralBasicExpr ::= BooleanConstant
     | RangeConstant
     | BuiltInConstant
 BooleanConstant ::= TRUE_KW | FALSE_KW
-WordConstant ::= "0" ("u"|"s")? ["b" | "B"] WholeNumber? "_" HEX_NUMBER
+WordConstant ::= WORD
 RangeConstant ::= WholeNumber RANGE WholeNumber
 WholeNumber ::= POSITIVE_INTEGER_NUMBER | INTEGER_NUMBER
 RealNumber ::= FLOAT_NUMBER | FRACTIONAL_NUMBER | EXPONENTIAL_NUMBER

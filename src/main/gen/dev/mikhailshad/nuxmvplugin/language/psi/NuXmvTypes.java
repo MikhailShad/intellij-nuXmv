@@ -280,6 +280,7 @@ public interface NuXmvTypes {
     IElementType UWCONST_FUN = new NuXmvTokenType("uwconst");
     IElementType VALID_KW = new NuXmvTokenType("VALID");
     IElementType VAR_KW = new NuXmvTokenType("VAR");
+    IElementType WORD = new NuXmvTokenType("WORD");
     IElementType WORD_KW = new NuXmvTokenType("Word");
     IElementType WORD_TYPE = new NuXmvTokenType("word");
     IElementType WRITE_FUN = new NuXmvTokenType("WRITE");

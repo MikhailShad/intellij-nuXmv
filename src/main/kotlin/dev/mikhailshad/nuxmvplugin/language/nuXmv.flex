@@ -33,6 +33,7 @@ FLOAT_NUMBER = {POSITIVE_INTEGER_NUMBER} "." {POSITIVE_INTEGER_NUMBER}
 FRACTIONAL_NUMBER = [fF] "’" {POSITIVE_INTEGER_NUMBER} "/" {POSITIVE_INTEGER_NUMBER}
 EXPONENTIAL_NUMBER = ({POSITIVE_INTEGER_NUMBER} | {FRACTIONAL_NUMBER}) [eE] {INTEGER_NUMBER}
 HEX_NUMBER = [0-9a-fA-F]+
+WORD = 0 [us] [bBdDoOhH] {DIGIT}* _ {HEX_NUMBER}
 
 EOL_WS           = \n | \r | \r\n
 LINE_WS          = [\ \t]
@@ -222,6 +223,7 @@ LINE_COMMENT=("--")[^\r\n]*
 
     // Common tokens
     {IDENTIFIER}                 {return IDENTIFIER;}
+    {WORD}                       {return WORD;}
     {POSITIVE_INTEGER_NUMBER}    {return POSITIVE_INTEGER_NUMBER;}
     {INTEGER_NUMBER}             {return INTEGER_NUMBER;}
     {FLOAT_NUMBER}               {return FLOAT_NUMBER;}

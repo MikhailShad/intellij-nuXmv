@@ -2,11 +2,11 @@
 package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public interface NuXmvWordConstant extends PsiElement {
 
-    @Nullable
-    NuXmvWholeNumber getWholeNumber();
+    @NotNull
+    PsiElement getWord();
 
 }
