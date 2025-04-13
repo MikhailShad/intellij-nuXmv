@@ -89,6 +89,8 @@
                 implementation="dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvConfigurationType"/>
         <runConfigurationProducer
                 implementation="dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvRunConfigurationProducer"/>
-
+        <lang.commenter
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.ide.format.NuXmvCommenter"/>
     </extensions>
 </idea-plugin>
