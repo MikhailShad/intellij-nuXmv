@@ -4,6 +4,7 @@ import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.StandardPatterns
+import com.intellij.psi.TokenType
 import dev.mikhailshad.nuxmvplugin.language.NuXmvLanguage
 import dev.mikhailshad.nuxmvplugin.language.psi.*
 
@@ -21,7 +22,20 @@ class NuXmvCompletionContributor : CompletionContributor() {
 
         extend(
             CompletionType.BASIC,
-            psiElement().withParent(NuXmvModuleBody::class.java),
+            psiElement().withLanguage(NuXmvLanguage)
+                .withParent(
+                    psiElement().afterSiblingSkipping(
+                        StandardPatterns.or(
+                            psiElement(TokenType.WHITE_SPACE),
+                            psiElement(NuXmvTypes.LINE_COMMENT),
+                            psiElement(NuXmvTypes.BLOCK_COMMENT)
+                        ),
+                        StandardPatterns.or(
+                            psiElement(NuXmvModuleDeclaration::class.java),
+                            psiElement(NuXmvModule::class.java)
+                        )
+                    )
+                ),
             NuXmvModuleBodyKeywordCompletionProvider
         )
 

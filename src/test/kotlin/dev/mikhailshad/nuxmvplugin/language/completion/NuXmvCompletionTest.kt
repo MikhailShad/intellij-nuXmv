@@ -20,6 +20,21 @@ class NuXmvCompletionTest : NuXmvCodeInsightFixtureTestCase() {
     }
 
     fun testCompletionInModuleBody() {
+        myFixture.configureByFiles("moduleCompletionInBody.smv")
+        myFixture.complete(CompletionType.BASIC)
+        val lookupElementStrings: MutableList<String>? = myFixture.lookupElementStrings
+        assertNotNull(lookupElementStrings)
+        assertSameElements(
+            lookupElementStrings!!,
+            "VAR",
+            "FROZENVAR",
+            "INVAR",
+            "INVARSPEC",
+            "IVAR",
+        )
+    }
+
+    fun testCompletionAfterModuleBody() {
         myFixture.configureByFiles("moduleCompletionAfterBody.smv")
         myFixture.complete(CompletionType.BASIC)
         val lookupElementStrings: MutableList<String>? = myFixture.lookupElementStrings
