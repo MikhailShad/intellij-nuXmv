@@ -74,6 +74,16 @@
                 implementationClass="dev.mikhailshad.nuxmvplugin.language.documentation.NuXmvDocumentationProvider"/>
         <breadcrumbsInfoProvider
                 implementation="dev.mikhailshad.nuxmvplugin.ide.breadcrumbs.NuXmvBreadcrumbsInfoProvider"/>
+        <lang.commenter
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.ide.format.NuXmvCommenter"/>
+        <lang.formatter
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.ide.format.NuXmvFormattingModelBuilder"/>
+        <langCodeStyleSettingsProvider
+                implementation="dev.mikhailshad.nuxmvplugin.ide.settings.NuXmvLanguageCodeStyleSettingsProvider"/>
+        <codeStyleSettingsProvider
+                implementation="dev.mikhailshad.nuxmvplugin.ide.settings.NuXmvCodeStyleSettingsProvider"/>
 
         <!-- Settings -->
         <applicationConfigurable
@@ -89,8 +99,6 @@
                 implementation="dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvConfigurationType"/>
         <runConfigurationProducer
                 implementation="dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvRunConfigurationProducer"/>
-        <lang.commenter
-                language="nuXmv"
-                implementationClass="dev.mikhailshad.nuxmvplugin.ide.format.NuXmvCommenter"/>
+
     </extensions>
 </idea-plugin>
