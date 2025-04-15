@@ -80,6 +80,8 @@
         <lang.formatter
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.ide.format.NuXmvFormattingModelBuilder"/>
+        <lang.foldingBuilder language="nuXmv"
+                             implementationClass="dev.mikhailshad.nuxmvplugin.ide.folding.NuXmvFoldingBuilder"/>
         <langCodeStyleSettingsProvider
                 implementation="dev.mikhailshad.nuxmvplugin.ide.settings.NuXmvLanguageCodeStyleSettingsProvider"/>
         <codeStyleSettingsProvider

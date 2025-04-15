@@ -1,4 +1,4 @@
-package dev.mikhailshad.nuxmvplugin.language.format
+package dev.mikhailshad.nuxmvplugin.ide.format
 
 import NuXmvCodeInsightFixtureTestCase
 import com.intellij.codeInsight.generation.actions.CommentByBlockCommentAction
