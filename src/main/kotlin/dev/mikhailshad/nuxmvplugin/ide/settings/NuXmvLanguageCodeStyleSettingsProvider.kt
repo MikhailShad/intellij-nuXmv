@@ -35,12 +35,6 @@ class NuXmvLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider
                     "Between sections (VAR, ASSIGN, etc.)",
                     CodeStyleSettingsCustomizableOptions.getInstance().BLANK_LINES_KEEP
                 )
-                consumer.showCustomOption(
-                    NuXmvCodeStyleSettings::class.java,
-                    "BLANK_LINES_BEFORE_SPECS",
-                    "Before specifications (SPEC, LTLSPEC, etc.)",
-                    CodeStyleSettingsCustomizableOptions.getInstance().BLANK_LINES_KEEP
-                )
             }
 
             else -> {
