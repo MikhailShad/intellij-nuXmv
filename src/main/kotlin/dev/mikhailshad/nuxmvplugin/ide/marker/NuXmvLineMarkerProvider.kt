@@ -3,9 +3,9 @@ package dev.mikhailshad.nuxmvplugin.ide.marker
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
-import com.intellij.icons.AllIcons
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import dev.mikhailshad.nuxmvplugin.language.NuXmvIcons
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFile
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModule
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModuleName
@@ -23,7 +23,7 @@ class NuXmvLineMarkerProvider : RelatedItemLineMarkerProvider() {
                 val targets = findModuleUsages(currentFile, moduleName)
 
                 if (targets.isNotEmpty()) {
-                    val builder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementedMethod)
+                    val builder = NavigationGutterIconBuilder.create(NuXmvIcons.MODULE_LINK_FROM)
                         .setTargets(targets)
                         .setTooltipText("Navigate to module usages")
 
@@ -38,7 +38,7 @@ class NuXmvLineMarkerProvider : RelatedItemLineMarkerProvider() {
                 val target = findModuleDeclaration(currentFile, moduleName)
 
                 if (target != null) {
-                    val builder = NavigationGutterIconBuilder.create(AllIcons.Gutter.ImplementingMethod)
+                    val builder = NavigationGutterIconBuilder.create(NuXmvIcons.MODULE_LINK_TO)
                         .setTarget(target)
                         .setTooltipText("Navigate to module declaration")
 
