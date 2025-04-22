@@ -1,9 +1,9 @@
 package dev.mikhailshad.nuxmvplugin.language.psi.mixin
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
-import com.intellij.icons.AllIcons
 import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentation
+import dev.mikhailshad.nuxmvplugin.language.NuXmvIcons
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvInvarSpecification
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement
 import javax.swing.Icon
@@ -21,7 +21,7 @@ abstract class NuXmvInvarSpecificationMixin(node: ASTNode) : ASTWrapperPsiElemen
                 return sb.toString()
             }
 
-            override fun getIcon(unused: Boolean): Icon = AllIcons.Nodes.Artifact // TODO: fix
+            override fun getIcon(unused: Boolean): Icon = NuXmvIcons.INVAR_SPEC
         }
     }
 }
