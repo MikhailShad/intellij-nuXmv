@@ -35,6 +35,8 @@
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.language.parser.NuXmvParserDefinition"/>
         <!-- Syntax highlighter -->
+        <additionalTextAttributes scheme="Darcula" file="colorScheme/NuXmv_Darcula.xml"/>
+        <additionalTextAttributes scheme="Default" file="colorScheme/NuXmv_Default.xml"/>
         <lang.syntaxHighlighterFactory
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.ide.highlighter.NuXmvSyntaxHighlighterFactory"/>
