@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list>
+    <!-- Keywords -->
+    <option name="NUXMV_KEYWORD">
+        <value>
+            <option name="FOREGROUND" value="CC7832"/>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+
+    <!-- Type Specifier -->
+    <option name="NUXMV_TYPE_SPECIFIER">
+        <value>
+            <option name="FOREGROUND" value="7A9EC2"/>
+            <option name="FONT_TYPE" value="2"/>
+        </value>
+    </option>
+
+    <!-- Comments -->
+    <option name="NUXMV_LINE_COMMENT">
+        <value>
+            <option name="FOREGROUND" value="629755"/>
+            <option name="FONT_TYPE" value="2"/>
+        </value>
+    </option>
+    <option name="NUXMV_BLOCK_COMMENT">
+        <value>
+            <option name="FOREGROUND" value="629755"/>
+            <option name="FONT_TYPE" value="2"/>
+        </value>
+    </option>
+
+    <!-- Numbers and literals -->
+    <option name="NUXMV_NUMBER">
+        <value>
+            <option name="FOREGROUND" value="6897BB"/>
+        </value>
+    </option>
+    <option name="NUXMV_WORD">
+        <value>
+            <option name="FOREGROUND" value="D89757"/>
+        </value>
+    </option>
+
+    <!-- Constants -->
+    <option name="NUXMV_CONSTANT_NAME">
+        <value>
+            <option name="FOREGROUND" value="66CCFF"/>
+        </value>
+    </option>
+
+    <!-- Operators -->
+    <option name="NUXMV_MATH_OPERATOR">
+        <value>
+            <option name="FOREGROUND" value="A9B7C6"/>
+        </value>
+    </option>
+    <option name="NUXMV_BOOL_OPERATOR">
+        <value>
+            <option name="FOREGROUND" value="4CAF50"/>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+    <option name="NUXMV_TIMED_LOGIC_OPERATOR">
+        <value>
+            <option name="FOREGROUND" value="9370DB"/>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+    <option name="NUXMV_BUILTIN_OPERATOR">
+        <value>
+            <option name="FOREGROUND" value="56B6C2"/>
+        </value>
+    </option>
+
+    <!-- Functions -->
+    <option name="NUXMV_INIT_FUNCTION">
+        <value>
+            <option name="FOREGROUND" value="FFC66D"/>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+    <option name="NUXMV_NEXT_FUNCTION">
+        <value>
+            <option name="FOREGROUND" value="FFC66D"/>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+    <option name="NUXMV_FUNCTION_DECLARATION">
+        <value>
+            <option name="FOREGROUND" value="FFC66D"/>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+    <option name="NUXMV_FUNCTION_CALL">
+        <value>
+            <option name="FOREGROUND" value="FFC66D"/>
+        </value>
+    </option>
+
+    <!-- Module related -->
+    <option name="NUXMV_MODULE_NAME">
+        <value>
+            <option name="FOREGROUND" value="A9B7C6"/>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+    <option name="NUXMV_PARAMETER_NAME">
+        <value>
+            <option name="FOREGROUND" value="56B6C2"/>
+        </value>
+    </option>
+
+    <!-- Variables -->
+    <option name="NUXMV_VARIABLE_NAME">
+        <value>
+            <option name="FOREGROUND" value="9876AA"/>
+        </value>
+    </option>
+
+    <!-- Punctuation -->
+    <option name="NUXMV_COMMA">
+        <value>
+            <option name="FOREGROUND" value="A9B7C6"/>
+        </value>
+    </option>
+    <option name="NUXMV_SEMICOLON">
+        <value>
+            <option name="FOREGROUND" value="A9B7C6"/>
+        </value>
+    </option>
+    <option name="NUXMV_COLON">
+        <value>
+            <option name="FOREGROUND" value="A9B7C6"/>
+        </value>
+    </option>
+    <option name="NUXMV_BRACKETS">
+        <value>
+            <option name="FOREGROUND" value="A9B7C6"/>
+        </value>
+    </option>
+    <option name="NUXMV_PARENTHESES">
+        <value>
+            <option name="FOREGROUND" value="A9B7C6"/>
+        </value>
+    </option>
+    <option name="NUXMV_BRACES">
+        <value>
+            <option name="FOREGROUND" value="A9B7C6"/>
+        </value>
+    </option>
+
+    <!-- Bad character -->
+    <option name="NUXMV_BAD_CHARACTER">
+        <value>
+            <option name="FOREGROUND" value="FF0000"/>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+</list>

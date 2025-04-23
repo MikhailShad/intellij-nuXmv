@@ -107,7 +107,9 @@ class NuXmvParserDefinition : ParserDefinition {
             NuXmvTypes.RANGE,
             NuXmvTypes.UNION,
             NuXmvTypes.IN,
-            NuXmvTypes.QUESTION_MARK
+            NuXmvTypes.QUESTION_MARK,
+            NuXmvTypes.COLON,
+            NuXmvTypes.ASSIGN,
         )
 
         @JvmStatic
@@ -122,7 +124,21 @@ class NuXmvParserDefinition : ParserDefinition {
         @JvmStatic
         val CONSTANTS = TokenSet.create(
             NuXmvTypes.TIME,
-            NuXmvTypes.PI
+            NuXmvTypes.PI,
+            NuXmvTypes.ENUMERATION_TYPE_VALUE,
+            NuXmvTypes.TRUE_KW,
+            NuXmvTypes.FALSE_KW,
+        )
+
+        @JvmStatic
+        val TYPES = TokenSet.create(
+            NuXmvTypes.INTEGER_TYPE,
+            NuXmvTypes.REAL_TYPE,
+            NuXmvTypes.CLOCK_TYPE,
+            NuXmvTypes.BOOLEAN_TYPE,
+            NuXmvTypes.SIGNED_WORD_TYPE,
+            NuXmvTypes.UNSIGNED_WORD_TYPE,
+            NuXmvTypes.WORD_TYPE
         )
 
         @JvmStatic
@@ -137,8 +153,6 @@ class NuXmvParserDefinition : ParserDefinition {
                 NuXmvTypes.PSLSPEC_KW,
                 NuXmvTypes.MODULE_KW,
                 NuXmvTypes.SELF_KW,
-                NuXmvTypes.TRUE_KW,
-                NuXmvTypes.FALSE_KW,
                 NuXmvTypes.FUN_KW,
                 NuXmvTypes.DEFINE_KW,
                 NuXmvTypes.CONSTANTS_KW,
@@ -188,8 +202,6 @@ class NuXmvParserDefinition : ParserDefinition {
         @JvmStatic
         val FUNCTION_CALLS = TokenSet.create(
             NuXmvTypes.FUNCTION_NAME_USAGE,
-            NuXmvTypes.INIT_FUN,
-            NuXmvTypes.NEXT_FUN,
             NuXmvTypes.ABS_FUN,
             NuXmvTypes.MAX_FUN,
             NuXmvTypes.MIN_FUN,
