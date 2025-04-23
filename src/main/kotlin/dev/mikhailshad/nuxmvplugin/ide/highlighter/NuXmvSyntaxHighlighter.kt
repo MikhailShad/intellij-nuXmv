@@ -27,13 +27,6 @@ class NuXmvSyntaxHighlighter : SyntaxHighlighterBase() {
         )
 
         @JvmStatic
-        val IDENTIFIER_ATTRIBUTE =
-            createTextAttributesKey(
-                "NUXMV_IDENTIFIER",
-                DefaultLanguageHighlighterColors.IDENTIFIER
-            )
-
-        @JvmStatic
         val KEYWORD_ATTRIBUTE = createTextAttributesKey(
             "NUXMV_KEYWORD",
             DefaultLanguageHighlighterColors.KEYWORD
@@ -131,7 +124,7 @@ class NuXmvSyntaxHighlighter : SyntaxHighlighterBase() {
         @JvmStatic
         val MODULE_NAME_ATTRIBUTE = createTextAttributesKey(
             "NUXMV_MODULE_NAME",
-            DefaultLanguageHighlighterColors.CLASS_NAME
+            DefaultLanguageHighlighterColors.FUNCTION_DECLARATION
         )
 
         @JvmStatic

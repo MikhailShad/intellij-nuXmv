@@ -4,49 +4,57 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvIdentifierUsage
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModuleName
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModuleParameter
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVarName
+import dev.mikhailshad.nuxmvplugin.language.psi.*
 
-// FIXME
 class NuXmvHighlighterAnnotator : Annotator {
 
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         when (element) {
+            is NuXmvIdentifierUsage -> {
+                val resolved = element.reference?.resolve()
+                innerAnnotate(element, holder, resolved)
+            }
+
+            else -> innerAnnotate(element, holder)
+        }
+    }
+
+    private fun innerAnnotate(element: PsiElement, holder: AnnotationHolder, reference: PsiElement? = null) {
+        val target = reference ?: element
+        when (target) {
             is NuXmvModuleName -> {
-                holder.newSilentAnnotation(HighlightSeverity.TEXT_ATTRIBUTES)
-                    .textAttributes(NuXmvSyntaxHighlighter.MODULE_PARAMETER_ATTRIBUTE)
+                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .textAttributes(NuXmvSyntaxHighlighter.MODULE_NAME_ATTRIBUTE)
+                    .range(element)
                     .create()
             }
 
             is NuXmvModuleParameter -> {
-                holder.newSilentAnnotation(HighlightSeverity.TEXT_ATTRIBUTES)
+                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                     .textAttributes(NuXmvSyntaxHighlighter.MODULE_PARAMETER_ATTRIBUTE)
+                    .range(element)
                     .create()
             }
 
             is NuXmvVarName -> {
-                holder.newSilentAnnotation(HighlightSeverity.TEXT_ATTRIBUTES)
+                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                     .textAttributes(NuXmvSyntaxHighlighter.VARIABLE_NAME_ATTRIBUTE)
+                    .range(element)
                     .create()
             }
 
-            is NuXmvIdentifierUsage -> {
-                val resolved = element.reference?.resolve()
-                when (resolved) {
-                    is NuXmvModuleParameter -> {
-                        holder.newSilentAnnotation(HighlightSeverity.TEXT_ATTRIBUTES)
-                            .textAttributes(NuXmvSyntaxHighlighter.MODULE_PARAMETER_ATTRIBUTE)
-                            .create()
-                    }
+            is NuXmvDefineName, is NuXmvEnumerationTypeValue -> {
+                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .textAttributes(NuXmvSyntaxHighlighter.CONSTANT_NAME_ATTRIBUTE)
+                    .range(element)
+                    .create()
+            }
 
-                    is NuXmvVarName -> {
-                        holder.newSilentAnnotation(HighlightSeverity.TEXT_ATTRIBUTES)
-                            .textAttributes(NuXmvSyntaxHighlighter.VARIABLE_NAME_ATTRIBUTE)
-                            .create()
-                    }
-                }
+            is NuXmvModuleTypeSpecifier -> {
+                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .textAttributes(NuXmvSyntaxHighlighter.TYPE_SPECIFIER_ATTRIBUTE)
+                    .range((element as NuXmvModuleTypeSpecifier).identifier)
+                    .create()
             }
         }
     }
