@@ -34,14 +34,19 @@
         <lang.parserDefinition
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.language.parser.NuXmvParserDefinition"/>
+        <!-- Syntax highlighter -->
         <lang.syntaxHighlighterFactory
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.ide.highlighter.NuXmvSyntaxHighlighterFactory"/>
+        <annotator
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.ide.highlighter.NuXmvHighlighterAnnotator"/>
+        <colorSettingsPage
+                implementation="dev.mikhailshad.nuxmvplugin.ide.highlighter.NuXmvColourSettingsPage"/>
+
         <lang.braceMatcher
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.ide.editor.NuXmvBraceMatcher"/>
-        <colorSettingsPage
-                implementation="dev.mikhailshad.nuxmvplugin.ide.highlighter.NuXmvColourSettingsPage"/>
         <annotator
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.ide.annotator.NuXmvWarningAnnotator"/>

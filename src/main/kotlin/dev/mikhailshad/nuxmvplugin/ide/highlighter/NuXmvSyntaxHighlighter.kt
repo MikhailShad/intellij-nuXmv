@@ -15,6 +15,18 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes
 class NuXmvSyntaxHighlighter : SyntaxHighlighterBase() {
     companion object {
         @JvmStatic
+        val LINE_COMMENT_ATTRIBUTE = createTextAttributesKey(
+            "NUXMV_LINE_COMMENT",
+            DefaultLanguageHighlighterColors.LINE_COMMENT
+        )
+
+        @JvmStatic
+        val BLOCK_COMMENT_ATTRIBUTE = createTextAttributesKey(
+            "NUXMV_BLOCK_COMMENT",
+            DefaultLanguageHighlighterColors.BLOCK_COMMENT
+        )
+
+        @JvmStatic
         val IDENTIFIER_ATTRIBUTE =
             createTextAttributesKey(
                 "NUXMV_IDENTIFIER",
@@ -48,19 +60,31 @@ class NuXmvSyntaxHighlighter : SyntaxHighlighterBase() {
         @JvmStatic
         val BOOL_OPERATOR_ATTRIBUTE = createTextAttributesKey(
             "NUXMV_BOOL_OPERATOR",
-            DefaultLanguageHighlighterColors.OPERATION_SIGN
+            DefaultLanguageHighlighterColors.METADATA
         )
 
         @JvmStatic
         val TIMED_LOGIC_OPERATOR_ATTRIBUTE = createTextAttributesKey(
             "NUXMV_TIMED_LOGIC_OPERATOR",
-            DefaultLanguageHighlighterColors.OPERATION_SIGN
+            DefaultLanguageHighlighterColors.STATIC_METHOD
         )
 
         @JvmStatic
         val BUILTIN_OPERATOR_ATTRIBUTE = createTextAttributesKey(
             "NUXMV_BUILTIN_OPERATOR",
-            DefaultLanguageHighlighterColors.OPERATION_SIGN
+            DefaultLanguageHighlighterColors.INSTANCE_METHOD
+        )
+
+        @JvmStatic
+        val INIT_FUNCTION_ATTRIBUTE = createTextAttributesKey(
+            "NUXMV_INIT_FUNCTION",
+            DefaultLanguageHighlighterColors.STATIC_FIELD
+        )
+
+        @JvmStatic
+        val NEXT_FUNCTION_ATTRIBUTE = createTextAttributesKey(
+            "NUXMV_NEXT_FUNCTION",
+            DefaultLanguageHighlighterColors.STATIC_FIELD
         )
 
         @JvmStatic
@@ -82,7 +106,9 @@ class NuXmvSyntaxHighlighter : SyntaxHighlighterBase() {
         )
 
         @JvmStatic
-        val COLON_ATTRIBUTE = createTextAttributesKey("NUXMV_COLON", DefaultLanguageHighlighterColors.COMMA)
+        val COLON_ATTRIBUTE = createTextAttributesKey(
+            "NUXMV_COLON", DefaultLanguageHighlighterColors.COMMA
+        )
 
         @JvmStatic
         val BRACKETS_ATTRIBUTE = createTextAttributesKey(
@@ -97,36 +123,52 @@ class NuXmvSyntaxHighlighter : SyntaxHighlighterBase() {
         )
 
         @JvmStatic
-        val BRACES_ATTRIBUTE = createTextAttributesKey("NUXMV_BRACES", DefaultLanguageHighlighterColors.BRACES)
+        val BRACES_ATTRIBUTE = createTextAttributesKey(
+            "NUXMV_BRACES",
+            DefaultLanguageHighlighterColors.BRACES
+        )
 
         @JvmStatic
-        val MODULE_NAME_ATTRIBUTE =
-            createTextAttributesKey("NUXMV_MODULE_NAME", DefaultLanguageHighlighterColors.CLASS_NAME)
+        val MODULE_NAME_ATTRIBUTE = createTextAttributesKey(
+            "NUXMV_MODULE_NAME",
+            DefaultLanguageHighlighterColors.CLASS_NAME
+        )
 
         @JvmStatic
-        val FUNCTION_DECLARATION_ATTRIBUTE =
-            createTextAttributesKey("NUXMV_FUNCTION_DECLARATION", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION)
+        val MODULE_PARAMETER_ATTRIBUTE = createTextAttributesKey(
+            "NUXMV_PARAMETER_NAME",
+            DefaultLanguageHighlighterColors.PARAMETER
+        )
 
         @JvmStatic
-        val FUNCTION_CALL_ATTRIBUTE =
-            createTextAttributesKey("NUXMV_FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL)
+        val FUNCTION_DECLARATION_ATTRIBUTE = createTextAttributesKey(
+            "NUXMV_FUNCTION_DECLARATION",
+            DefaultLanguageHighlighterColors.FUNCTION_DECLARATION
+        )
 
         @JvmStatic
-        val VARIABLE_NAME_ATTRIBUTE =
-            createTextAttributesKey("NUXMV_VARIABLE_NAME", DefaultLanguageHighlighterColors.LOCAL_VARIABLE)
+        val FUNCTION_CALL_ATTRIBUTE = createTextAttributesKey(
+            "NUXMV_FUNCTION_CALL",
+            DefaultLanguageHighlighterColors.FUNCTION_CALL
+        )
 
         @JvmStatic
-        val CONSTANT_NAME_ATTRIBUTE =
-            createTextAttributesKey("NUXMV_CONSTANT_NAME", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE)
+        val VARIABLE_NAME_ATTRIBUTE = createTextAttributesKey(
+            "NUXMV_VARIABLE_NAME",
+            DefaultLanguageHighlighterColors.LOCAL_VARIABLE
+        )
 
         @JvmStatic
-        val LINE_COMMENT_ATTRIBUTE =
-            createTextAttributesKey("NUXMV_LINE_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
+        val CONSTANT_NAME_ATTRIBUTE = createTextAttributesKey(
+            "NUXMV_CONSTANT_NAME",
+            DefaultLanguageHighlighterColors.CONSTANT
+        )
 
         @JvmStatic
-        val BLOCK_COMMENT_ATTRIBUTE =
-            createTextAttributesKey("NUXMV_BLOCK_COMMENT", DefaultLanguageHighlighterColors.BLOCK_COMMENT)
-
+        val TYPE_SPECIFIER_ATTRIBUTE = createTextAttributesKey(
+            "NUXMV_TYPE_SPECIFIER",
+            DefaultLanguageHighlighterColors.FUNCTION_DECLARATION
+        )
 
         val EMPTY_ATTRIBUTE = arrayOf<TextAttributesKey>()
     }
@@ -136,7 +178,6 @@ class NuXmvSyntaxHighlighter : SyntaxHighlighterBase() {
     init {
         val tokenTypeToAttribute = HashMap<IElementType, TextAttributesKey>()
         mapOf(
-            NuXmvParserDefinition.Util.IDENTIFIER to IDENTIFIER_ATTRIBUTE,
             NuXmvParserDefinition.Util.KEYWORDS to KEYWORD_ATTRIBUTE,
             NuXmvParserDefinition.Util.CONSTANTS to CONSTANT_NAME_ATTRIBUTE,
             NuXmvParserDefinition.Util.NUMBERS to NUMBER_ATTRIBUTE,
@@ -151,24 +192,25 @@ class NuXmvSyntaxHighlighter : SyntaxHighlighterBase() {
             NuXmvParserDefinition.Util.BRACKETS to BRACKETS_ATTRIBUTE,
             NuXmvParserDefinition.Util.PARENTHESES to PARENTHESES_ATTRIBUTE,
             NuXmvParserDefinition.Util.FUNCTION_CALLS to FUNCTION_CALL_ATTRIBUTE,
+            NuXmvParserDefinition.Util.TYPES to TYPE_SPECIFIER_ATTRIBUTE,
         ).forEach {
             fillMap(tokenTypeToAttribute, it.key, it.value)
         }
+
         attributes = tokenTypeToAttribute
     }
 
     override fun getHighlightingLexer(): Lexer = NuXmvLexerAdapter()
 
-
     override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> {
         return when {
-            NuXmvTypes.MODULE_NAME.equals(tokenType) -> pack(MODULE_NAME_ATTRIBUTE)
+            tokenType == NuXmvTypes.INIT_FUN -> pack(INIT_FUNCTION_ATTRIBUTE)
+            tokenType == NuXmvTypes.NEXT_FUN -> pack(NEXT_FUNCTION_ATTRIBUTE)
             NuXmvTypes.FUNCTION_DECLARATION.equals(tokenType) -> pack(FUNCTION_DECLARATION_ATTRIBUTE)
             NuXmvTypes.FUNCTION_CALL_BASIC_EXPR.equals(tokenType) -> pack(FUNCTION_CALL_ATTRIBUTE)
-            NuXmvTypes.VAR_NAME.equals(tokenType) -> pack(VARIABLE_NAME_ATTRIBUTE)
             NuXmvTypes.LINE_COMMENT.equals(tokenType) -> pack(LINE_COMMENT_ATTRIBUTE)
             NuXmvTypes.BLOCK_COMMENT.equals(tokenType) -> pack(BLOCK_COMMENT_ATTRIBUTE)
-            NuXmvTypes.WORD_CONSTANT.equals(tokenType) -> pack(WORD_ATTRIBUTE)
+            NuXmvTypes.WORD.equals(tokenType) -> pack(WORD_ATTRIBUTE)
             attributes.containsKey(tokenType) -> pack(attributes[tokenType])
             tokenType?.equals(TokenType.BAD_CHARACTER) ?: false -> pack(BAD_CHARACTER)
             else -> EMPTY_ATTRIBUTE
