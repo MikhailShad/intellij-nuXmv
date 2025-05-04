@@ -3,6 +3,7 @@ package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import dev.mikhailshad.nuxmvplugin.language.psi.type.TypeResolvable;
 import org.jetbrains.annotations.NotNull;
 
 public class NuXmvVisitor extends PsiElementVisitor {
@@ -333,7 +334,7 @@ public class NuXmvVisitor extends PsiElementVisitor {
     }
 
     public void visitSimpleTypeSpecifier(@NotNull NuXmvSimpleTypeSpecifier o) {
-        visitPsiElement(o);
+        visitTypeResolvable(o);
     }
 
     public void visitSingleAssignConstraint(@NotNull NuXmvSingleAssignConstraint o) {
@@ -426,6 +427,10 @@ public class NuXmvVisitor extends PsiElementVisitor {
 
     public void visitPresentableElement(@NotNull NuXmvPresentableElement o) {
         visitPsiElement(o);
+    }
+
+    public void visitTypeResolvable(@NotNull TypeResolvable o) {
+        visitElement(o);
     }
 
     public void visitPsiElement(@NotNull PsiElement o) {

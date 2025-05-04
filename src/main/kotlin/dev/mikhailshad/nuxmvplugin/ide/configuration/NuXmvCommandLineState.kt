@@ -17,7 +17,7 @@ class NuXmvCommandLineState(
 ) : CommandLineState(environment) {
 
     companion object {
-        private val LOG = Logger.getInstance(NuXmvCommandLineState::class.java)
+        private val logger = Logger.getInstance(NuXmvCommandLineState::class.java)
     }
 
     @Throws(ExecutionException::class)
@@ -38,7 +38,7 @@ class NuXmvCommandLineState(
         }
 
         val commandLine = buildCommandLine(nuXmvPath, modelFile)
-        LOG.info("Executing: ${commandLine.commandLineString}")
+        logger.info("Executing: ${commandLine.commandLineString}")
 
         val processHandler = ColoredProcessHandler(commandLine)
         ProcessTerminatedListener.attach(processHandler)
@@ -76,7 +76,12 @@ class NuXmvCommandLineState(
             tempFile.deleteOnExit()
 
             tempFile.writer().use { writer ->
-                writer.write("go\n")
+                val buildCommand = when (runConfiguration.domainType) {
+                    NuXmvDomainType.FINITE_DOMAIN -> "go"
+                    else -> "go_msat"
+                }
+                writer.write("$buildCommand\n")
+
                 if (runConfiguration.checkCtlSpecifications) {
                     writer.write("check_ctlspec\n")
                 }
@@ -94,7 +99,7 @@ class NuXmvCommandLineState(
 
             return tempFile
         } catch (e: Exception) {
-            LOG.error("Error creating command script", e)
+            logger.error("Error creating command script", e)
             return null
         }
     }

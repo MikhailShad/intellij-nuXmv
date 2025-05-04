@@ -9,6 +9,8 @@
   psiPackage="dev.mikhailshad.nuxmvplugin.language.psi"
   psiImplPackage="dev.mikhailshad.nuxmvplugin.language.psi.impl"
 
+  psiImplUtilClass="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPsiUtils"
+
   elementTypeHolderClass="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes"
   elementTypeClass="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvElementType"
   tokenTypeClass="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTokenType"
@@ -397,6 +399,10 @@ SimpleTypeSpecifier ::= BOOLEAN_TYPE
     | ARRAY_TYPE WordType ARRAY_OF SimpleTypeSpecifier
     | ARRAY_TYPE IntegerType ARRAY_OF SimpleTypeSpecifier
     | SimpleIdentifier // TODO: что-то придумать с проверкой, что тип корректный
+    {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvSimpleTypeSpecifierMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.type.TypeResolvable"
+}
 private WordType ::= (WORD_TYPE | UNSIGNED_WORD_TYPE | SIGNED_WORD_TYPE) LBRACKET WholeNumber RBRACKET
 private IntegerType ::= INTEGER_TYPE
 EnumerationTypeBody ::= EnumerationTypeValue (COMMA EnumerationTypeValue)*

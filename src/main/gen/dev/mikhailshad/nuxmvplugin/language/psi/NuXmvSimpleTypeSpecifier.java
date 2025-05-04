@@ -2,9 +2,10 @@
 package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import com.intellij.psi.PsiElement;
+import dev.mikhailshad.nuxmvplugin.language.psi.type.TypeResolvable;
 import org.jetbrains.annotations.Nullable;
 
-public interface NuXmvSimpleTypeSpecifier extends PsiElement {
+public interface NuXmvSimpleTypeSpecifier extends TypeResolvable {
 
     @Nullable
     NuXmvEnumerationTypeBody getEnumerationTypeBody();
