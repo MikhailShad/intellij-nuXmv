@@ -1,4 +1,4 @@
-package dev.mikhailshad.nuxmvplugin.ide.configuration
+package dev.mikhailshad.nuxmvplugin.language.psi.type
 
 enum class NuXmvDomainType(val stringRepresentation: String) {
     FINITE_DOMAIN("Finite Domain"),

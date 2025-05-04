@@ -1,4 +1,4 @@
-package dev.mikhailshad.nuxmvplugin.ide.configuration
+package dev.mikhailshad.nuxmvplugin.ide.run.configuration
 
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.LazyRunConfigurationProducer

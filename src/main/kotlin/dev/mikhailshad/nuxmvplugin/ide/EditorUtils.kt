@@ -1,4 +1,4 @@
-package dev.mikhailshad.nuxmvplugin.language.utils
+package dev.mikhailshad.nuxmvplugin.ide
 
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project

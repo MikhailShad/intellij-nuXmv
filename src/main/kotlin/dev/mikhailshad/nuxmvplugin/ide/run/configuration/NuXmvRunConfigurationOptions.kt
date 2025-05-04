@@ -1,6 +1,7 @@
-package dev.mikhailshad.nuxmvplugin.ide.configuration
+package dev.mikhailshad.nuxmvplugin.ide.run.configuration
 
 import com.intellij.execution.configurations.RunConfigurationOptions
+import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
 
 /**
  * Run configuration options for NuXmv

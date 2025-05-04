@@ -1,16 +1,16 @@
-package dev.mikhailshad.nuxmvplugin.language.utils
+package dev.mikhailshad.nuxmvplugin.language
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
-import dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvDomainType
 import dev.mikhailshad.nuxmvplugin.language.psi.*
 import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvBuiltInType
+import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
 
 object NuXmvUtils {
-    private val LOG = Logger.getInstance(NuXmvUtils::class.java)
+    private val logger = Logger.getInstance(NuXmvUtils::class.java)
 
     data class ModelSpecifications(
         val hasCtlSpecs: Boolean = false,
@@ -34,7 +34,7 @@ object NuXmvUtils {
                 domainType = visitor.domainType
             )
         } catch (e: Exception) {
-            LOG.warn("Error analyzing model file: ${virtualFile.path}", e)
+            logger.warn("Error analyzing model file: ${virtualFile.path}", e)
             return ModelSpecifications()
         }
     }

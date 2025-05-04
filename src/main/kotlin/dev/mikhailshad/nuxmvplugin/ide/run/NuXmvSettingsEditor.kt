@@ -1,4 +1,4 @@
-package dev.mikhailshad.nuxmvplugin.ide.configuration
+package dev.mikhailshad.nuxmvplugin.ide.run
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.SettingsEditor
@@ -10,7 +10,9 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.FormBuilder
-import dev.mikhailshad.nuxmvplugin.language.utils.NuXmvUtils
+import dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvRunConfiguration
+import dev.mikhailshad.nuxmvplugin.language.NuXmvUtils
+import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
 import java.io.File
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent

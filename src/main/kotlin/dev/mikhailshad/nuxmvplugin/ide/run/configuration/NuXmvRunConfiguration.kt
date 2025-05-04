@@ -1,4 +1,4 @@
-package dev.mikhailshad.nuxmvplugin.ide.configuration
+package dev.mikhailshad.nuxmvplugin.ide.run.configuration
 
 import com.intellij.execution.Executor
 import com.intellij.execution.configurations.*
@@ -6,7 +6,10 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMExternalizerUtil
-import dev.mikhailshad.nuxmvplugin.language.utils.EditorUtils
+import dev.mikhailshad.nuxmvplugin.ide.EditorUtils
+import dev.mikhailshad.nuxmvplugin.ide.run.NuXmvCommandLineState
+import dev.mikhailshad.nuxmvplugin.ide.run.NuXmvSettingsEditor
+import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
 import org.jdom.Element
 
 class NuXmvRunConfiguration(
@@ -101,7 +104,7 @@ class NuXmvRunConfiguration(
             JDOMExternalizerUtil.readField(element, CHECK_LTL_SPECIFICATIONS_FIELD)?.toBoolean() ?: false
         checkInvarSpecifications =
             JDOMExternalizerUtil.readField(element, CHECK_INVAR_SPECIFICATIONS_FIELD)?.toBoolean() ?: false
-        domainType = NuXmvDomainType.fromString(
+        domainType = NuXmvDomainType.Companion.fromString(
             JDOMExternalizerUtil.readField(element, DOMAIN_TYPE_FIELD)
         )
     }

@@ -1,4 +1,4 @@
-package dev.mikhailshad.nuxmvplugin.ide.configuration
+package dev.mikhailshad.nuxmvplugin.ide.run
 
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.CommandLineState
@@ -8,6 +8,9 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.diagnostic.Logger
+import dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvSettingsState
+import dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvRunConfiguration
+import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
 import java.io.File
 import java.util.*
 
@@ -22,7 +25,7 @@ class NuXmvCommandLineState(
 
     @Throws(ExecutionException::class)
     override fun startProcess(): ProcessHandler {
-        val nuXmvPath = NuXmvSettingsState.getInstance().state.nuXmvExecutablePath
+        val nuXmvPath = NuXmvSettingsState.Companion.getInstance().state.nuXmvExecutablePath
         if (nuXmvPath.isBlank()) {
             throw ExecutionException("NuXmv executable path is not set. Please configure it in Settings | Tools | nuXmv")
         }
