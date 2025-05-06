@@ -3,15 +3,18 @@ package dev.mikhailshad.nuxmvplugin.ide.run
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.ColoredProcessHandler
-import com.intellij.execution.process.ProcessHandler
-import com.intellij.execution.process.ProcessTerminatedListener
+import com.intellij.execution.process.*
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.wm.ToolWindowManager
 import dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvSettingsState
 import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvBddCommands
 import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvMsatCommands
 import dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvRunConfiguration
+import dev.mikhailshad.nuxmvplugin.ide.run.visualization.NuXmvModelVisualizationService
 import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
 import java.io.File
 import java.util.*
@@ -47,7 +50,38 @@ class NuXmvCommandLineState(
 
         val processHandler = ColoredProcessHandler(commandLine)
         ProcessTerminatedListener.attach(processHandler)
+
+        // Add process listener to update visualization after execution
+        processHandler.addProcessListener(object : ProcessAdapter() {
+            override fun processTerminated(event: ProcessEvent) {
+                if (event.exitCode == 0) {
+                    updateModelVisualization(runConfiguration.project, modelFile)
+                }
+            }
+        })
+        
         return processHandler
+    }
+
+    private fun updateModelVisualization(project: Project, modelFile: File) {
+        ApplicationManager.getApplication().invokeLater {
+            try {
+                // Open visualization tool window
+                val toolWindow = ToolWindowManager.getInstance(project).getToolWindow("NuXmv Model Visualizer")
+                if (toolWindow != null) {
+                    toolWindow.show()
+
+                    // Get virtual file for the model
+                    val virtualFile = LocalFileSystem.getInstance().findFileByIoFile(modelFile)
+                    if (virtualFile != null) {
+                        // Notify visualization service
+                        NuXmvModelVisualizationService.getInstance(project).visualizeModel(virtualFile)
+                    }
+                }
+            } catch (e: Exception) {
+                logger.error("Error updating model visualization", e)
+            }
+        }
     }
 
     private fun buildCommandLine(nuXmvPath: String, modelFile: File): GeneralCommandLine {
