@@ -9,6 +9,8 @@ import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.diagnostic.Logger
 import dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvSettingsState
+import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvBddCommands
+import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvMsatCommands
 import dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvRunConfiguration
 import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
 import java.io.File
@@ -79,25 +81,25 @@ class NuXmvCommandLineState(
             tempFile.deleteOnExit()
 
             tempFile.writer().use { writer ->
-                val buildCommand = when (runConfiguration.domainType) {
-                    NuXmvDomainType.FINITE_DOMAIN -> "go"
-                    else -> "go_msat"
+                val runCommands = when (runConfiguration.domainType) {
+                    NuXmvDomainType.FINITE_DOMAIN -> NuXmvBddCommands
+                    else -> NuXmvMsatCommands
                 }
-                writer.write("$buildCommand\n")
+                writer.write("${runCommands.buildCmd}\n")
 
                 if (runConfiguration.checkCtlSpecifications) {
-                    writer.write("check_ctlspec\n")
+                    writer.write("${runCommands.checkCtlCmd}\n")
                 }
 
                 if (runConfiguration.checkLtlSpecifications) {
-                    writer.write("check_ltlspec\n")
+                    writer.write("${runCommands.checkLtlCmd}\n")
                 }
 
                 if (runConfiguration.checkInvarSpecifications) {
-                    writer.write("check_invar\n")
+                    writer.write("${runCommands.checkInvarCmd}\n")
                 }
 
-                writer.write("quit\n")
+                writer.write("${runCommands.quitCmd}\n")
             }
 
             return tempFile

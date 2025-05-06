@@ -11,8 +11,9 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.FormBuilder
 import dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvRunConfiguration
-import dev.mikhailshad.nuxmvplugin.language.NuXmvUtils
 import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
+import dev.mikhailshad.nuxmvplugin.language.utils.ModelSpecifications
+import dev.mikhailshad.nuxmvplugin.language.utils.NuXmvUtils
 import java.io.File
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
@@ -71,7 +72,7 @@ class NuXmvSettingsEditor(private val project: Project) : SettingsEditor<NuXmvRu
         domainTypeComboBox.selectedItem = modelSpecifications.domainType
     }
 
-    private fun setCheckBoxesEnabled(modelSpecifications: NuXmvUtils.ModelSpecifications? = null) {
+    private fun setCheckBoxesEnabled(modelSpecifications: ModelSpecifications? = null) {
         if (modelSpecifications == null) {
             setCheckBoxValue(checkCtlSpecificationsCheckBox, false)
             setCheckBoxValue(checkLtlSpecificationsCheckBox, false)
