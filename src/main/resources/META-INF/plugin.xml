@@ -105,9 +105,9 @@
 
         <!-- Run Configuration -->
         <configurationType
-                implementation="dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvConfigurationType"/>
+                implementation="dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvConfigurationType"/>
         <runConfigurationProducer
-                implementation="dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvRunConfigurationProducer"/>
+                implementation="dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvRunConfigurationProducer"/>
 
     </extensions>
 </idea-plugin>

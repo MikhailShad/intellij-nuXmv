@@ -1,4 +1,4 @@
-package dev.mikhailshad.nuxmvplugin.ide.configuration
+package dev.mikhailshad.nuxmvplugin.ide.run
 
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.CommandLineState
@@ -8,6 +8,11 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.diagnostic.Logger
+import dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvSettingsState
+import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvBddCommands
+import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvMsatCommands
+import dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvRunConfiguration
+import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
 import java.io.File
 import java.util.*
 
@@ -17,12 +22,12 @@ class NuXmvCommandLineState(
 ) : CommandLineState(environment) {
 
     companion object {
-        private val LOG = Logger.getInstance(NuXmvCommandLineState::class.java)
+        private val logger = Logger.getInstance(NuXmvCommandLineState::class.java)
     }
 
     @Throws(ExecutionException::class)
     override fun startProcess(): ProcessHandler {
-        val nuXmvPath = NuXmvSettingsState.getInstance().state.nuXmvExecutablePath
+        val nuXmvPath = NuXmvSettingsState.Companion.getInstance().state.nuXmvExecutablePath
         if (nuXmvPath.isBlank()) {
             throw ExecutionException("NuXmv executable path is not set. Please configure it in Settings | Tools | nuXmv")
         }
@@ -38,7 +43,7 @@ class NuXmvCommandLineState(
         }
 
         val commandLine = buildCommandLine(nuXmvPath, modelFile)
-        LOG.info("Executing: ${commandLine.commandLineString}")
+        logger.info("Executing: ${commandLine.commandLineString}")
 
         val processHandler = ColoredProcessHandler(commandLine)
         ProcessTerminatedListener.attach(processHandler)
@@ -76,25 +81,30 @@ class NuXmvCommandLineState(
             tempFile.deleteOnExit()
 
             tempFile.writer().use { writer ->
-                writer.write("go\n")
+                val runCommands = when (runConfiguration.domainType) {
+                    NuXmvDomainType.FINITE_DOMAIN -> NuXmvBddCommands
+                    else -> NuXmvMsatCommands
+                }
+                writer.write("${runCommands.buildCmd}\n")
+
                 if (runConfiguration.checkCtlSpecifications) {
-                    writer.write("check_ctlspec\n")
+                    writer.write("${runCommands.checkCtlCmd}\n")
                 }
 
                 if (runConfiguration.checkLtlSpecifications) {
-                    writer.write("check_ltlspec\n")
+                    writer.write("${runCommands.checkLtlCmd}\n")
                 }
 
                 if (runConfiguration.checkInvarSpecifications) {
-                    writer.write("check_invar\n")
+                    writer.write("${runCommands.checkInvarCmd}\n")
                 }
 
-                writer.write("quit\n")
+                writer.write("${runCommands.quitCmd}\n")
             }
 
             return tempFile
         } catch (e: Exception) {
-            LOG.error("Error creating command script", e)
+            logger.error("Error creating command script", e)
             return null
         }
     }

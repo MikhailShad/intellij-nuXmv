@@ -1,4 +1,4 @@
-package dev.mikhailshad.nuxmvplugin.ide.configuration
+package dev.mikhailshad.nuxmvplugin.ide.run.configuration
 
 import com.intellij.execution.Executor
 import com.intellij.execution.configurations.*
@@ -6,7 +6,10 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMExternalizerUtil
-import dev.mikhailshad.nuxmvplugin.language.utils.EditorUtils
+import dev.mikhailshad.nuxmvplugin.ide.EditorUtils
+import dev.mikhailshad.nuxmvplugin.ide.run.NuXmvCommandLineState
+import dev.mikhailshad.nuxmvplugin.ide.run.NuXmvSettingsEditor
+import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
 import org.jdom.Element
 
 class NuXmvRunConfiguration(
@@ -20,6 +23,7 @@ class NuXmvRunConfiguration(
         const val CHECK_CTL_SPECIFICATIONS_FIELD = "CHECK_CTL_SPECIFICATIONS"
         const val CHECK_LTL_SPECIFICATIONS_FIELD = "CHECK_LTL_SPECIFICATIONS"
         const val CHECK_INVAR_SPECIFICATIONS_FIELD = "CHECK_INVAR_SPECIFICATIONS"
+        const val DOMAIN_TYPE_FIELD = "DOMAIN_TYPE"
     }
 
     var modelFilePath: String
@@ -52,6 +56,11 @@ class NuXmvRunConfiguration(
             options.checkInvarSpecifications = value
         }
 
+    var domainType: NuXmvDomainType
+        get() = options.domainType
+        set(value) {
+            options.domainType = value
+        }
 
     // Set default model file path for new configurations
     init {
@@ -82,6 +91,7 @@ class NuXmvRunConfiguration(
         JDOMExternalizerUtil.writeField(element, CHECK_CTL_SPECIFICATIONS_FIELD, checkCtlSpecifications.toString())
         JDOMExternalizerUtil.writeField(element, CHECK_LTL_SPECIFICATIONS_FIELD, checkLtlSpecifications.toString())
         JDOMExternalizerUtil.writeField(element, CHECK_INVAR_SPECIFICATIONS_FIELD, checkInvarSpecifications.toString())
+        JDOMExternalizerUtil.writeField(element, DOMAIN_TYPE_FIELD, domainType.name)
     }
 
     override fun readExternal(element: Element) {
@@ -94,6 +104,9 @@ class NuXmvRunConfiguration(
             JDOMExternalizerUtil.readField(element, CHECK_LTL_SPECIFICATIONS_FIELD)?.toBoolean() ?: false
         checkInvarSpecifications =
             JDOMExternalizerUtil.readField(element, CHECK_INVAR_SPECIFICATIONS_FIELD)?.toBoolean() ?: false
+        domainType = NuXmvDomainType.Companion.fromString(
+            JDOMExternalizerUtil.readField(element, DOMAIN_TYPE_FIELD)
+        )
     }
 
     override fun checkConfiguration() {
@@ -102,4 +115,3 @@ class NuXmvRunConfiguration(
         }
     }
 }
-

@@ -1,16 +1,21 @@
-package dev.mikhailshad.nuxmvplugin.ide.configuration
+package dev.mikhailshad.nuxmvplugin.ide.run
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.FormBuilder
+import dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvRunConfiguration
+import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
+import dev.mikhailshad.nuxmvplugin.language.utils.ModelSpecifications
 import dev.mikhailshad.nuxmvplugin.language.utils.NuXmvUtils
 import java.io.File
+import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
@@ -23,6 +28,9 @@ class NuXmvSettingsEditor(private val project: Project) : SettingsEditor<NuXmvRu
     private val checkCtlSpecificationsCheckBox = JBCheckBox("Check CTL specifications")
     private val checkLtlSpecificationsCheckBox = JBCheckBox("Check LTL specifications")
     private val checkInvarSpecificationsCheckBox = JBCheckBox("Check INVAR specifications")
+    private val domainTypeComboBox = ComboBox(
+        DefaultComboBoxModel(NuXmvDomainType.entries.toTypedArray())
+    )
 
     init {
         modelFileChooser.addBrowseFolderListener(
@@ -60,9 +68,11 @@ class NuXmvSettingsEditor(private val project: Project) : SettingsEditor<NuXmvRu
 
         val modelSpecifications = NuXmvUtils.analyzeModelSpecifications(project, virtualFile)
         setCheckBoxesEnabled(modelSpecifications)
+
+        domainTypeComboBox.selectedItem = modelSpecifications.domainType
     }
 
-    private fun setCheckBoxesEnabled(modelSpecifications: NuXmvUtils.ModelSpecifications? = null) {
+    private fun setCheckBoxesEnabled(modelSpecifications: ModelSpecifications? = null) {
         if (modelSpecifications == null) {
             setCheckBoxValue(checkCtlSpecificationsCheckBox, false)
             setCheckBoxValue(checkLtlSpecificationsCheckBox, false)
@@ -85,6 +95,7 @@ class NuXmvSettingsEditor(private val project: Project) : SettingsEditor<NuXmvRu
         checkCtlSpecificationsCheckBox.isSelected = configuration.checkCtlSpecifications
         checkLtlSpecificationsCheckBox.isSelected = configuration.checkLtlSpecifications
         checkInvarSpecificationsCheckBox.isSelected = configuration.checkInvarSpecifications
+        domainTypeComboBox.selectedItem = configuration.domainType
         updateCheckboxes()
     }
 
@@ -94,11 +105,13 @@ class NuXmvSettingsEditor(private val project: Project) : SettingsEditor<NuXmvRu
         configuration.checkCtlSpecifications = checkCtlSpecificationsCheckBox.isSelected
         configuration.checkLtlSpecifications = checkLtlSpecificationsCheckBox.isSelected
         configuration.checkInvarSpecifications = checkInvarSpecificationsCheckBox.isSelected
+        configuration.domainType = domainTypeComboBox.selectedItem as NuXmvDomainType
     }
 
     override fun createEditor(): JComponent {
         panel = FormBuilder.createFormBuilder()
             .addLabeledComponent(JBLabel("Model file:"), modelFileChooser)
+            .addLabeledComponent(JBLabel("Domain type:"), domainTypeComboBox)
             .addLabeledComponent(JBLabel("Command Line options:"), commandLineOptionsField)
             .addSeparator(3)
             .addComponent(checkCtlSpecificationsCheckBox)
