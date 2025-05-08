@@ -17,13 +17,15 @@ class NuXmvIdentifierReference(element: NuXmvIdentifierUsage) :
             identifier = identifier.substring(0, braceIndex)
         }
 
-        val partsIdentifier = identifier.split('.')
-
-        if (partsIdentifier.size == 1) {
-            return findDeclarationsInScope(file, identifier)
+        // At first look for as-is declaration of identifier
+        val asIsDeclaration = findDeclarationsInScope(file, identifier)
+        if (asIsDeclaration.isNotEmpty()) {
+            return asIsDeclaration
         }
 
+        // then we try to resolve partial declaration (module + identifier)
         var currentModule: PsiElement = element.findParentOfType<NuXmvModule>() ?: element.containingFile
+        val partsIdentifier = identifier.split('.')
         for (i in 0 until partsIdentifier.size - 1) {
             val partName = partsIdentifier[i]
             val variable = findVariableInScope(currentModule, partName)
