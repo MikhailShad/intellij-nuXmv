@@ -4,31 +4,26 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
+import dev.mikhailshad.nuxmvplugin.ide.run.visualization.model.ModelGraph
+import dev.mikhailshad.nuxmvplugin.ide.run.visualization.model.StateVariable
+import dev.mikhailshad.nuxmvplugin.ide.run.visualization.model.Transition
 import dev.mikhailshad.nuxmvplugin.language.psi.*
 import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvBuiltInType
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class ModelStateAnalyzer(private val project: Project) {
-    data class StateVariable(
-        val name: String,
-        val type: NuXmvBuiltInType,
-        val transitions: MutableList<Transition> = mutableListOf()
-    )
-
-    data class Transition(
-        val from: String,
-        val to: String,
-    ) {
-        lateinit var condition: String
+    companion object {
+        private val logger = KotlinLogging.logger {}
     }
 
-    fun analyzeModelFile(file: VirtualFile): List<StateVariable> {
-        val psiFile = PsiManager.getInstance(project).findFile(file) ?: return emptyList()
-        if (psiFile !is NuXmvFile) return emptyList()
+    fun analyzeModelFile(file: VirtualFile): ModelGraph {
+        val psiFile = PsiManager.getInstance(project).findFile(file) as? NuXmvFile
+            ?: throw Exception("Not a nuXmv file")
 
         val stateVariables = findStateVariables(psiFile)
         analyzeTransitionsInNextExpressions(psiFile, stateVariables)
 
-        return stateVariables.values.toList()
+        return ModelGraph(stateVariables.filter { it.value.transitions.isNotEmpty() })
     }
 
     private fun findStateVariables(psiFile: NuXmvFile): Map<String, StateVariable> {

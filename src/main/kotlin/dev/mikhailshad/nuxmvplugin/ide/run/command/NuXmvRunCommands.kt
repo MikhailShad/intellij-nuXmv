@@ -5,6 +5,8 @@ interface NuXmvRunCommands {
     val checkCtlCmd: String
     val checkLtlCmd: String
     val checkInvarCmd: String
+    val showTracesCmd: String
+        get() = "show_traces -a -v"
     val quitCmd: String
         get() = "quit"
 }

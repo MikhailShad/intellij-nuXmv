@@ -1,26 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" style="background: transparent !important;">
 <head>
     <meta charset="UTF-8">
     <title>NuXmv Model Visualization</title>
     <style>
-        html, body { 
-            margin: 0; 
-            padding: 0; 
+        html, body {
+            margin: 0;
+            padding: 0;
             overflow: hidden;
             width: 100%;
             height: 100%;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: transparent;
+            background-color: transparent !important;
+            background: none !important;
         }
+
+        /* Main layout using flexbox for better structure */
+        body {
+            display: flex;
+            flex-direction: column;
+            background-color: transparent !important;
+            background-image: none !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        /* Graph container with proper padding to avoid overlapping panels */
+        #cy-container {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            height: calc(100% - 60px); /* Account for control panel height */
+            padding-top: 60px; /* Space for top control panel */
+            box-sizing: border-box;
+            background-color: transparent !important;
+        }
+
+        /* The actual Cytoscape graph container */
         #cy {
             width: 100%;
             height: 100%;
             position: absolute;
-            top: 0;
+            top: 60px; /* Pushed down for control panel */
             left: 0;
-            background-color: transparent;
+            background-color: transparent !important;
         }
+
         .empty-message {
             position: absolute;
             top: 50%;
@@ -30,243 +55,1097 @@
             font-size: 14px;
             text-align: center;
             padding: 20px;
-            background-color: rgba(255, 255, 255, 0.7);
+            background-color: rgba(255, 255, 255, 0.9);
             border-radius: 8px;
-            border: 1px solid rgba(200, 200, 200, 0.5);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
             z-index: 10;
-            max-width: 80%;
+        }
+
+        /* Legend panel */
+        .legend-panel {
+            position: fixed;
+            left: 10px;
+            top: 60px; /* Below the control panel */
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            font-size: 12px;
+            z-index: 20;
+            max-width: 180px;
+            border: 1px solid #ddd;
+        }
+
+        .legend-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .legend-close {
+            cursor: pointer;
+            font-size: 16px;
+            color: #999;
+        }
+
+        .legend-close:hover {
+            color: #666;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* Fixed control panel at the top */
+        .control-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            z-index: 10;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 5px 10px;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .trace-navigation {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-button {
+            background-color: #4f81bd;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .nav-button:hover {
+            background-color: #2a5784;
+        }
+
+        .nav-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* Compact state details panel in the bottom right corner */
+        .state-details {
+            position: fixed;
+            right: 10px;
+            bottom: 10px;
+            max-width: 350px;
+            max-height: 250px;
+            background-color: rgba(255, 255, 255, 0.97);
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+            z-index: 20;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(200, 200, 200, 0.5);
+        }
+
+        .details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            background-color: #4f81bd;
+            color: white;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            flex-shrink: 0;
+        }
+
+        .details-header h3 {
+            margin: 0;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 0 0 10px;
+            line-height: 1;
+        }
+
+        /* State variables table */
+        #state-variables {
+            padding: 5px;
+            overflow-y: auto;
+            max-height: 200px;
+            font-size: 12px;
+            width: 100%;
+        }
+
+        .variables-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .variables-table th,
+        .variables-table td {
+            padding: 4px 8px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .variables-table th {
+            background-color: #f6f6f6;
+            color: #444;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .variables-table td {
+            word-break: break-word;
+        }
+
+        .variable-name {
+            font-weight: 600;
+            color: #2a5784;
+            width: 40%;
+        }
+
+        /* Added styles for better panel integration */
+        #controls {
+            backdrop-filter: blur(5px);
+        }
+
+        #state-details {
+            backdrop-filter: blur(5px);
+            opacity: 0.97;
+        }
+
+        .hidden {
+            display: none !important;
         }
     </style>
-    <!-- Using a fixed version of Cytoscape.js for reliability -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
 </head>
 <body>
-<div id="empty-message" class="empty-message">
-    Нет данных для визуализации.<br>
-    Откройте файл модели, содержащий переменные состояния с конечными доменами.<br>
-    Поддерживаются типы: boolean, set, WORD.
+<div id="controls" class="control-panel hidden">
+    <div class="trace-selector">
+        <label for="trace-select">Trace: </label>
+        <select id="trace-select"></select>
+    </div>
+    <div class="trace-navigation">
+        <button id="prev-state" class="nav-button" disabled>◀ Previous</button>
+        <span id="state-info">State: -</span>
+        <button id="next-state" class="nav-button" disabled>Next ▶</button>
+    </div>
 </div>
-<div id="cy"></div>
 
+<div id="cy-container">
+    <div id="empty-message" class="empty-message">
+        <h3>NuXmv Model Visualization</h3>
+        <p>Waiting for model data...</p>
+    </div>
+    <div id="legend" class="legend-panel hidden">
+        <div class="legend-title">
+            <span>Variables</span>
+            <span class="legend-close" title="Close legend">×</span>
+        </div>
+        <div id="legend-items">
+            <!-- Legend items will be generated here -->
+        </div>
+    </div>
+    <div id="cy"></div>
+</div>
+
+<div id="state-details" class="state-details hidden">
+    <div class="details-header">
+        <h3 id="state-details-title">State Details</h3>
+        <button id="close-details" class="close-button">×</button>
+    </div>
+    <div id="state-variables"></div>
+</div>
 <script>
-    // Global variables
     let cy = null;
-    const emptyMessage = document.getElementById('empty-message');
+    let modelData = null;
+    let activeTrace = -1;
+    let currentStateIndex = -1;
 
-    // Initialize Cytoscape with basic configuration
     function initCytoscape() {
-        console.log("Initializing Cytoscape.js");
-        try {
-            cy = cytoscape({
-                container: document.getElementById('cy'),
-                elements: [],
-                style: [
-                    {
-                        selector: 'node',
-                        style: {
-                            'background-color': '#4f81bd',
-                            'label': 'data(label)',
-                            'color': '#fff',
-                            'text-valign': 'center',
-                            'text-halign': 'center',
-                            'width': 'label',
-                            'height': 'label',
-                            'padding': '10px',
-                            'font-size': '12px',
-                            'shape': 'round-rectangle',
-                            'border-width': '1px',
-                            'border-color': '#2a5784',
-                            'text-outline-width': '1px',
-                            'text-outline-color': '#2a5784',
-                            'text-outline-opacity': 0.5
-                        }
-                    },
-                    {
-                        selector: 'edge',
-                        style: {
-                            'width': 2,
-                            'line-color': '#9bbb59',
-                            'target-arrow-color': '#9bbb59',
-                            'target-arrow-shape': 'triangle',
-                            'curve-style': 'bezier',
-                            'label': 'data(label)',
-                            'text-background-color': '#ffffff',
-                            'text-background-opacity': 0.7,
-                            'text-background-padding': 3,
-                            'text-background-shape': 'round-rectangle',
-                            'font-size': '10px',
-                            'color': '#333333'
-                        }
+        if (cy !== null) {
+            return;
+        }
+
+        const cyContainer = document.getElementById('cy');
+        const containerWrapper = document.getElementById('cy-container');
+
+        if (!cyContainer || !containerWrapper) {
+            console.error("Cytoscape container elements not found");
+            return;
+        }
+
+        containerWrapper.style.height = `${window.innerHeight}px`;
+
+        cy = cytoscape({
+            container: cyContainer,
+            userZoomingEnabled: true,
+            userPanningEnabled: true,
+            boxSelectionEnabled: false,
+            autounselectify: false,
+            wheelSensitivity: 0.2,
+            styleEnabled: true,
+            hideEdgesOnViewport: false,
+            hideLabelsOnViewport: false,
+            textureOnViewport: false,
+            motionBlur: true,
+            motionBlurOpacity: 0.2,
+            pixelRatio: 'auto',
+            background: 'transparent',
+            style: [
+                {
+                    selector: 'node',
+                    style: {
+                        'label': 'data(label)',
+                        'text-valign': 'center',
+                        'text-halign': 'center',
+                        'background-color': '#888888',
+                        'color': 'white',
+                        'font-size': '12px',
+                        'width': 50,
+                        'height': 50,
+                        'text-wrap': 'wrap',
+                        'text-max-width': '46px',
+                        'text-overflow-wrap': 'anywhere',
+                        'text-justification': 'center',
+                        'shape': 'ellipse',
+                        'border-width': 0
                     }
-                ],
-                layout: {
-                    name: 'grid',
-                    padding: 50
+                },
+                {
+                    selector: 'node.value',
+                    style: {
+                        'background-color': 'data(color)',
+                        'text-valign': 'center',
+                        'text-halign': 'center',
+                        'font-size': '12px',
+                        'color': 'white',
+                        'width': 'label',
+                        'height': 'label',
+                        'padding': '10px',
+                        'shape': 'ellipse',
+                        'text-wrap': 'wrap'
+                    }
+                },
+                {
+                    selector: 'node.variable',
+                    style: {
+                        'opacity': 0,
+                        'width': 0,
+                        'height': 0
+                    }
+                },
+                {
+                    selector: 'edge',
+                    style: {
+                        'width': 2,
+                        'line-color': '#999',
+                        'target-arrow-color': '#999',
+                        'target-arrow-shape': 'triangle',
+                        'arrow-scale': 1.2,
+                        'curve-style': 'bezier',
+                        'label': 'data(condition)',
+                        'font-size': '10px',
+                        'text-background-color': 'white',
+                        'text-background-opacity': 0.8,
+                        'text-background-padding': '2px',
+                        'text-rotation': 'autorotate',
+                        'text-wrap': 'wrap',
+                        'text-max-width': '100px',
+                        'edge-text-rotation': 'autorotate',
+                        'min-zoomed-font-size': 6
+                    }
+                },
+                {
+                    selector: '.highlighted',
+                    style: {
+                        'border-width': 3,
+                        'border-color': '#ff5500',
+                        'border-style': 'solid',
+                        'opacity': 1.0,
+                        'z-index': 999
+                    }
+                },
+                {
+                    selector: '.transition',
+                    style: {
+                        'line-color': '#ff5500',
+                        'target-arrow-color': '#ff5500',
+                        'width': 3,
+                        'arrow-scale': 1.5,
+                        'z-index': 999
+                    }
+                },
+                {
+                    selector: '.trace-path',
+                    style: {
+                        'border-width': 2,
+                        'border-color': '#daa520',
+                        'border-style': 'dashed'
+                    }
+                },
+                {
+                    selector: '.trace-edge',
+                    style: {
+                        'line-color': '#daa520',
+                        'target-arrow-color': '#daa520',
+                        'width': 2,
+                        'line-style': 'dashed',
+                        'z-index': 900
+                    }
                 }
-            });
-            console.log("Cytoscape initialized successfully");
-            return true;
-        } catch(e) {
-            console.error("Error initializing Cytoscape:", e);
-            emptyMessage.textContent = "Ошибка инициализации графа: " + e.message;
-            return false;
+            ],
+            layout: {
+                name: 'cose',
+                animate: false,
+                nodeDimensionsIncludeLabels: true,
+                idealEdgeLength: 150,
+                nodeOverlap: 10,
+                padding: 50,
+                nodeRepulsion: 1000000,
+                edgeElasticity: 100,
+                gravity: 80,
+                numIter: 3000,
+                initialTemp: 200,
+                coolingFactor: 0.95,
+                minTemp: 1.0,
+                randomize: false
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        initCytoscape();
+        setupUIEventHandlers();
+        setupResizeHandler();
+    });
+
+    function setupResizeHandler() {
+        let resizeTimeout;
+
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function () {
+                const containerWrapper = document.getElementById('cy-container');
+                if (containerWrapper) {
+                    containerWrapper.style.height = `${window.innerHeight - 60}px`;
+                }
+
+                if (cy) {
+                    cy.resize();
+                    cy.fit();
+                    cy.center();
+                }
+            }, 250);
+        });
+
+        if (window.ResizeObserver) {
+            const containerWrapper = document.getElementById('cy-container');
+            if (containerWrapper) {
+                const resizeObserver = new ResizeObserver(function () {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(function () {
+                        if (cy) {
+                            cy.resize();
+                            cy.fit();
+                            cy.center();
+                        }
+                    }, 250);
+                });
+                resizeObserver.observe(containerWrapper);
+                console.log("ResizeObserver set up for container wrapper");
+            }
         }
     }
 
-    // Initialize when DOM is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log("DOM loaded, initializing visualization");
-        initCytoscape();
-    });
-
-    // Try to initialize immediately as well
     try {
         initCytoscape();
-    } catch(e) {
+    } catch (e) {
         console.error("Error in immediate initialization:", e);
     }
 
-    // Update visualization with new data from Java
-    function updateVisualization(jsonData) {
-        console.log("updateVisualization called");
+    function updateVisualization(dataJson) {
         try {
+            modelData = JSON.parse(dataJson);
+
+            if (!modelData || typeof modelData !== 'object') {
+                console.error("Invalid model data format");
+                return;
+            }
+
+            document.getElementById('empty-message').classList.add('hidden');
+            document.getElementById('controls').classList.remove('hidden');
+
+            generateLegend();
+
             if (!cy) {
-                console.log("No Cytoscape instance, initializing");
-                if (!initCytoscape()) {
-                    console.error("Failed to initialize Cytoscape");
-                    emptyMessage.textContent = "Ошибка: Не удалось инициализировать граф";
-                    emptyMessage.style.display = 'block';
-                    return;
+                initCytoscape();
+            }
+
+            cy.startBatch();
+
+            cy.elements().remove();
+
+            const elements = [];
+
+            if (modelData.nodes && modelData.nodes.length > 0) {
+                for (const nodeData of modelData.nodes) {
+                    const nodeClass = nodeData.isVariable ? 'variable' : (nodeData.isValue ? 'value' : '');
+
+                    let customWidth, customHeight;
+
+                    if (nodeData.label) {
+                        const labelLength = nodeData.label.length;
+
+                        if (nodeClass === 'variable') {
+                            customWidth = Math.max(80, Math.min(150, 60 + labelLength * 5));
+                            customHeight = Math.max(40, Math.min(60, 30 + Math.ceil(labelLength / 10) * 10));
+                        } else if (nodeClass === 'value') {
+                            customWidth = Math.max(50, Math.min(100, 40 + labelLength * 4));
+                            customHeight = 40;
+                        } else {
+                            customWidth = Math.max(60, Math.min(120, 50 + labelLength * 4));
+                            customHeight = Math.max(40, Math.min(60, 30 + Math.ceil(labelLength / 15) * 10));
+                        }
+                    }
+
+                    if (nodeClass === 'value' && nodeData.variableName) {
+                        nodeData.color = getColorForVariable(nodeData.variableName);
+                    } else if (nodeClass === 'variable' && nodeData.label) {
+                        nodeData.color = getColorForVariable(nodeData.label);
+                        nodeData.hidden = true;
+                    }
+
+                    const nodeElement = {
+                        group: 'nodes',
+                        data: nodeData,
+                        classes: nodeClass
+                    };
+
+                    if (customWidth && customHeight) {
+                        nodeElement.style = {
+                            'width': customWidth,
+                            'height': customHeight,
+                            'text-max-width': customWidth - 4
+                        };
+                    }
+
+                    elements.push(nodeElement);
                 }
             }
 
-            // Parse JSON data safely
-            let data = [];
-            try {
-                data = JSON.parse(jsonData);
-                console.log("Parsed JSON data, elements:", (data ? data.length : 0));
-            } catch (parseError) {
-                console.error("Error parsing JSON:", parseError);
-                emptyMessage.textContent = "Ошибка: Неверный формат данных";
-                emptyMessage.style.display = 'block';
-                return;
+            if (modelData.edges && modelData.edges.length > 0) {
+                const edgeGroups = new Map();
+
+                for (const edgeData of modelData.edges) {
+                    const sourceId = edgeData.source;
+                    const targetId = edgeData.target;
+                    const key = `${sourceId}->${targetId}`;
+
+                    if (!edgeGroups.has(key)) {
+                        edgeGroups.set(key, []);
+                    }
+                    edgeGroups.get(key).push(edgeData);
+                }
+
+                let edgeCounter = 0;
+                for (const [key, edgeList] of edgeGroups.entries()) {
+                    for (let i = 0; i < edgeList.length; i++) {
+                        const edgeData = edgeList[i];
+                        const edgeId = edgeData.id || `edge-${++edgeCounter}`;
+
+                        const edgeElement = {
+                            group: 'edges',
+                            data: {
+                                ...edgeData,
+                                id: edgeId
+                            }
+                        };
+
+                        if (edgeList.length > 1) {
+                            const curveDistance = 20 + (15 * i);
+                            edgeElement.style = {
+                                'curve-style': 'unbundled-bezier',
+                                'control-point-distances': i % 2 === 0 ? curveDistance : -curveDistance,
+                                'control-point-weights': 0.5
+                            };
+                        }
+
+                        elements.push(edgeElement);
+                    }
+                }
             }
 
-            // Clear existing elements safely
-            try {
-                cy.elements().remove();
-            } catch (removeError) {
-                console.error("Error removing elements:", removeError);
+            cy.add(elements);
+
+            const layout = cy.layout({
+                name: 'cose',
+                animate: false,
+                nodeDimensionsIncludeLabels: true,
+                idealEdgeLength: 150,
+                nodeOverlap: 10,
+                padding: 50,
+                nodeRepulsion: 1000000,
+                edgeElasticity: 100,
+                gravity: 80,
+                numIter: 3000,
+                initialTemp: 200,
+                coolingFactor: 0.95,
+                minTemp: 1.0,
+                randomize: false,
+                fit: true
+            });
+
+            layout.run();
+
+            cy.endBatch();
+
+            if (modelData.traces && modelData.traces.length > 0) {
+                populateTraceSelector();
+                showTrace(0);
+            }
+        } catch (e) {
+            console.error("Error in updateVisualization:", e);
+        }
+    }
+
+    function getColorForVariable(variableName) {
+        if (!window.variableColors) {
+            window.variableColors = new Map();
+        }
+
+        if (window.variableColors.has(variableName)) {
+            return window.variableColors.get(variableName);
+        }
+
+        const usePredefined = true;
+
+        if (usePredefined) {
+            const colors = [
+                '#4f81bd',
+                '#c0504d',
+                '#9bbb59',
+                '#8064a2',
+                '#4bacc6',
+                '#6b83ab',
+                '#b66d6b',
+                '#749a53',
+                '#6f5a7e',
+                '#458b9a',
+                '#4b5fbd',
+                '#c04d8d',
+                '#59bb80',
+                '#a264a2',
+                '#4bacc6',
+            ];
+
+            let hash = 0;
+            for (let i = 0; i < variableName.length; i++) {
+                hash = ((hash << 5) - hash) + variableName.charCodeAt(i);
+                hash = hash & hash;
             }
 
-            // Show empty message if no data
-            if (!data || data.length === 0) {
-                console.log("No elements to display");
-                emptyMessage.style.display = 'block';
-                return;
+            const index = Math.abs(hash) % colors.length;
+            const color = colors[index];
+
+            window.variableColors.set(variableName, color);
+            return color;
+        } else {
+
+            let hash = 0;
+            for (let i = 0; i < variableName.length; i++) {
+                hash = ((hash << 5) - hash) + variableName.charCodeAt(i);
+                hash = hash & hash;
             }
 
-            // Hide empty message
-            emptyMessage.style.display = 'none';
+            const hue = Math.abs(hash) % 360;
 
-            // Add elements to graph
-            try {
-                cy.add(data);
-                console.log("Added elements to graph, count:", cy.elements().length);
-            } catch (addError) {
-                console.error("Error adding elements:", addError);
-                emptyMessage.textContent = "Ошибка: Не удалось добавить элементы графа";
-                emptyMessage.style.display = 'block';
-                return;
+            const saturation = 65;
+            const lightness = 40;
+
+            const color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+
+            window.variableColors.set(variableName, color);
+            return color;
+        }
+    }
+
+    function populateTraceSelector() {
+        const traceSelect = document.getElementById('trace-select');
+        traceSelect.innerHTML = '';
+
+        modelData.traces.forEach((trace, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.text = `Trace ${trace.traceNumber}: ${trace.specType} - ${trace.specification.substring(0, 40)}${trace.specification.length > 40 ? '...' : ''}`;
+            traceSelect.appendChild(option);
+        });
+
+        traceSelect.onchange = function () {
+            showTrace(this.value);
+        };
+    }
+
+    function showTrace(traceIndex) {
+        if (!modelData || !modelData.traces || traceIndex >= modelData.traces.length) {
+            return;
+        }
+
+        cy.elements().removeClass('trace-path').removeClass('trace-edge').removeClass('highlighted').removeClass('transition');
+
+        activeTrace = parseInt(traceIndex);
+        const trace = modelData.traces[activeTrace];
+
+        const prevButton = document.getElementById('prev-state');
+        const nextButton = document.getElementById('next-state');
+
+        prevButton.onclick = function () {
+            if (currentStateIndex > 0) {
+                showState(currentStateIndex - 1);
             }
+        };
 
-            // Apply a simple grid layout
-            console.log("Applying grid layout");
-            try {
-                cy.layout({
-                    name: 'grid',
-                    padding: 50,
-                    fit: true,
-                    avoidOverlap: true
-                }).run();
+        nextButton.onclick = function () {
+            if (currentStateIndex < trace.states.length - 1) {
+                showState(currentStateIndex + 1);
+            }
+        };
 
-                // Ensure graph is centered and visible
-                setTimeout(function() {
-                    try {
-                        cy.center();
+        currentStateIndex = -1;
+
+        showState(0);
+    }
+
+    function highlightTracePathUpToState(trace, stateIndex) {
+        if (!trace || !trace.states || trace.states.length === 0 || stateIndex < 0) return;
+
+        cy.elements().removeClass('trace-path').removeClass('trace-edge');
+
+        const tracedNodes = new Set();
+        const tracedNodePairs = new Set();
+
+        for (let i = 0; i <= stateIndex; i++) {
+            const state = trace.states[i];
+            if (!state || !state.variables) continue;
+
+            const stateNodes = new Set();
+
+            Object.entries(state.variables).forEach(([varName, value]) => {
+                const possibleIds = [
+                    `${varName}=${value}`,
+                    `${varName}_${value}`,
+                    `${varName}-${value}`
+                ];
+
+                let found = false;
+                for (const id of possibleIds) {
+                    const node = cy.getElementById(id);
+                    if (node.length > 0) {
+                        stateNodes.add(node.id());
+                        if (!tracedNodes.has(node.id())) {
+                            node.addClass('trace-path');
+                            tracedNodes.add(node.id());
+                        }
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    cy.nodes().forEach(node => {
+                        const label = node.data('label');
+                        if (label && (label === `${varName}=${value}` ||
+                                label.includes(`${varName}=${value}`) ||
+                                label === value)) {
+                            stateNodes.add(node.id());
+                            if (!tracedNodes.has(node.id())) {
+                                node.addClass('trace-path');
+                                tracedNodes.add(node.id());
+                            }
+                        }
+                    });
+                }
+            });
+
+            if (i > 0 && trace.states[i - 1] && trace.states[i - 1].variables) {
+                const prevStateNodes = new Set();
+
+                Object.entries(trace.states[i - 1].variables).forEach(([varName, value]) => {
+                    const possibleIds = [
+                        `${varName}=${value}`,
+                        `${varName}_${value}`,
+                        `${varName}-${value}`
+                    ];
+
+                    for (const id of possibleIds) {
+                        const node = cy.getElementById(id);
+                        if (node.length > 0) {
+                            prevStateNodes.add(node.id());
+                            break;
+                        }
+                    }
+
+                    cy.nodes().forEach(node => {
+                        const label = node.data('label');
+                        if (label && (label === `${varName}=${value}` ||
+                                label.includes(`${varName}=${value}`) ||
+                                label === value)) {
+                            prevStateNodes.add(node.id());
+                        }
+                    });
+                });
+
+                cy.edges().forEach(edge => {
+                    const sourceId = edge.source().id();
+                    const targetId = edge.target().id();
+
+                    const pairKey = `${sourceId}->${targetId}`;
+                    if (!tracedNodePairs.has(pairKey) &&
+                            ((prevStateNodes.has(sourceId) && stateNodes.has(targetId)) ||
+                                    (stateNodes.has(sourceId) && prevStateNodes.has(targetId)))) {
+                        edge.addClass('trace-edge');
+                        tracedNodePairs.add(pairKey);
+                    }
+                });
+            }
+        }
+    }
+
+    function showState(stateIndex) {
+        if (!modelData || !modelData.traces || activeTrace < 0 ||
+                stateIndex < 0 || stateIndex >= modelData.traces[activeTrace].states.length) {
+            return;
+        }
+
+        currentStateIndex = stateIndex;
+        const trace = modelData.traces[activeTrace];
+        const state = trace.states[stateIndex];
+        const prevState = stateIndex > 0 ? trace.states[stateIndex - 1] : null;
+
+        document.getElementById('state-info').textContent = `State: ${state.stateNumber}${state.isLoopState ? ' (loop)' : ''}`;
+
+        document.getElementById('prev-state').disabled = (stateIndex === 0);
+        document.getElementById('next-state').disabled = (stateIndex === trace.states.length - 1);
+
+        highlightState(state, prevState);
+
+        updateStateDetails(state);
+    }
+
+    function highlightState(state, prevState) {
+        cy.elements().removeClass('highlighted').removeClass('transition');
+
+        if (!state) return;
+
+        const trace = modelData.traces[activeTrace];
+        highlightTracePathUpToState(trace, currentStateIndex);
+
+        const highlightedNodes = new Set();
+
+        if (state.variables) {
+            Object.entries(state.variables).forEach(([varName, value]) => {
+                const possibleIds = [
+                    `${varName}=${value}`,
+                    `${varName}_${value}`,
+                    `${varName}-${value}`
+                ];
+
+                let found = false;
+
+                for (const id of possibleIds) {
+                    const node = cy.getElementById(id);
+                    if (node.length > 0) {
+                        node.addClass('highlighted');
+                        highlightedNodes.add(node.id());
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    cy.nodes().forEach(node => {
+                        const label = node.data('label');
+                        if (label && (label === `${varName}=${value}` ||
+                                label.includes(`${varName}=${value}`) ||
+                                label === value)) {
+                            node.addClass('highlighted');
+                            highlightedNodes.add(node.id());
+                        }
+                    });
+                }
+            });
+        }
+
+        if (prevState && prevState.variables) {
+            const prevHighlightedNodes = new Set();
+
+            Object.entries(prevState.variables).forEach(([varName, value]) => {
+                const possibleIds = [
+                    `${varName}=${value}`,
+                    `${varName}_${value}`,
+                    `${varName}-${value}`
+                ];
+
+                for (const id of possibleIds) {
+                    const node = cy.getElementById(id);
+                    if (node.length > 0) {
+                        prevHighlightedNodes.add(node.id());
+                        break;
+                    }
+                }
+
+                cy.nodes().forEach(node => {
+                    const label = node.data('label');
+                    if (label && (label === `${varName}=${value}` ||
+                            label.includes(`${varName}=${value}`) ||
+                            label === value)) {
+                        prevHighlightedNodes.add(node.id());
+                    }
+                });
+            });
+
+            cy.edges().forEach(edge => {
+                const sourceId = edge.source().id();
+                const targetId = edge.target().id();
+
+
+                if ((prevHighlightedNodes.has(sourceId) && highlightedNodes.has(targetId)) ||
+                        (highlightedNodes.has(sourceId) && prevHighlightedNodes.has(targetId))) {
+                    edge.addClass('transition');
+                }
+            });
+        }
+
+        cy.nodes('.highlighted').forEach(node => {
+            node.style('z-index', 999);
+        });
+    }
+
+
+    function generateLegend() {
+        if (!modelData || !modelData.nodes) return;
+
+        const legendItems = document.getElementById('legend-items');
+        legendItems.innerHTML = '';
+
+        const variableColors = new Map();
+
+        modelData.nodes.forEach(node => {
+            if (node.isVariable && node.label) {
+                const varName = node.label;
+                const color = getColorForVariable(varName);
+                variableColors.set(varName, color);
+            } else if (node.isValue && node.variableName) {
+                const varName = node.variableName;
+                const color = getColorForVariable(varName);
+                variableColors.set(varName, color);
+            }
+        });
+
+        const sortedVariables = Array.from(variableColors.keys()).sort();
+
+        sortedVariables.forEach(varName => {
+            const color = variableColors.get(varName);
+            const item = document.createElement('div');
+            item.className = 'legend-item';
+
+            const colorSquare = document.createElement('div');
+            colorSquare.className = 'legend-color';
+            colorSquare.style.backgroundColor = color;
+
+            const label = document.createElement('div');
+            label.textContent = varName;
+
+            item.appendChild(colorSquare);
+            item.appendChild(label);
+            legendItems.appendChild(item);
+        });
+
+        if (sortedVariables.length > 0) {
+            document.getElementById('legend').classList.remove('hidden');
+        }
+    }
+
+    function updateStateDetails(state) {
+        const detailsPanel = document.getElementById('state-details');
+        const variablesContainer = document.getElementById('state-variables');
+        const detailsTitle = document.getElementById('state-details-title');
+
+        detailsPanel.classList.remove('hidden');
+        detailsTitle.textContent = `State ${state.stateNumber}${state.isLoopState ? ' (loop)' : ''}`;
+
+        variablesContainer.innerHTML = '';
+
+        if (state.variables) {
+            const table = document.createElement('table');
+            table.className = 'variables-table';
+
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr>
+                    <th class="variable-name">Variable</th>
+                    <th>Value</th>
+                </tr>
+            `;
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+
+            const sortedVars = Object.entries(state.variables).sort((a, b) => a[0].localeCompare(b[0]));
+
+            sortedVars.forEach(([varName, value]) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="variable-name">${varName}</td>
+                    <td>${value}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            table.appendChild(tbody);
+            variablesContainer.appendChild(table);
+        }
+    }
+
+    function setupUIEventHandlers() {
+        const closeDetailsButton = document.getElementById('close-details');
+        if (closeDetailsButton) {
+            closeDetailsButton.addEventListener('click', function () {
+                const stateDetails = document.getElementById('state-details');
+                if (stateDetails) {
+                    stateDetails.classList.add('hidden');
+                }
+            });
+        }
+
+        const closeLegendButton = document.querySelector('.legend-close');
+        if (closeLegendButton) {
+            closeLegendButton.addEventListener('click', function () {
+                const legend = document.getElementById('legend');
+                if (legend) {
+                    legend.classList.add('hidden');
+                }
+            });
+        }
+
+        const controlPanel = document.getElementById('controls');
+        if (controlPanel) {
+            const legendToggle = document.createElement('button');
+            legendToggle.className = 'nav-button';
+            legendToggle.textContent = 'Show Legend';
+            legendToggle.style.marginLeft = '10px';
+            legendToggle.addEventListener('click', function () {
+                const legend = document.getElementById('legend');
+                if (legend.classList.contains('hidden')) {
+                    legend.classList.remove('hidden');
+                    legendToggle.textContent = 'Hide Legend';
+                } else {
+                    legend.classList.add('hidden');
+                    legendToggle.textContent = 'Show Legend';
+                }
+            });
+
+            const navSection = document.querySelector('.trace-navigation');
+            if (navSection) {
+                navSection.appendChild(legendToggle);
+            }
+        }
+    }
+
+    function handleCommand(command, data) {
+        switch (command) {
+            case 'refresh':
+                if (cy) {
+                    updateLayoutForPanels();
+                    cy.fit();
+                    cy.center();
+                }
+                break;
+
+            case 'fit':
+                if (cy) {
+                    updateLayoutForPanels();
+                    cy.fit();
+                    cy.center();
+                }
+                break;
+
+            case 'resize':
+                const containerWrapper = document.getElementById('cy-container');
+                if (containerWrapper) {
+                    containerWrapper.style.height = `${window.innerHeight - 60}px`;
+                }
+
+                setTimeout(() => {
+                    if (cy) {
+                        updateLayoutForPanels();
+                        cy.resize();
                         cy.fit();
-                        console.log("Graph centered and fitted to view");
-                    } catch(e) {
-                        console.error("Error in delayed centering:", e);
+                        cy.center();
                     }
                 }, 100);
-
-            } catch (layoutError) {
-                console.error("Error applying layout:", layoutError);
-                // Even if layout fails, try to make the graph visible
-                try {
-                    cy.fit();
-                } catch (e) {
-                    console.error("Error fitting graph:", e);
-                }
-            }
-
-        } catch (e) {
-            console.error("Error updating visualization:", e);
-            emptyMessage.textContent = "Ошибка: " + e.message;
-            emptyMessage.style.display = 'block';
+                break;
         }
     }
 
-    // Refresh visualization (called from Java)
-    function refreshVisualization() {
-        console.log("Refreshing visualization");
-        try {
-            if (typeof cy !== 'undefined' && cy) {
-                console.log("Cytoscape instance found, refreshing layout");
+    function updateLayoutForPanels() {
+        const controlPanel = document.getElementById('controls');
 
-                // Get element count with safeguards
-                let elemCount = 0;
-                try {
-                    elemCount = cy.elements().length;
-                    console.log("Graph has " + elemCount + " elements");
-                } catch(err) {
-                    console.error("Error getting element count:", err);
-                }
+        if (!controlPanel || !cy) return;
 
-                if (elemCount > 0) {
-                    // Apply simple grid layout for stability
-                    console.log("Applying grid layout");
-                    cy.layout({
-                        name: 'grid',
-                        padding: 50,
-                        fit: true,
-                        avoidOverlap: true
-                    }).run();
+        const topPadding = 60;
 
-                    // Use both center and fit for best positioning
-                    console.log("Centering and fitting graph");
-                    cy.center();
-                    cy.fit();
-                } else {
-                    console.log("No elements to display");
-                }
-            } else if (typeof initCytoscape === 'function') {
-                console.log("No Cytoscape instance, reinitializing");
-                initCytoscape();
-            } else {
-                console.log("No Cytoscape functions available");
-            }
-        } catch(e) {
-            console.error("Error refreshing visualization:", e);
+        const cyContainer = document.getElementById('cy-container');
+        if (cyContainer) {
+            cyContainer.style.paddingRight = '0';
+            cyContainer.style.paddingTop = `${topPadding}px`;
+
+            cyContainer.style.width = '100%';
         }
     }
 
-    // Ensure functions are available to Java
+    // Export functions for Java to call
     window.updateVisualization = updateVisualization;
-    window.refreshVisualization = refreshVisualization;
-    console.log("Visualization ready");
+    window.handleCommand = handleCommand;
 </script>
 </body>
 </html>

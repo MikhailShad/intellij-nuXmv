@@ -8,7 +8,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
  */
 class NuXmvRunConfigurationOptions : RunConfigurationOptions() {
     var modelFilePath by string("")
-    var commandLineOptions by string("-int")
+    var commandLineOptions by string("")
     var checkCtlSpecifications by property(false)
     var checkLtlSpecifications by property(false)
     var checkInvarSpecifications by property(false)

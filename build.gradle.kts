@@ -34,7 +34,7 @@ dependencies {
     }
 
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
-    implementation("org.json:json:20230618")
+    implementation("org.json:json:20231013")
     testImplementation("junit:junit:4.13.2")
 }
 

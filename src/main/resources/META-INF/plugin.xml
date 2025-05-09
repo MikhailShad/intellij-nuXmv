@@ -102,22 +102,12 @@
                 displayName="nuXmv"/>
         <applicationService
                 serviceImplementation="dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvSettingsState"/>
-        <projectService
-                serviceImplementation="dev.mikhailshad.nuxmvplugin.ide.run.visualization.NuXmvModelVisualizationService"/>
 
         <!-- Run Configuration -->
         <configurationType
                 implementation="dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvConfigurationType"/>
         <runConfigurationProducer
                 implementation="dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvRunConfigurationProducer"/>
-
-        <!-- Visualization -->
-        <toolWindow id="NuXmv Model Visualizer"
-                    factoryClass="dev.mikhailshad.nuxmvplugin.ide.run.visualization.NuXmvModelGraphToolWindowFactory"
-                    icon="com.intellij.icons.AllIcons.Toolwindows.WebToolWindow"
-                    anchor="right"
-                    secondary="false"
-                    canCloseContents="false"/>
 
     </extensions>
 </idea-plugin>

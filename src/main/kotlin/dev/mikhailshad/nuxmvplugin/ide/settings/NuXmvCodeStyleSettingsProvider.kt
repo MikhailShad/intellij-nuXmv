@@ -4,7 +4,9 @@ import com.intellij.application.options.CodeStyleAbstractConfigurable
 import com.intellij.application.options.CodeStyleAbstractPanel
 import com.intellij.application.options.TabbedLanguageCodeStylePanel
 import com.intellij.lang.Language
-import com.intellij.psi.codeStyle.*
+import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.codeStyle.CodeStyleSettingsProvider
+import com.intellij.psi.codeStyle.CustomCodeStyleSettings
 import dev.mikhailshad.nuxmvplugin.language.NuXmvLanguage
 
 
