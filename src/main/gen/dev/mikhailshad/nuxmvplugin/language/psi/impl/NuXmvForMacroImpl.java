@@ -1,23 +1,27 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import dev.mikhailshad.nuxmvplugin.language.psi.*;
+import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvForMacroMixin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class NuXmvModuleBodyImpl extends ASTWrapperPsiElement implements NuXmvModuleBody {
+import static dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes.IDENTIFIER;
 
-    public NuXmvModuleBodyImpl(@NotNull ASTNode node) {
+public class NuXmvForMacroImpl extends NuXmvForMacroMixin implements NuXmvForMacro {
+
+    public NuXmvForMacroImpl(@NotNull ASTNode node) {
         super(node);
     }
 
     public void accept(@NotNull NuXmvVisitor visitor) {
-        visitor.visitModuleBody(this);
+        visitor.visitForMacro(this);
     }
 
     @Override
@@ -147,6 +151,12 @@ public class NuXmvModuleBodyImpl extends ASTWrapperPsiElement implements NuXmvMo
     }
 
     @Override
+    @Nullable
+    public NuXmvRangeConstant getRangeConstant() {
+        return findChildByClass(NuXmvRangeConstant.class);
+    }
+
+    @Override
     @NotNull
     public List<NuXmvTransConstraint> getTransConstraintList() {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvTransConstraint.class);
@@ -156,6 +166,12 @@ public class NuXmvModuleBodyImpl extends ASTWrapperPsiElement implements NuXmvMo
     @NotNull
     public List<NuXmvVarDeclaration> getVarDeclarationList() {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvVarDeclaration.class);
+    }
+
+    @Override
+    @Nullable
+    public PsiElement getIdentifier() {
+        return findChildByType(IDENTIFIER);
     }
 
 }

@@ -3,10 +3,11 @@ package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface NuXmvModuleBody extends PsiElement {
+public interface NuXmvForMacro extends NuXmvMacro {
 
     @NotNull
     List<NuXmvAssignConstraint> getAssignConstraintList();
@@ -68,10 +69,16 @@ public interface NuXmvModuleBody extends PsiElement {
     @NotNull
     List<NuXmvPredDeclaration> getPredDeclarationList();
 
+    @Nullable
+    NuXmvRangeConstant getRangeConstant();
+
     @NotNull
     List<NuXmvTransConstraint> getTransConstraintList();
 
     @NotNull
     List<NuXmvVarDeclaration> getVarDeclarationList();
+
+    @Nullable
+    PsiElement getIdentifier();
 
 }

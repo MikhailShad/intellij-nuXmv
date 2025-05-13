@@ -592,6 +592,43 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
+    // FOR_MACRO_KW SimpleIdentifier IN_KW RangeConstant ModuleElement* END_MACRO_KW SEMICOLON?
+    public static boolean ForMacro(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "ForMacro")) return false;
+        if (!nextTokenIs(b, FOR_MACRO_KW)) return false;
+        boolean r, p;
+        Marker m = enter_section_(b, l, _NONE_, FOR_MACRO, null);
+        r = consumeToken(b, FOR_MACRO_KW);
+        p = r; // pin = 1
+        r = r && report_error_(b, SimpleIdentifier(b, l + 1));
+        r = p && report_error_(b, consumeToken(b, IN_KW)) && r;
+        r = p && report_error_(b, RangeConstant(b, l + 1)) && r;
+        r = p && report_error_(b, ForMacro_4(b, l + 1)) && r;
+        r = p && report_error_(b, consumeToken(b, END_MACRO_KW)) && r;
+        r = p && ForMacro_6(b, l + 1) && r;
+        exit_section_(b, l, m, r, p, null);
+        return r || p;
+    }
+
+    // ModuleElement*
+    private static boolean ForMacro_4(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "ForMacro_4")) return false;
+        while (true) {
+            int c = current_position_(b);
+            if (!ModuleElement(b, l + 1)) break;
+            if (!empty_element_parsed_guard_(b, "ForMacro_4", c)) break;
+        }
+        return true;
+    }
+
+    // SEMICOLON?
+    private static boolean ForMacro_6(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "ForMacro_6")) return false;
+        consumeToken(b, SEMICOLON);
+        return true;
+    }
+
+    /* ********************************************************** */
     // FROZENVAR_KW SingleIvarDeclaration+
     public static boolean FrozenVarDeclaration(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "FrozenVarDeclaration")) return false;
@@ -1166,6 +1203,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     //     | IsaDeclaration
     //     | PredDeclaration
     //     | MirrorDeclaration
+    //     | ForMacro
     static boolean ModuleElement(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "ModuleElement")) return false;
         boolean r;
@@ -1191,6 +1229,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         if (!r) r = IsaDeclaration(b, l + 1);
         if (!r) r = PredDeclaration(b, l + 1);
         if (!r) r = MirrorDeclaration(b, l + 1);
+        if (!r) r = ForMacro(b, l + 1);
         exit_section_(b, l, m, r, false, NuXmvParser::module_element_recover);
         return r;
     }
@@ -1964,6 +2003,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     //     | COMPUTE_KW | PARSYNTH_KW
     //     | ISA_KW | PRED_KW | MIRROR_KW
     //     | MODULE_KW
+    //     | FOR_MACRO_KW | END_MACRO_KW
     //     )
     static boolean module_element_recover(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "module_element_recover")) return false;
@@ -1981,6 +2021,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     //     | COMPUTE_KW | PARSYNTH_KW
     //     | ISA_KW | PRED_KW | MIRROR_KW
     //     | MODULE_KW
+    //     | FOR_MACRO_KW | END_MACRO_KW
     private static boolean module_element_recover_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "module_element_recover_0")) return false;
         boolean r;
@@ -2009,6 +2050,8 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         if (!r) r = consumeToken(b, PRED_KW);
         if (!r) r = consumeToken(b, MIRROR_KW);
         if (!r) r = consumeToken(b, MODULE_KW);
+        if (!r) r = consumeToken(b, FOR_MACRO_KW);
+        if (!r) r = consumeToken(b, END_MACRO_KW);
         return r;
     }
 

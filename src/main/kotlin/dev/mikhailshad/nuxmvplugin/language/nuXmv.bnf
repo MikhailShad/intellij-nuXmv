@@ -201,6 +201,9 @@
     URGENT_KW           = 'URGENT'
     WORD_KW             = 'Word'
 
+    FOR_MACRO_KW        = '%FOR'
+    END_MACRO_KW        = '%END'
+
     IDENTIFIER = "regexp:[A-Za-z_][A-Za-z_0-9$\-#]*"
     WORD = "regexp:(0[us][bBdDoOhH][0-9]*_[0-9a-fA-F]+})"
     INTEGER_NUMBER = "regexp:-?[0-9]+"
@@ -257,6 +260,7 @@ private ModuleElement ::= VarDeclaration
     | IsaDeclaration
     | PredDeclaration
     | MirrorDeclaration
+    | ForMacro
     {recoverWhile=module_element_recover}
 
 private module_element_recover ::= !(
@@ -267,7 +271,14 @@ private module_element_recover ::= !(
     | COMPUTE_KW | PARSYNTH_KW
     | ISA_KW | PRED_KW | MIRROR_KW
     | MODULE_KW
+    | FOR_MACRO_KW | END_MACRO_KW
     )
+
+ForMacro ::= FOR_MACRO_KW SimpleIdentifier IN_KW RangeConstant ModuleElement* END_MACRO_KW SEMICOLON? {
+    pin=1
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvForMacroMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvMacro"
+}
 
 CtlSpecification ::= CtlSpecKeyWord NamedSpecification? Expr SEMICOLON? {
     pin=1
