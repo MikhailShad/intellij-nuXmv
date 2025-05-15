@@ -8,7 +8,8 @@ enum class NuXmvDomainType(val stringRepresentation: String) {
 
     companion object {
         fun fromString(value: String?): NuXmvDomainType {
-            return NuXmvDomainType.entries.first { it.name == value || it.stringRepresentation == value }
+            return NuXmvDomainType.entries.firstOrNull { it.name == value || it.stringRepresentation == value }
+                ?: FINITE_DOMAIN
         }
     }
 

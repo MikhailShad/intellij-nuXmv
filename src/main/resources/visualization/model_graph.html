@@ -432,6 +432,24 @@
                         'line-style': 'dashed',
                         'z-index': 900
                     }
+                },
+                {
+                    selector: '.current-trace-path',
+                    style: {
+                        'border-width': 3,
+                        'border-color': '#ff0000',
+                        'border-style': 'solid'
+                    }
+                },
+                {
+                    selector: '.current-trace-edge',
+                    style: {
+                        'line-color': '#ff0000',
+                        'target-arrow-color': '#ff0000',
+                        'width': 3,
+                        'line-style': 'solid',
+                        'z-index': 950
+                    }
                 }
             ],
             layout: {
@@ -758,7 +776,8 @@
     function highlightTracePathUpToState(trace, stateIndex) {
         if (!trace || !trace.states || trace.states.length === 0 || stateIndex < 0) return;
 
-        cy.elements().removeClass('trace-path').removeClass('trace-edge');
+        cy.elements().removeClass('trace-path').removeClass('trace-edge')
+                .removeClass('current-trace-path').removeClass('current-trace-edge');
 
         const tracedNodes = new Set();
         const tracedNodePairs = new Set();
@@ -768,6 +787,7 @@
             if (!state || !state.variables) continue;
 
             const stateNodes = new Set();
+            const isCurrentState = (i === stateIndex);
 
             Object.entries(state.variables).forEach(([varName, value]) => {
                 const possibleIds = [
@@ -782,7 +802,12 @@
                     if (node.length > 0) {
                         stateNodes.add(node.id());
                         if (!tracedNodes.has(node.id())) {
-                            node.addClass('trace-path');
+                            // Add appropriate class based on whether this is the current state
+                            if (isCurrentState) {
+                                node.addClass('current-trace-path');
+                            } else {
+                                node.addClass('trace-path');
+                            }
                             tracedNodes.add(node.id());
                         }
                         found = true;
@@ -798,7 +823,12 @@
                                 label === value)) {
                             stateNodes.add(node.id());
                             if (!tracedNodes.has(node.id())) {
-                                node.addClass('trace-path');
+                                // Add appropriate class based on whether this is the current state
+                                if (isCurrentState) {
+                                    node.addClass('current-trace-path');
+                                } else {
+                                    node.addClass('trace-path');
+                                }
                                 tracedNodes.add(node.id());
                             }
                         }
@@ -842,7 +872,12 @@
                     if (!tracedNodePairs.has(pairKey) &&
                             ((prevStateNodes.has(sourceId) && stateNodes.has(targetId)) ||
                                     (stateNodes.has(sourceId) && prevStateNodes.has(targetId)))) {
-                        edge.addClass('trace-edge');
+                        // For the edge between the previous state and current state, use current-trace-edge
+                        if (i === stateIndex) {
+                            edge.addClass('current-trace-edge');
+                        } else {
+                            edge.addClass('trace-edge');
+                        }
                         tracedNodePairs.add(pairKey);
                     }
                 });
@@ -872,7 +907,8 @@
     }
 
     function highlightState(state, prevState) {
-        cy.elements().removeClass('highlighted').removeClass('transition');
+        cy.elements().removeClass('highlighted').removeClass('transition')
+                .removeClass('current-trace-path').removeClass('current-trace-edge');
 
         if (!state) return;
 
@@ -895,6 +931,7 @@
                     const node = cy.getElementById(id);
                     if (node.length > 0) {
                         node.addClass('highlighted');
+                        node.addClass('current-trace-path');
                         highlightedNodes.add(node.id());
                         found = true;
                         break;
@@ -908,6 +945,7 @@
                                 label.includes(`${varName}=${value}`) ||
                                 label === value)) {
                             node.addClass('highlighted');
+                            node.addClass('current-trace-path');
                             highlightedNodes.add(node.id());
                         }
                     });
@@ -947,10 +985,10 @@
                 const sourceId = edge.source().id();
                 const targetId = edge.target().id();
 
-
                 if ((prevHighlightedNodes.has(sourceId) && highlightedNodes.has(targetId)) ||
                         (highlightedNodes.has(sourceId) && prevHighlightedNodes.has(targetId))) {
                     edge.addClass('transition');
+                    edge.addClass('current-trace-edge');
                 }
             });
         }
