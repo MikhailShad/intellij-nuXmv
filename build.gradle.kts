@@ -7,7 +7,7 @@ plugins {
     kotlin("plugin.serialization") version "2.1.21"
 }
 
-val intellijIdeaBuild = 243
+val intellijIdeaBuild = 242
 
 group = "dev.MikhailShad"
 version = "0.0.2+IJ.$intellijIdeaBuild"
@@ -30,7 +30,7 @@ sourceSets {
 
 dependencies {
     intellijPlatform {
-        intellijIdeaCommunity("2024.3.5")
+        intellijIdeaCommunity("2024.2.1")
         bundledPlugin("com.intellij.java")
 
         testFramework(TestFrameworkType.Platform)
@@ -59,6 +59,6 @@ intellijPlatform {
 
 val runIdeWithPsiViewer by intellijPlatformTesting.runIde.registering {
     plugins {
-        plugin("PsiViewer", "243.7768")
+        plugin("PsiViewer", "242.4697")
     }
 }
