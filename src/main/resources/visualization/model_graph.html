@@ -264,6 +264,9 @@
         <label for="trace-select">Trace: </label>
         <select id="trace-select"></select>
     </div>
+    <div id="success-message" class="hidden" style="color: #2e8b57; font-weight: bold;">
+        Model verification successful! No counterexamples found.
+    </div>
     <div class="trace-navigation">
         <button id="prev-state" class="nav-button" disabled>◀ Previous</button>
         <span id="state-info">State: -</span>
@@ -533,6 +536,24 @@
             document.getElementById('empty-message').classList.add('hidden');
             document.getElementById('controls').classList.remove('hidden');
 
+            // Handle successful verification (no counterexamples) case
+            const traceSelector = document.querySelector('.trace-selector');
+            const traceNavigation = document.querySelector('.trace-navigation');
+            const successMessage = document.getElementById('success-message');
+
+            const hasTraces = modelData.traces && modelData.traces.length > 0;
+
+            // Show/hide UI elements based on trace existence
+            if (hasTraces) {
+                traceSelector.classList.remove('hidden');
+                traceNavigation.classList.remove('hidden');
+                successMessage.classList.add('hidden');
+            } else {
+                traceSelector.classList.add('hidden');
+                traceNavigation.classList.add('hidden');
+                successMessage.classList.remove('hidden');
+            }
+
             generateLegend();
 
             if (!cy) {
@@ -657,7 +678,7 @@
 
             cy.endBatch();
 
-            if (modelData.traces && modelData.traces.length > 0) {
+            if (hasTraces) {
                 populateTraceSelector();
                 showTrace(0);
             }
