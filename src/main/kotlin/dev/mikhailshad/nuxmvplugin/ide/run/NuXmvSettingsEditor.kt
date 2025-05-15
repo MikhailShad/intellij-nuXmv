@@ -34,10 +34,10 @@ class NuXmvSettingsEditor(private val project: Project) : SettingsEditor<NuXmvRu
 
     init {
         modelFileChooser.addBrowseFolderListener(
+            "Select NuXmv Model File",
+            "Choose the .smv file to run",
             project,
             FileChooserDescriptorFactory.createSingleFileDescriptor("smv")
-                .withTitle("Select NuXmv Model File")
-                .withDescription("Choose the .smv file to run")
         )
 
         modelFileChooser.textField.document.addDocumentListener(object : DocumentListener {

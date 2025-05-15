@@ -8,11 +8,11 @@ plugins {
     id("co.uzzu.dotenv.gradle") version "4.0.0"
 }
 
-val sinceIntellijIdeaBuild = 243
-val untilIntellijIdeaBuild = 251
+val sinceIntellijIdeaBuild = 242
+val untilIntellijIdeaBuild = 242
 
 group = "dev.MikhailShad"
-version = "0.0.2"
+version = "0.0.2+IJ.$untilIntellijIdeaBuild"
 
 repositories {
     mavenCentral()
@@ -32,7 +32,7 @@ sourceSets {
 
 dependencies {
     intellijPlatform {
-        intellijIdeaCommunity("2025.1.2")
+        intellijIdeaCommunity("2024.2.1")
         bundledPlugin("com.intellij.java")
 
         testFramework(TestFrameworkType.Platform)
@@ -71,6 +71,6 @@ intellijPlatform {
 
 val runIdeWithPsiViewer by intellijPlatformTesting.runIde.registering {
     plugins {
-        plugin("PsiViewer", "$untilIntellijIdeaBuild.175")
+        plugin("PsiViewer", "$untilIntellijIdeaBuild.4697")
     }
 }
