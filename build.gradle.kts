@@ -27,7 +27,7 @@ sourceSets {
 
 dependencies {
     intellijPlatform {
-        intellijIdeaCommunity("2024.3.5")
+        intellijIdeaCommunity("2024.2.1")
         bundledPlugin("com.intellij.java")
 
         testFramework(TestFrameworkType.Platform)
@@ -46,14 +46,14 @@ intellijPlatform {
     pluginConfiguration {
         version = project.version.toString()
         ideaVersion {
-            sinceBuild = "243"
-            untilBuild = "243.*"
+            sinceBuild = "242"
+            untilBuild = "242.*"
         }
     }
 }
 
 val runIdeWithPsiViewer by intellijPlatformTesting.runIde.registering {
     plugins {
-        plugin("PsiViewer", "243.7768")
+        plugin("PsiViewer", "242.4697")
     }
 }
