@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "dev.MikhailShad"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 
 repositories {
     mavenCentral()
@@ -44,15 +44,7 @@ intellijPlatform {
     projectName = project.name
 
     pluginConfiguration {
-        id = "dev-mikhailshad-nuxmvplugin"
-        name = "IntelliJ-NuXmv"
         version = project.version.toString()
-        description = "NuXmv plugin for IntelliJ IDEA"
-        changeNotes =
-            """
-                First release
-            """.trimIndent()
-
         ideaVersion {
             sinceBuild = "243"
             untilBuild = "243.*"

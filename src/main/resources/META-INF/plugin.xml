@@ -5,17 +5,64 @@
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>Syntax Support for NuXmv</name>
+    <name>NuXmv</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="nuxmv@mikhailshad.dev" url="https://github.com/MikhailShad">MikhailShad</vendor>
+    <vendor url="https://github.com/MikhailShad/nuXmv-plugin">Mikhail Shadrin</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    Intellij-based plugin for nuXmv modelling language syntax support
+    <p>IntelliJ IDEA support for the <a href="https://nuxmv.fbk.eu/">NuXmv</a> formal verification language. This plugin enables efficient development of formal verification models with a rich set of features.</p>
+    
+    <h2>Key Features</h2>
+    
+    <h3>Language Support</h3>
+    <ul>
+      <li>Syntax highlighting for NuXmv models (.smv, .xmv, .nuxmv files)</li>
+      <li>Smart code completion for keywords, operators, variables, and modules</li>
+      <li>Code navigation, structure view, and breadcrumbs</li>
+      <li>Reference resolution for variables, modules, and definitions</li>
+      <li>Code folding, formatting, and commenter support</li>
+      <li>Find usages and refactoring tools</li>
+    </ul>
+    
+    <h3>Execution Support</h3>
+    <ul>
+      <li>Built-in run configuration for executing NuXmv models</li>
+      <li>Support for different verification engines (BDD, MSAT)</li>
+      <li>Configurable verification options for CTL, LTL, and INVAR specifications</li>
+      <li>Integrated console with syntax highlighting and command history</li>
+    </ul>
+    
+    <h3>Model Visualization</h3>
+    <ul>
+      <li>Interactive visualization of state models and transitions</li>
+      <li>Counterexample trace visualization with state details</li>
+      <li>State variable tracking across traces</li>
+      <li>Browser-based embedded visualization</li>
+    </ul>
+    
+    <h3>FOR Loop Macro Support</h3>
+    <ul>
+      <li>Simplify repetitive model elements with FOR loop macros</li>
+      <li>Automatic macro expansion during model verification</li>
+      <li>Support for variable substitution within macro bodies</li>
+    </ul>
+    
+    <p>This plugin is not affiliated with the official NuXmv project.</p>
   ]]></description>
+
+    <change-notes><![CDATA[
+    <h3>0.0.1</h3>
+    <ul>
+      <li>Initial release with language support for NuXmv</li>
+      <li>Run configuration for model verification</li>
+      <li>Interactive model visualization</li>
+      <li>FOR loop macro extension for compact model description</li>
+    </ul>
+  ]]></change-notes>
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
