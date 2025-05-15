@@ -222,8 +222,9 @@ LINE_COMMENT=("--")[^\r\n]*
     "Word"           {return WORD_KW;}
     
     // Macro keywords
-    "%FOR"           {return FOR_MACRO_KW;}
-    "%END"           {return END_MACRO_KW;}
+    "#"              {return MACRO_PREFIX;}
+    "#FOR"           {return FOR_MACRO_KW;}
+    "#END"           {return END_MACRO_KW;}
 
     // Common tokens
     {IDENTIFIER}                 {return IDENTIFIER;}

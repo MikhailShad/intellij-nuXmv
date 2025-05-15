@@ -1,13 +1,12 @@
 // This is a generated file. Not intended for manual editing.
 package dev.mikhailshad.nuxmvplugin.language.psi;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface NuXmvForMacro extends NuXmvMacro {
+public interface NuXmvForLoopMacro extends NuXmvMacro {
 
     @NotNull
     List<NuXmvAssignConstraint> getAssignConstraintList();
@@ -31,7 +30,10 @@ public interface NuXmvForMacro extends NuXmvMacro {
     List<NuXmvFairnessConstraint> getFairnessConstraintList();
 
     @NotNull
-    List<NuXmvForMacro> getForMacroList();
+    List<NuXmvForLoopMacro> getForLoopMacroList();
+
+    @Nullable
+    NuXmvForLoopVariable getForLoopVariable();
 
     @NotNull
     List<NuXmvFrozenVarDeclaration> getFrozenVarDeclarationList();
@@ -77,8 +79,5 @@ public interface NuXmvForMacro extends NuXmvMacro {
 
     @NotNull
     List<NuXmvVarDeclaration> getVarDeclarationList();
-
-    @Nullable
-    PsiElement getIdentifier();
 
 }

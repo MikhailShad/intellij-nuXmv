@@ -5,13 +5,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.findParentOfType
 import dev.mikhailshad.nuxmvplugin.language.psi.*
+import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvIdentifierUsageMixin
 
 class NuXmvIdentifierReference(element: NuXmvIdentifierUsage) :
     NuXmvReferenceBase(element, TextRange.from(0, element.textLength)) {
     override fun resolveInner(incompleteCode: Boolean): List<PsiElement> {
         val file = element.containingFile
-
-        var identifier = element.text
+        val identifierUsage = element as NuXmvIdentifierUsageMixin
+        var identifier = identifierUsage.text
         val braceIndex = identifier.indexOf('[')
         if (braceIndex >= 0) {
             identifier = identifier.substring(0, braceIndex)

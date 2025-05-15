@@ -1,0 +1,6 @@
+MODULE main
+VAR
+  counter : 0..10;
+  array : array 0..10 of boolean;
+
+  #F<caret>

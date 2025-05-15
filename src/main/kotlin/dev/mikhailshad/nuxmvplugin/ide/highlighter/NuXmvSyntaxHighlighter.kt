@@ -33,6 +33,12 @@ class NuXmvSyntaxHighlighter : SyntaxHighlighterBase() {
         )
 
         @JvmStatic
+        val MACRO_KEYWORD_ATTRIBUTE = createTextAttributesKey(
+            "NUXMV_MACRO_KEYWORD",
+            DefaultLanguageHighlighterColors.METADATA
+        )
+
+        @JvmStatic
         val NUMBER_ATTRIBUTE = createTextAttributesKey(
             "NUXMV_NUMBER",
             DefaultLanguageHighlighterColors.NUMBER
@@ -172,6 +178,7 @@ class NuXmvSyntaxHighlighter : SyntaxHighlighterBase() {
         val tokenTypeToAttribute = HashMap<IElementType, TextAttributesKey>()
         mapOf(
             NuXmvParserDefinition.Util.KEYWORDS to KEYWORD_ATTRIBUTE,
+            NuXmvParserDefinition.Util.MACRO_KEYWORDS to MACRO_KEYWORD_ATTRIBUTE,
             NuXmvParserDefinition.Util.CONSTANTS to CONSTANT_NAME_ATTRIBUTE,
             NuXmvParserDefinition.Util.NUMBERS to NUMBER_ATTRIBUTE,
             NuXmvParserDefinition.Util.MATH_OPERATORS to MATH_OPERATOR_ATTRIBUTE,

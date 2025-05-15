@@ -2,26 +2,23 @@
 package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import dev.mikhailshad.nuxmvplugin.language.psi.*;
-import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvForMacroMixin;
+import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvForLoopMacroMixin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes.IDENTIFIER;
+public class NuXmvForLoopMacroImpl extends NuXmvForLoopMacroMixin implements NuXmvForLoopMacro {
 
-public class NuXmvForMacroImpl extends NuXmvForMacroMixin implements NuXmvForMacro {
-
-    public NuXmvForMacroImpl(@NotNull ASTNode node) {
+    public NuXmvForLoopMacroImpl(@NotNull ASTNode node) {
         super(node);
     }
 
     public void accept(@NotNull NuXmvVisitor visitor) {
-        visitor.visitForMacro(this);
+        visitor.visitForLoopMacro(this);
     }
 
     @Override
@@ -74,8 +71,14 @@ public class NuXmvForMacroImpl extends NuXmvForMacroMixin implements NuXmvForMac
 
     @Override
     @NotNull
-    public List<NuXmvForMacro> getForMacroList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvForMacro.class);
+    public List<NuXmvForLoopMacro> getForLoopMacroList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvForLoopMacro.class);
+    }
+
+    @Override
+    @Nullable
+    public NuXmvForLoopVariable getForLoopVariable() {
+        return findChildByClass(NuXmvForLoopVariable.class);
     }
 
     @Override
@@ -166,12 +169,6 @@ public class NuXmvForMacroImpl extends NuXmvForMacroMixin implements NuXmvForMac
     @NotNull
     public List<NuXmvVarDeclaration> getVarDeclarationList() {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvVarDeclaration.class);
-    }
-
-    @Override
-    @Nullable
-    public PsiElement getIdentifier() {
-        return findChildByType(IDENTIFIER);
     }
 
 }

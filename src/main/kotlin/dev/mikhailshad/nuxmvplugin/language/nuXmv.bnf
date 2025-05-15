@@ -201,8 +201,9 @@
     URGENT_KW           = 'URGENT'
     WORD_KW             = 'Word'
 
-    FOR_MACRO_KW        = '%FOR'
-    END_MACRO_KW        = '%END'
+    MACRO_PREFIX        = '#'
+    FOR_MACRO_KW        = '#FOR'
+    END_MACRO_KW        = '#END'
 
     IDENTIFIER = "regexp:[A-Za-z_][A-Za-z_0-9$\-#]*"
     WORD = "regexp:(0[us][bBdDoOhH][0-9]*_[0-9a-fA-F]+})"
@@ -260,7 +261,7 @@ private ModuleElement ::= VarDeclaration
     | IsaDeclaration
     | PredDeclaration
     | MirrorDeclaration
-    | ForMacro
+    | ForLoopMacro
     {recoverWhile=module_element_recover}
 
 private module_element_recover ::= !(
@@ -274,10 +275,14 @@ private module_element_recover ::= !(
     | FOR_MACRO_KW | END_MACRO_KW
     )
 
-ForMacro ::= FOR_MACRO_KW SimpleIdentifier IN_KW RangeConstant ModuleElement* END_MACRO_KW SEMICOLON? {
+ForLoopMacro ::= FOR_MACRO_KW ForLoopVariable IN_KW RangeConstant ModuleElement* END_MACRO_KW {
     pin=1
-    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvForMacroMixin"
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvForLoopMacroMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvMacro"
+}
+ForLoopVariable ::= SimpleIdentifier {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
 }
 
 CtlSpecification ::= CtlSpecKeyWord NamedSpecification? Expr SEMICOLON? {

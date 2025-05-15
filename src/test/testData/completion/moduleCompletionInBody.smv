@@ -1,2 +1,4 @@
 MODULE main
+VAR foo: integer;
 V<caret>
+DEFINE bar = 1;

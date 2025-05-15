@@ -1,0 +1,8 @@
+MODULE main
+VAR
+  x : array 1..5 of boolean;
+
+#FOR i IN 1..5
+  ASSIGN
+    x[i] := i mod 2 = 0;
+#END

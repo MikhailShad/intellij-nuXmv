@@ -9,7 +9,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-object NuXmvModuleBodyKeywordCompletionProvider : CompletionProvider<CompletionParameters>() {
+object NuXmvModuleElementSectionKeywordCompletionProvider : CompletionProvider<CompletionParameters>() {
     private val moduleBodyKeywords = listOf(
         "VAR", "IVAR", "FROZENVAR", "DEFINE", "CONSTANTS",
         "ASSIGN", "INIT", "TRANS", "INVAR",
@@ -22,28 +22,11 @@ object NuXmvModuleBodyKeywordCompletionProvider : CompletionProvider<CompletionP
         context: ProcessingContext,
         resultSet: CompletionResultSet
     ) {
-        val position = parameters.position
-        logger.info {
-            """
-            Current element: ${position.javaClass.name}
-            Text: ${position.text}
-            Parents: ${
-                sequence {
-                    var el = position
-                    while (el.parent != null) {
-                        el = el.parent
-                        yield(el)
-                    }
-                }.toList()
-            }
-        """.trimIndent()
-        }
-
         moduleBodyKeywords.forEach { keyword ->
             resultSet.addElement(
                 LookupElementBuilder.create(keyword)
                     .bold()
-                    .withTypeText("section")
+                    .withTypeText("module section")
             )
         }
     }

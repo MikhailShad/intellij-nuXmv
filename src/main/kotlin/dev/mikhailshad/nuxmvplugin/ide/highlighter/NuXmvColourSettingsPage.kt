@@ -28,6 +28,7 @@ class NuXmvColourSettingsPage : ColorSettingsPage {
             AttributesDescriptor("Function declaration", NuXmvSyntaxHighlighter.FUNCTION_DECLARATION_ATTRIBUTE),
             AttributesDescriptor("Function call", NuXmvSyntaxHighlighter.FUNCTION_CALL_ATTRIBUTE),
             AttributesDescriptor("Variable name", NuXmvSyntaxHighlighter.VARIABLE_NAME_ATTRIBUTE),
+            AttributesDescriptor("Macro", NuXmvSyntaxHighlighter.MACRO_KEYWORD_ATTRIBUTE),
             AttributesDescriptor("Bad character", NuXmvSyntaxHighlighter.BAD_CHARACTER),
         )
     }

@@ -109,8 +109,12 @@ public class NuXmvVisitor extends PsiElementVisitor {
         visitPsiElement(o);
     }
 
-    public void visitForMacro(@NotNull NuXmvForMacro o) {
+    public void visitForLoopMacro(@NotNull NuXmvForLoopMacro o) {
         visitMacro(o);
+    }
+
+    public void visitForLoopVariable(@NotNull NuXmvForLoopVariable o) {
+        visitNamedElement(o);
     }
 
     public void visitFrozenVarDeclaration(@NotNull NuXmvFrozenVarDeclaration o) {

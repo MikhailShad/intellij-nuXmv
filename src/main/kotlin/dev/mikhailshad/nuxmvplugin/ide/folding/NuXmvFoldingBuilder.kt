@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import dev.mikhailshad.nuxmvplugin.language.psi.*
+import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvForLoopMacroMixin
 
 class NuXmvFoldingBuilder : FoldingBuilderEx() {
 
@@ -41,7 +42,8 @@ class NuXmvFoldingBuilder : FoldingBuilderEx() {
             is NuXmvComputeSpecification,
             is NuXmvCtlSpecification,
             is NuXmvInvarSpecification,
-            is NuXmvLtlSpecification -> {
+            is NuXmvLtlSpecification,
+            is NuXmvForLoopMacro -> {
                 val range = element.textRange
                 if (range.length > 50 || element.children.size > 10) {
                     descriptors.add(FoldingDescriptor(element.node, range))
@@ -56,7 +58,8 @@ class NuXmvFoldingBuilder : FoldingBuilderEx() {
     }
 
     override fun getPlaceholderText(node: ASTNode): String {
-        return when (val element = node.psi) {
+        val psiNode = node.psi
+        return when (psiNode) {
             is NuXmvModule -> "MODULE..."
             is NuXmvAssignConstraint -> "ASSIGN..."
             is NuXmvInitConstraint -> "INIT..."
@@ -77,6 +80,8 @@ class NuXmvFoldingBuilder : FoldingBuilderEx() {
             is NuXmvCtlSpecification -> "CTL..."
             is NuXmvInvarSpecification -> "INVAR..."
             is NuXmvLtlSpecification -> "LTL..."
+            is NuXmvForLoopMacroMixin -> "FOR ${psiNode.loopVariableName} IN ${psiNode.loopRange} ..."
+
             else -> "..."
         }
     }

@@ -109,6 +109,7 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
             before(ISA_DECLARATION).lineBreakInCode()
             before(PRED_DECLARATION).lineBreakInCode()
             before(MIRROR_DECLARATION).lineBreakInCode()
+            before(FOR_LOOP_MACRO).lineBreakInCode()
 
             // Section members line breaks
             after(DEFINE_BODY).lineBreakInCode()
@@ -137,6 +138,7 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
             before(ISA_DECLARATION).blankLines(sectionBlankLines)
             before(PRED_DECLARATION).blankLines(sectionBlankLines)
             before(MIRROR_DECLARATION).blankLines(sectionBlankLines)
+            before(FOR_LOOP_MACRO).blankLines(sectionBlankLines)
 
             // Section keywords spacing
             betweenInside(VAR_KW, SINGLE_VAR_DECLARATION, VAR_DECLARATION).lineBreakInCode()
@@ -181,6 +183,12 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
             // Arrays and type definitions
             between(ARRAY_TYPE, LBRACKET).spaces(1)
             between(ARRAY_OF, SIMPLE_TYPE_SPECIFIER).spaces(1)
+
+            // FOR macro formatting
+            after(FOR_MACRO_KW).spaces(1)
+            around(IN_KW).spaces(1)
+            afterInside(RANGE_CONSTANT, FOR_LOOP_MACRO).lineBreakInCode()
+            before(END_MACRO_KW).lineBreakInCode()
         }
     }
 
@@ -228,6 +236,14 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
                 }
             }
 
+            // Handle FOR macro indentation
+            if (parentType == FOR_LOOP_MACRO) {
+                return when (node.elementType) {
+                    FOR_MACRO_KW, FOR_LOOP_VARIABLE, IN_KW, RANGE_CONSTANT, END_MACRO_KW -> Indent.getNoneIndent()
+                    else -> Indent.getNormalIndent(true)
+                }
+            }
+
             // Handle other specific blocks that should be indented
             return when (node.elementType) {
                 REGULAR_CASE_BODY -> Indent.getNormalIndent(true)
@@ -258,6 +274,13 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
                     || parentType == INVAR_SPECIFICATION && nodeType != INVARSPEC_KW
                     || parentType == LTL_SPECIFICATION && nodeType != LTLSPEC_KW
                     || parentType == FUNCTION_DECLARATION && nodeType != FUN_KW
+                    || parentType == FOR_LOOP_MACRO && nodeType !in listOf(
+                FOR_MACRO_KW,
+                FOR_LOOP_VARIABLE,
+                IN_KW,
+                RANGE_CONSTANT,
+                END_MACRO_KW
+            )
                     )
         }
 

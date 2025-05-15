@@ -592,40 +592,44 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // FOR_MACRO_KW SimpleIdentifier IN_KW RangeConstant ModuleElement* END_MACRO_KW SEMICOLON?
-    public static boolean ForMacro(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "ForMacro")) return false;
+    // FOR_MACRO_KW ForLoopVariable IN_KW RangeConstant ModuleElement* END_MACRO_KW
+    public static boolean ForLoopMacro(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "ForLoopMacro")) return false;
         if (!nextTokenIs(b, FOR_MACRO_KW)) return false;
         boolean r, p;
-        Marker m = enter_section_(b, l, _NONE_, FOR_MACRO, null);
+        Marker m = enter_section_(b, l, _NONE_, FOR_LOOP_MACRO, null);
         r = consumeToken(b, FOR_MACRO_KW);
         p = r; // pin = 1
-        r = r && report_error_(b, SimpleIdentifier(b, l + 1));
+        r = r && report_error_(b, ForLoopVariable(b, l + 1));
         r = p && report_error_(b, consumeToken(b, IN_KW)) && r;
         r = p && report_error_(b, RangeConstant(b, l + 1)) && r;
-        r = p && report_error_(b, ForMacro_4(b, l + 1)) && r;
-        r = p && report_error_(b, consumeToken(b, END_MACRO_KW)) && r;
-        r = p && ForMacro_6(b, l + 1) && r;
+        r = p && report_error_(b, ForLoopMacro_4(b, l + 1)) && r;
+        r = p && consumeToken(b, END_MACRO_KW) && r;
         exit_section_(b, l, m, r, p, null);
         return r || p;
     }
 
     // ModuleElement*
-    private static boolean ForMacro_4(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "ForMacro_4")) return false;
+    private static boolean ForLoopMacro_4(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "ForLoopMacro_4")) return false;
         while (true) {
             int c = current_position_(b);
             if (!ModuleElement(b, l + 1)) break;
-            if (!empty_element_parsed_guard_(b, "ForMacro_4", c)) break;
+            if (!empty_element_parsed_guard_(b, "ForLoopMacro_4", c)) break;
         }
         return true;
     }
 
-    // SEMICOLON?
-    private static boolean ForMacro_6(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "ForMacro_6")) return false;
-        consumeToken(b, SEMICOLON);
-        return true;
+    /* ********************************************************** */
+    // SimpleIdentifier
+    public static boolean ForLoopVariable(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "ForLoopVariable")) return false;
+        if (!nextTokenIs(b, IDENTIFIER)) return false;
+        boolean r;
+        Marker m = enter_section_(b);
+        r = SimpleIdentifier(b, l + 1);
+        exit_section_(b, m, FOR_LOOP_VARIABLE, r);
+        return r;
     }
 
     /* ********************************************************** */
@@ -1203,7 +1207,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     //     | IsaDeclaration
     //     | PredDeclaration
     //     | MirrorDeclaration
-    //     | ForMacro
+    //     | ForLoopMacro
     static boolean ModuleElement(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "ModuleElement")) return false;
         boolean r;
@@ -1229,7 +1233,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         if (!r) r = IsaDeclaration(b, l + 1);
         if (!r) r = PredDeclaration(b, l + 1);
         if (!r) r = MirrorDeclaration(b, l + 1);
-        if (!r) r = ForMacro(b, l + 1);
+        if (!r) r = ForLoopMacro(b, l + 1);
         exit_section_(b, l, m, r, false, NuXmvParser::module_element_recover);
         return r;
     }

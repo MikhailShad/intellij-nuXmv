@@ -33,7 +33,8 @@ public interface NuXmvTypes {
     IElementType EQUIVALENCE_BASIC_EXPR = new NuXmvElementType("EQUIVALENCE_BASIC_EXPR");
     IElementType EXPR = new NuXmvElementType("EXPR");
     IElementType FAIRNESS_CONSTRAINT = new NuXmvElementType("FAIRNESS_CONSTRAINT");
-    IElementType FOR_MACRO = new NuXmvElementType("FOR_MACRO");
+    IElementType FOR_LOOP_MACRO = new NuXmvElementType("FOR_LOOP_MACRO");
+    IElementType FOR_LOOP_VARIABLE = new NuXmvElementType("FOR_LOOP_VARIABLE");
     IElementType FROZEN_VAR_DECLARATION = new NuXmvElementType("FROZEN_VAR_DECLARATION");
     IElementType FUNCTION_ARG_TYPES_SPECIFIER = new NuXmvElementType("FUNCTION_ARG_TYPES_SPECIFIER");
     IElementType FUNCTION_CALL_BASIC_EXPR = new NuXmvElementType("FUNCTION_CALL_BASIC_EXPR");
@@ -152,7 +153,7 @@ public interface NuXmvTypes {
     IElementType DEFINE_KW = new NuXmvTokenType("DEFINE");
     IElementType DIV = new NuXmvTokenType("/");
     IElementType DOT = new NuXmvTokenType(".");
-    IElementType END_MACRO_KW = new NuXmvTokenType("%END");
+    IElementType END_MACRO_KW = new NuXmvTokenType("#END");
     IElementType EQUALITY = new NuXmvTokenType("=");
     IElementType EQUIVALENCE = new NuXmvTokenType("<->");
     IElementType ESAC_KW = new NuXmvTokenType("esac");
@@ -163,7 +164,7 @@ public interface NuXmvTypes {
     IElementType FALSE_KW = new NuXmvTokenType("FALSE");
     IElementType FLOAT_NUMBER = new NuXmvTokenType("FLOAT_NUMBER");
     IElementType FLOOR_FUN = new NuXmvTokenType("floor");
-    IElementType FOR_MACRO_KW = new NuXmvTokenType("%FOR");
+    IElementType FOR_MACRO_KW = new NuXmvTokenType("#FOR");
     IElementType FRACTIONAL_NUMBER = new NuXmvTokenType("FRACTIONAL_NUMBER");
     IElementType FROZENVAR_KW = new NuXmvTokenType("FROZENVAR");
     IElementType FUN_KW = new NuXmvTokenType("FUN");
@@ -208,6 +209,7 @@ public interface NuXmvTypes {
     IElementType LTL_TIME_SINCE = new NuXmvTokenType("time_since");
     IElementType LTL_TIME_UNTIL = new NuXmvTokenType("time_until");
     IElementType LTL_TRIGGERED = new NuXmvTokenType("T");
+    IElementType MACRO_PREFIX = new NuXmvTokenType("#");
     IElementType MAX_FUN = new NuXmvTokenType("max");
     IElementType MAX_KW = new NuXmvTokenType("MAX");
     IElementType MDEFINE_KW = new NuXmvTokenType("MDEFINE");
@@ -340,8 +342,10 @@ public interface NuXmvTypes {
                 return new NuXmvEquivalenceBasicExprImpl(node);
             } else if (type == FAIRNESS_CONSTRAINT) {
                 return new NuXmvFairnessConstraintImpl(node);
-            } else if (type == FOR_MACRO) {
-                return new NuXmvForMacroImpl(node);
+            } else if (type == FOR_LOOP_MACRO) {
+                return new NuXmvForLoopMacroImpl(node);
+            } else if (type == FOR_LOOP_VARIABLE) {
+                return new NuXmvForLoopVariableImpl(node);
             } else if (type == FROZEN_VAR_DECLARATION) {
                 return new NuXmvFrozenVarDeclarationImpl(node);
             } else if (type == FUNCTION_ARG_TYPES_SPECIFIER) {

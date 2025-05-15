@@ -49,9 +49,16 @@ class NuXmvCommandLineState(
             throw ExecutionException("Invalid nuXmv executable at: $nuXmvPath. Please check the path in Settings | Tools | nuXmv")
         }
 
+        // Expand macros before execution
+        val expandedFile = expandMacrosIfNeeded(modelVirtualFile)
+
+        // Visualize the original model (for better user experience)
         console.visualizeModel(modelVirtualFile)
 
-        val cmd = buildCommandLine(nuXmvPath, modelFile)
+        // Use the expanded file for execution
+        val fileToExecute = File(expandedFile.path)
+
+        val cmd = buildCommandLine(nuXmvPath, fileToExecute)
         logger.info("Starting interactive NuXmv: ${cmd.commandLineString}")
 
         val handler = OSProcessHandler(cmd)
@@ -62,6 +69,18 @@ class NuXmvCommandLineState(
 
         handler.startNotify()
         return handler
+    }
+
+    private fun expandMacrosIfNeeded(modelFile: com.intellij.openapi.vfs.VirtualFile): com.intellij.openapi.vfs.VirtualFile {
+        try {
+            // Import dynamically to avoid circular dependencies
+            val macroExpansionService =
+                dev.mikhailshad.nuxmvplugin.language.utils.MacroExpansionService.getInstance(project)
+            return macroExpansionService.expandMacrosInFile(modelFile)
+        } catch (e: Exception) {
+            logger.error("Failed to expand macros in file: ${modelFile.path}", e)
+            return modelFile
+        }
     }
 
     @Throws(ExecutionException::class)

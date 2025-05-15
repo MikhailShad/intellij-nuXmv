@@ -200,6 +200,12 @@ class NuXmvParserDefinition : ParserDefinition {
             )
 
         @JvmStatic
+        val MACRO_KEYWORDS = TokenSet.create(
+            NuXmvTypes.FOR_MACRO_KW,
+            NuXmvTypes.END_MACRO_KW,
+        )
+
+        @JvmStatic
         val FUNCTION_CALLS = TokenSet.create(
             NuXmvTypes.FUNCTION_NAME_USAGE,
             NuXmvTypes.ABS_FUN,

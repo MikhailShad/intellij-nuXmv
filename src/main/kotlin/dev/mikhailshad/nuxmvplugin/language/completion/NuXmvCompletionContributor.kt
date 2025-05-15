@@ -4,7 +4,6 @@ import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.StandardPatterns
-import com.intellij.psi.TokenType
 import dev.mikhailshad.nuxmvplugin.language.NuXmvLanguage
 import dev.mikhailshad.nuxmvplugin.language.psi.*
 
@@ -23,20 +22,29 @@ class NuXmvCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             psiElement().withLanguage(NuXmvLanguage)
-                .withParent(
-                    psiElement().afterSiblingSkipping(
-                        StandardPatterns.or(
-                            psiElement(TokenType.WHITE_SPACE),
-                            psiElement(NuXmvTypes.LINE_COMMENT),
-                            psiElement(NuXmvTypes.BLOCK_COMMENT)
-                        ),
-                        StandardPatterns.or(
-                            psiElement(NuXmvModuleDeclaration::class.java),
-                            psiElement(NuXmvModule::class.java)
-                        )
+                .withAncestor(
+                    2,
+                    StandardPatterns.or(
+                        psiElement(NuXmvModule::class.java),
+                        psiElement(NuXmvMacro::class.java)
+                    )
+                ).andNot(
+                    psiElement().withParent(NuXmvFile::class.java)
+                ),
+            NuXmvModuleElementSectionKeywordCompletionProvider
+        )
+
+        extend(
+            CompletionType.BASIC,
+            psiElement().withLanguage(NuXmvLanguage)
+                .withAncestor(
+                    2,
+                    StandardPatterns.or(
+                        psiElement(NuXmvModuleDeclaration::class.java),
+                        psiElement(NuXmvModule::class.java),
                     )
                 ),
-            NuXmvModuleBodyKeywordCompletionProvider
+            NuXmvMacroCompletionProvider
         )
 
         extend(

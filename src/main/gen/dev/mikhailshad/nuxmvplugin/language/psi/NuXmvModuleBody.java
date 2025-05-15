@@ -30,7 +30,7 @@ public interface NuXmvModuleBody extends PsiElement {
     List<NuXmvFairnessConstraint> getFairnessConstraintList();
 
     @NotNull
-    List<NuXmvForMacro> getForMacroList();
+    List<NuXmvForLoopMacro> getForLoopMacroList();
 
     @NotNull
     List<NuXmvFrozenVarDeclaration> getFrozenVarDeclarationList();

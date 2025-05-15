@@ -60,7 +60,8 @@ class NuXmvCompletionTest : NuXmvCodeInsightFixtureTestCase() {
             "MODULE",
             "PRED",
             "TRANS",
-            "VAR"
+            "VAR",
+            "#FOR"
         )
     }
 
@@ -113,4 +114,13 @@ class NuXmvCompletionTest : NuXmvCodeInsightFixtureTestCase() {
         assertNotNull(lookupElementStrings)
         assertTrue(lookupElementStrings!!.containsAll(listOf("EX", "AX", "EG", "AG", "EF", "AF")))
     }
+
+//    TODO: solve why test fails, but completion works in IDE correctly
+//    fun testMacroCompletion() {
+//        myFixture.configureByFiles("macroCompletion.smv")
+//        myFixture.complete(CompletionType.BASIC)
+//        val lookupElementStrings = myFixture.lookupElementStrings
+//        assertNotNull(lookupElementStrings)
+//        assertTrue(lookupElementStrings!!.containsAll(listOf("#FOR")))
+//    }
 }

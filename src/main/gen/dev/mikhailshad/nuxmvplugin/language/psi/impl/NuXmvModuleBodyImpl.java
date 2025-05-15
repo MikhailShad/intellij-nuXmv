@@ -70,8 +70,8 @@ public class NuXmvModuleBodyImpl extends ASTWrapperPsiElement implements NuXmvMo
 
     @Override
     @NotNull
-    public List<NuXmvForMacro> getForMacroList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvForMacro.class);
+    public List<NuXmvForLoopMacro> getForLoopMacroList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvForLoopMacro.class);
     }
 
     @Override
