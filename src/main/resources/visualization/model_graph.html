@@ -366,7 +366,8 @@
                         'height': 'label',
                         'padding': '10px',
                         'shape': 'ellipse',
-                        'text-wrap': 'wrap'
+                        'text-wrap': 'wrap',
+                        'label': 'data(variableValue)'
                     }
                 },
                 {
@@ -811,29 +812,22 @@
             const isCurrentState = (i === stateIndex);
 
             Object.entries(state.variables).forEach(([varName, value]) => {
-                const possibleIds = [
-                    `${varName}=${value}`,
-                    `${varName}_${value}`,
-                    `${varName}-${value}`
-                ];
-
+                const nodeId = `${varName}=${value}`;
+                const node = cy.getElementById(nodeId);
                 let found = false;
-                for (const id of possibleIds) {
-                    const node = cy.getElementById(id);
-                    if (node.length > 0) {
-                        stateNodes.add(node.id());
-                        if (!tracedNodes.has(node.id())) {
-                            // Add appropriate class based on whether this is the current state
-                            if (isCurrentState) {
-                                node.addClass('current-trace-path');
-                            } else {
-                                node.addClass('trace-path');
-                            }
-                            tracedNodes.add(node.id());
+
+                if (node.length > 0) {
+                    stateNodes.add(node.id());
+                    if (!tracedNodes.has(node.id())) {
+                        // Add appropriate class based on whether this is the current state
+                        if (isCurrentState) {
+                            node.addClass('current-trace-path');
+                        } else {
+                            node.addClass('trace-path');
                         }
-                        found = true;
-                        break;
+                        tracedNodes.add(node.id());
                     }
+                    found = true;
                 }
 
                 if (!found) {
@@ -861,18 +855,10 @@
                 const prevStateNodes = new Set();
 
                 Object.entries(trace.states[i - 1].variables).forEach(([varName, value]) => {
-                    const possibleIds = [
-                        `${varName}=${value}`,
-                        `${varName}_${value}`,
-                        `${varName}-${value}`
-                    ];
-
-                    for (const id of possibleIds) {
-                        const node = cy.getElementById(id);
-                        if (node.length > 0) {
-                            prevStateNodes.add(node.id());
-                            break;
-                        }
+                    const nodeId = `${varName}=${value}`;
+                    const node = cy.getElementById(nodeId);
+                    if (node.length > 0) {
+                        prevStateNodes.add(node.id());
                     }
 
                     cy.nodes().forEach(node => {
@@ -940,23 +926,15 @@
 
         if (state.variables) {
             Object.entries(state.variables).forEach(([varName, value]) => {
-                const possibleIds = [
-                    `${varName}=${value}`,
-                    `${varName}_${value}`,
-                    `${varName}-${value}`
-                ];
-
+                const nodeId = `${varName}=${value}`;
+                const node = cy.getElementById(nodeId);
                 let found = false;
 
-                for (const id of possibleIds) {
-                    const node = cy.getElementById(id);
-                    if (node.length > 0) {
-                        node.addClass('highlighted');
-                        node.addClass('current-trace-path');
-                        highlightedNodes.add(node.id());
-                        found = true;
-                        break;
-                    }
+                if (node.length > 0) {
+                    node.addClass('highlighted');
+                    node.addClass('current-trace-path');
+                    highlightedNodes.add(node.id());
+                    found = true;
                 }
 
                 if (!found) {
@@ -978,18 +956,10 @@
             const prevHighlightedNodes = new Set();
 
             Object.entries(prevState.variables).forEach(([varName, value]) => {
-                const possibleIds = [
-                    `${varName}=${value}`,
-                    `${varName}_${value}`,
-                    `${varName}-${value}`
-                ];
-
-                for (const id of possibleIds) {
-                    const node = cy.getElementById(id);
-                    if (node.length > 0) {
-                        prevHighlightedNodes.add(node.id());
-                        break;
-                    }
+                const nodeId = `${varName}=${value}`;
+                const node = cy.getElementById(nodeId);
+                if (node.length > 0) {
+                    prevHighlightedNodes.add(node.id());
                 }
 
                 cy.nodes().forEach(node => {
@@ -1006,8 +976,7 @@
                 const sourceId = edge.source().id();
                 const targetId = edge.target().id();
 
-                if ((prevHighlightedNodes.has(sourceId) && highlightedNodes.has(targetId)) ||
-                        (highlightedNodes.has(sourceId) && prevHighlightedNodes.has(targetId))) {
+                if (prevHighlightedNodes.has(sourceId) && highlightedNodes.has(targetId)) {
                     edge.addClass('transition');
                     edge.addClass('current-trace-edge');
                 }
