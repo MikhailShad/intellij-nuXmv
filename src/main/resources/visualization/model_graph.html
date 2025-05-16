@@ -454,6 +454,15 @@
                         'line-style': 'solid',
                         'z-index': 950
                     }
+                },
+                {
+                    selector: 'node.initial-state',
+                    style: {
+                        'border-width': 3,
+                        'border-color': '#008800',
+                        'border-style': 'double',
+                        'z-index': 900
+                    }
                 }
             ],
             layout: {
@@ -571,6 +580,14 @@
                 for (const nodeData of modelData.nodes) {
                     const nodeClass = nodeData.isVariable ? 'variable' : (nodeData.isValue ? 'value' : '');
 
+                    // Формируем список классов для узла
+                    let nodeClasses = nodeClass;
+
+                    // Добавляем класс для начального состояния
+                    if (nodeData.isInitialState) {
+                        nodeClasses += ' initial-state';
+                    }
+
                     let customWidth, customHeight;
 
                     if (nodeData.label) {
@@ -598,7 +615,7 @@
                     const nodeElement = {
                         group: 'nodes',
                         data: nodeData,
-                        classes: nodeClass
+                        classes: nodeClasses
                     };
 
                     if (customWidth && customHeight) {

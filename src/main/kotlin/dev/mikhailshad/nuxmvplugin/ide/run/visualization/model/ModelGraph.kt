@@ -33,6 +33,11 @@ data class ModelGraph(
                 valueNode.put("isValue", true)
                 valueNode.put("variableName", name)
                 valueNode.put("variableValue", value)
+
+                if (variable.initialValue == value) {
+                    valueNode.put("isInitialState", true)
+                }
+                
                 nodes.put(valueNode)
             }
         }

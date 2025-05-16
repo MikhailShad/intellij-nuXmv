@@ -22,6 +22,7 @@ class ModelStateAnalyzer(private val project: Project) {
 
         val stateVariables = findStateVariables(psiFile)
         analyzeTransitionsInNextExpressions(psiFile, stateVariables)
+        analyzeInitialStates(psiFile, stateVariables)
 
         return ModelGraph(stateVariables.filter { it.value.transitions.isNotEmpty() })
     }
@@ -85,6 +86,75 @@ class ModelStateAnalyzer(private val project: Project) {
                 }
 
                 stateVariable.transitions.addAll(transitions)
+            }
+        }
+    }
+
+    private fun analyzeInitialStates(psiFile: NuXmvFile, stateVariables: Map<String, StateVariable>) {
+        // INIT constranit
+        val initConstraints = PsiTreeUtil.findChildrenOfType(psiFile, NuXmvInitConstraint::class.java)
+        for (initConstraint in initConstraints) {
+            val expr = initConstraint.expr ?: continue
+            analyzeInitExpr(expr, stateVariables)
+        }
+
+        // init(<variable>) := <expr>
+        val initAssignExprs = PsiTreeUtil.findChildrenOfType(psiFile, NuXmvInitAssignExpr::class.java)
+        for (initAssign in initAssignExprs) {
+            val varName = initAssign.identifierUsage?.text ?: continue
+            val stateVariable = stateVariables[varName] ?: continue
+            val valueExpr = initAssign.expr
+
+            if (valueExpr != null) {
+                stateVariable.initialValue = valueExpr.text
+            }
+        }
+    }
+
+    private fun analyzeInitExpr(expr: NuXmvExpr, stateVariables: Map<String, StateVariable>) {
+        when (expr) {
+            is NuXmvEqualityBasicExpr -> {
+                val operands = expr.exprList
+                if (operands.size == 2) {
+                    val leftOperand = operands[0].text
+                    val rightOperand = operands[1].text
+                    val stateVariable = stateVariables[leftOperand]
+                    if (stateVariable != null) {
+                        stateVariable.initialValue = rightOperand
+                    }
+                }
+            }
+
+            is NuXmvLogicalNotBasicExpr -> {
+                val innerExpr = expr.expr
+                if (innerExpr is NuXmvReferenceBasicExpr) {
+                    val varName = innerExpr.text
+                    val stateVariable = stateVariables[varName]
+                    if (stateVariable != null && stateVariable.type == NuXmvBuiltInType.BOOLEAN) {
+                        stateVariable.initialValue = "FALSE"
+                    }
+                }
+            }
+
+            is NuXmvReferenceBasicExpr -> {
+                val varName = expr.text
+                val stateVariable = stateVariables[varName]
+                if (stateVariable != null && stateVariable.type == NuXmvBuiltInType.BOOLEAN) {
+                    stateVariable.initialValue = "TRUE"
+                }
+            }
+
+            is NuXmvAndBasicExpr,
+            is NuXmvOrBasicExpr -> {
+                val exprList = when (expr) {
+                    is NuXmvAndBasicExpr -> expr.exprList
+                    is NuXmvOrBasicExpr -> expr.exprList
+                    else -> return
+                }
+
+                for (subExpr in exprList) {
+                    analyzeInitExpr(subExpr, stateVariables)
+                }
             }
         }
     }

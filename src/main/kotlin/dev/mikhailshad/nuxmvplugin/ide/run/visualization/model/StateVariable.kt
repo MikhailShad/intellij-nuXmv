@@ -5,5 +5,6 @@ import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvBuiltInType
 data class StateVariable(
     val name: String,
     val type: NuXmvBuiltInType,
-    val transitions: MutableList<Transition> = mutableListOf()
+    val transitions: MutableList<Transition> = mutableListOf(),
+    var initialValue: String? = null
 )
