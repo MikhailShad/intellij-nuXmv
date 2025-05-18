@@ -46,6 +46,14 @@
             background-color: transparent !important;
         }
 
+        /* Loop transition styling */
+        .loop-transition {
+            stroke-dasharray: 5, 5;
+            line-color: #ff9500 !important;
+            target-arrow-color: #ff9500 !important;
+            width: 3px !important;
+        }
+
         .empty-message {
             position: absolute;
             top: 50%;
@@ -302,7 +310,9 @@
     let cy = null;
     let modelData = null;
     let activeTrace = -1;
-    let currentStateIndex = -1;
+    let currentStateKey = null;
+    let currentKeyIndex = -1;
+    let isMovingForward = true;
 
     function initCytoscape() {
         if (cy !== null) {
@@ -536,12 +546,15 @@
 
     function updateVisualization(dataJson) {
         try {
+            console.log("Received data:", dataJson.substring(0, 200) + "...");
             modelData = JSON.parse(dataJson);
 
             if (!modelData || typeof modelData !== 'object') {
                 console.error("Invalid model data format");
                 return;
             }
+
+            console.log("Parsed model data:", modelData);
 
             document.getElementById('empty-message').classList.add('hidden');
             document.getElementById('controls').classList.remove('hidden');
@@ -551,7 +564,8 @@
             const traceNavigation = document.querySelector('.trace-navigation');
             const successMessage = document.getElementById('success-message');
 
-            const hasTraces = modelData.traces && modelData.traces.length > 0;
+            const traces = modelData.traces ? JSON.parse(modelData.traces) : [];
+            const hasTraces = traces && traces.length > 0;
 
             // Show/hide UI elements based on trace existence
             if (hasTraces) {
@@ -634,6 +648,10 @@
                 const edgeGroups = new Map();
 
                 for (const edgeData of modelData.edges) {
+                    if (!edgeData.id && edgeData.source && edgeData.target) {
+                        edgeData.id = `${edgeData.source}_to_${edgeData.target}`;
+                    }
+
                     const sourceId = edgeData.source;
                     const targetId = edgeData.target;
                     const key = `${sourceId}->${targetId}`;
@@ -698,7 +716,8 @@
 
             if (hasTraces) {
                 populateTraceSelector();
-                showTrace(0);
+                const firstTrace = traces[0].traceNumber.toString();
+                showTrace(firstTrace);
             }
         } catch (e) {
             console.error("Error in updateVisualization:", e);
@@ -770,10 +789,28 @@
         const traceSelect = document.getElementById('trace-select');
         traceSelect.innerHTML = '';
 
-        modelData.traces.forEach((trace, index) => {
+        const traces = JSON.parse(modelData.traces || '[]');
+        if (!traces || traces.length === 0) {
+            return;
+        }
+
+        traces.forEach((trace, index) => {
             const option = document.createElement('option');
-            option.value = index;
-            option.text = `Trace ${trace.traceNumber}: ${trace.specType} - ${trace.specification.substring(0, 40)}${trace.specification.length > 40 ? '...' : ''}`;
+            option.value = trace.traceNumber.toString();
+
+            let displayText = `Trace ${trace.traceNumber}`;
+            if (trace.description) {
+                displayText += `: ${trace.description}`;
+            } else if (trace.type) {
+                displayText += `: ${trace.type}`;
+            }
+            if (trace.specification) {
+                const specText = trace.specification.length > 30 ?
+                        trace.specification.substring(0, 30) + '...' : trace.specification;
+                displayText += ` - ${specText}`;
+            }
+
+            option.text = displayText;
             traceSelect.appendChild(option);
         });
 
@@ -782,226 +819,179 @@
         };
     }
 
-    function showTrace(traceIndex) {
-        if (!modelData || !modelData.traces || traceIndex >= modelData.traces.length) {
+    function showTrace(traceId) {
+        if (!modelData || !modelData.traces) {
             return;
         }
 
-        cy.elements().removeClass('trace-path').removeClass('trace-edge').removeClass('highlighted').removeClass('transition');
+        cy.elements().removeClass('trace-path').removeClass('trace-edge')
+                .removeClass('highlighted').removeClass('transition')
+                .removeClass('current-trace-path').removeClass('current-trace-edge');
 
-        activeTrace = parseInt(traceIndex);
-        const trace = modelData.traces[activeTrace];
+        const traces = JSON.parse(modelData.traces || '[]');
+        const trace = traces.find(t => t.traceNumber.toString() === traceId.toString());
+        if (!trace || !trace.states || Object.keys(trace.states).length === 0) {
+            console.error("Trace not found or has no states:", traceId);
+            return;
+        }
+
+        activeTrace = traceId;
+
+        const stateKeys = Object.keys(trace.states).sort((a, b) => {
+            return parseFloat(a) - parseFloat(b);
+        });
 
         const prevButton = document.getElementById('prev-state');
         const nextButton = document.getElementById('next-state');
 
+        let loopStartKey = null;
+        for (const key of stateKeys) {
+            if (trace.states[key].isLoopStart) {
+                loopStartKey = key;
+                break;
+            }
+        }
+
         prevButton.onclick = function () {
-            if (currentStateIndex > 0) {
-                showState(currentStateIndex - 1);
+            if (currentKeyIndex > 0) {
+                isMovingForward = false;
+                currentKeyIndex--;
+                showState(stateKeys[currentKeyIndex]);
             }
         };
 
         nextButton.onclick = function () {
-            if (currentStateIndex < trace.states.length - 1) {
-                showState(currentStateIndex + 1);
+            isMovingForward = true;
+            if (currentKeyIndex < stateKeys.length - 1) {
+                currentKeyIndex++;
+                showState(stateKeys[currentKeyIndex]);
+            } else if (stateKeys.length > 0 && loopStartKey) {
+                currentKeyIndex = stateKeys.indexOf(loopStartKey);
+                showState(loopStartKey, true);
             }
         };
 
-        currentStateIndex = -1;
 
-        showState(0);
-    }
+        currentKeyIndex = -1;
+        currentStateKey = null;
+        isMovingForward = true;
 
-    function highlightTracePathUpToState(trace, stateIndex) {
-        if (!trace || !trace.states || trace.states.length === 0 || stateIndex < 0) return;
-
-        cy.elements().removeClass('trace-path').removeClass('trace-edge')
-                .removeClass('current-trace-path').removeClass('current-trace-edge');
-
-        const tracedNodes = new Set();
-        const tracedNodePairs = new Set();
-
-        for (let i = 0; i <= stateIndex; i++) {
-            const state = trace.states[i];
-            if (!state || !state.variables) continue;
-
-            const stateNodes = new Set();
-            const isCurrentState = (i === stateIndex);
-
-            Object.entries(state.variables).forEach(([varName, value]) => {
-                const nodeId = `${varName}=${value}`;
-                const node = cy.getElementById(nodeId);
-                let found = false;
-
-                if (node.length > 0) {
-                    stateNodes.add(node.id());
-                    if (!tracedNodes.has(node.id())) {
-                        // Add appropriate class based on whether this is the current state
-                        if (isCurrentState) {
-                            node.addClass('current-trace-path');
-                        } else {
-                            node.addClass('trace-path');
-                        }
-                        tracedNodes.add(node.id());
-                    }
-                    found = true;
-                }
-
-                if (!found) {
-                    cy.nodes().forEach(node => {
-                        const label = node.data('label');
-                        if (label && (label === `${varName}=${value}` ||
-                                label.includes(`${varName}=${value}`) ||
-                                label === value)) {
-                            stateNodes.add(node.id());
-                            if (!tracedNodes.has(node.id())) {
-                                // Add appropriate class based on whether this is the current state
-                                if (isCurrentState) {
-                                    node.addClass('current-trace-path');
-                                } else {
-                                    node.addClass('trace-path');
-                                }
-                                tracedNodes.add(node.id());
-                            }
-                        }
-                    });
-                }
-            });
-
-            if (i > 0 && trace.states[i - 1] && trace.states[i - 1].variables) {
-                const prevStateNodes = new Set();
-
-                Object.entries(trace.states[i - 1].variables).forEach(([varName, value]) => {
-                    const nodeId = `${varName}=${value}`;
-                    const node = cy.getElementById(nodeId);
-                    if (node.length > 0) {
-                        prevStateNodes.add(node.id());
-                    }
-
-                    cy.nodes().forEach(node => {
-                        const label = node.data('label');
-                        if (label && (label === `${varName}=${value}` ||
-                                label.includes(`${varName}=${value}`) ||
-                                label === value)) {
-                            prevStateNodes.add(node.id());
-                        }
-                    });
-                });
-
-                cy.edges().forEach(edge => {
-                    const sourceId = edge.source().id();
-                    const targetId = edge.target().id();
-
-                    const pairKey = `${sourceId}->${targetId}`;
-                    if (!tracedNodePairs.has(pairKey) &&
-                            ((prevStateNodes.has(sourceId) && stateNodes.has(targetId)) ||
-                                    (stateNodes.has(sourceId) && prevStateNodes.has(targetId)))) {
-                        // For the edge between the previous state and current state, use current-trace-edge
-                        if (i === stateIndex) {
-                            edge.addClass('current-trace-edge');
-                        } else {
-                            edge.addClass('trace-edge');
-                        }
-                        tracedNodePairs.add(pairKey);
-                    }
-                });
-            }
+        if (stateKeys.length > 0) {
+            showState(stateKeys[0]);
         }
     }
 
-    function showState(stateIndex) {
-        if (!modelData || !modelData.traces || activeTrace < 0 ||
-                stateIndex < 0 || stateIndex >= modelData.traces[activeTrace].states.length) {
+    function showState(stateKey, isLoopTransition = false) {
+        if (!modelData || !modelData.traces) {
             return;
         }
 
-        currentStateIndex = stateIndex;
-        const trace = modelData.traces[activeTrace];
-        const state = trace.states[stateIndex];
-        const prevState = stateIndex > 0 ? trace.states[stateIndex - 1] : null;
+        const traces = JSON.parse(modelData.traces || '[]');
+        const trace = traces.find(t => t.traceNumber.toString() === activeTrace.toString());
+        if (!trace || !trace.states || !trace.states[stateKey]) {
+            console.error("State not found:", stateKey, "in trace:", activeTrace);
+            return;
+        }
 
-        document.getElementById('state-info').textContent = `State: ${state.stateNumber}${state.isLoopState ? ' (loop)' : ''}`;
+        if (isLoopTransition) {
+            isMovingForward = true;
+        }
 
-        document.getElementById('prev-state').disabled = (stateIndex === 0);
-        document.getElementById('next-state').disabled = (stateIndex === trace.states.length - 1);
+        currentStateKey = stateKey;
+        const state = trace.states[stateKey];
 
-        highlightState(state, prevState);
+        const stateKeys = Object.keys(trace.states).sort((a, b) => parseFloat(a) - parseFloat(b));
+        currentKeyIndex = stateKeys.indexOf(stateKey);
 
-        updateStateDetails(state);
+        let prevState = null;
+        let prevStateKey = null;
+        if (isLoopTransition) {
+            prevStateKey = stateKeys[stateKeys.length - 1];
+            prevState = trace.states[prevStateKey];
+        } else if (currentKeyIndex > 0) {
+            prevStateKey = stateKeys[currentKeyIndex - 1];
+            prevState = trace.states[prevStateKey];
+        }
+
+        let stateLabel = `State: ${stateKey}`;
+        if (state.isLoopStart) {
+            stateLabel += ' (loop start)';
+        }
+
+        document.getElementById('state-info').textContent = stateLabel;
+        document.getElementById('prev-state').disabled = (currentKeyIndex === 0);
+
+        let loopStartKey = null;
+        for (const key of stateKeys) {
+            if (trace.states[key].isLoopStart) {
+                loopStartKey = key;
+                break;
+            }
+        }
+
+        const isLastState = (currentKeyIndex === stateKeys.length - 1);
+        const nextButton = document.getElementById('next-state');
+
+        if (isLastState && loopStartKey) {
+            nextButton.disabled = false;
+            nextButton.textContent = "Loop ↻";
+        } else if (isLastState && !loopStartKey) {
+            nextButton.disabled = true;
+            nextButton.textContent = "Next ▶";
+        } else {
+            nextButton.disabled = false;
+            nextButton.textContent = "Next ▶";
+        }
+
+        highlightState(state, prevState, stateKey, prevStateKey, isMovingForward);
+        updateStateDetails(state, stateKey);
     }
 
-    function highlightState(state, prevState) {
-        cy.elements().removeClass('highlighted').removeClass('transition')
-                .removeClass('current-trace-path').removeClass('current-trace-edge');
-
+    function highlightState(state, prevState, stateKey, prevStateKey, isMovingForward) {
         if (!state) return;
 
-        const trace = modelData.traces[activeTrace];
-        highlightTracePathUpToState(trace, currentStateIndex);
-
-        const highlightedNodes = new Set();
-
-        if (state.variables) {
-            Object.entries(state.variables).forEach(([varName, value]) => {
-                const nodeId = `${varName}=${value}`;
-                const node = cy.getElementById(nodeId);
-                let found = false;
-
-                if (node.length > 0) {
-                    node.addClass('highlighted');
-                    node.addClass('current-trace-path');
-                    highlightedNodes.add(node.id());
-                    found = true;
-                }
-
-                if (!found) {
-                    cy.nodes().forEach(node => {
-                        const label = node.data('label');
-                        if (label && (label === `${varName}=${value}` ||
-                                label.includes(`${varName}=${value}`) ||
-                                label === value)) {
-                            node.addClass('highlighted');
-                            node.addClass('current-trace-path');
-                            highlightedNodes.add(node.id());
-                        }
-                    });
-                }
-            });
+        if (!isMovingForward) {
+            cy.nodes('.trace-path').removeClass('trace-path');
+            cy.edges('.trace-edge').removeClass('trace-edge');
         }
 
-        if (prevState && prevState.variables) {
-            const prevHighlightedNodes = new Set();
+        cy.nodes('.current-trace-path').removeClass('current-trace-path').addClass('trace-path');
+        cy.edges('.current-trace-edge').removeClass('current-trace-edge').addClass('trace-edge');
+        cy.elements().removeClass('highlighted').removeClass('transition');
 
-            Object.entries(prevState.variables).forEach(([varName, value]) => {
-                const nodeId = `${varName}=${value}`;
-                const node = cy.getElementById(nodeId);
-                if (node.length > 0) {
-                    prevHighlightedNodes.add(node.id());
-                }
+        for (const [varName, value] of Object.entries(state.variables)) {
+            const nodeId = `${varName}=${value}`;
+            const node = cy.getElementById(nodeId);
+            if (node.length > 0) {
+                node.addClass('highlighted');
+                node.addClass('current-trace-path');
+                node.removeClass('trace-path');
+            }
+        }
 
-                cy.nodes().forEach(node => {
-                    const label = node.data('label');
-                    if (label && (label === `${varName}=${value}` ||
-                            label.includes(`${varName}=${value}`) ||
-                            label === value)) {
-                        prevHighlightedNodes.add(node.id());
-                    }
-                });
-            });
+        if (prevState) {
+            for (const [varName, currentValue] of Object.entries(state.variables)) {
+                const prevValue = prevState.variables[varName];
 
-            cy.edges().forEach(edge => {
-                const sourceId = edge.source().id();
-                const targetId = edge.target().id();
+                if (prevValue === currentValue) continue;
 
-                if (prevHighlightedNodes.has(sourceId) && highlightedNodes.has(targetId)) {
+                const edgeId = `${varName}=${prevValue}_to_${varName}=${currentValue}`;
+                const edge = cy.getElementById(edgeId);
+
+                if (edge.length > 0) {
                     edge.addClass('transition');
                     edge.addClass('current-trace-edge');
+                    edge.removeClass('trace-edge');
                 }
-            });
+            }
         }
 
-        cy.nodes('.highlighted').forEach(node => {
+        cy.nodes('.highlighted, .current-trace-path').forEach(node => {
             node.style('z-index', 999);
+        });
+
+        cy.edges('.transition, .current-trace-edge').forEach(edge => {
+            edge.style('z-index', 999);
         });
     }
 
@@ -1050,16 +1040,20 @@
         }
     }
 
-    function updateStateDetails(state) {
+    function updateStateDetails(state, stateKey) {
         const detailsPanel = document.getElementById('state-details');
         const variablesContainer = document.getElementById('state-variables');
         const detailsTitle = document.getElementById('state-details-title');
 
         detailsPanel.classList.remove('hidden');
-        detailsTitle.textContent = `State ${state.stateNumber}${state.isLoopState ? ' (loop)' : ''}`;
+
+        let titleText = `State ${stateKey}`;
+        if (state.isLoopStart) {
+            titleText += ' (loop start)';
+        }
+        detailsTitle.textContent = titleText;
 
         variablesContainer.innerHTML = '';
-
         if (state.variables) {
             const table = document.createElement('table');
             table.className = 'variables-table';
@@ -1074,14 +1068,35 @@
             table.appendChild(thead);
 
             const tbody = document.createElement('tbody');
-
             const sortedVars = Object.entries(state.variables).sort((a, b) => a[0].localeCompare(b[0]));
+            let prevState = null;
+            const traces = JSON.parse(modelData.traces || '[]');
+            const trace = traces.find(t => t.traceNumber.toString() === activeTrace.toString());
+
+            if (trace) {
+                const stateKeys = Object.keys(trace.states).sort((a, b) => parseFloat(a) - parseFloat(b));
+                const currentIndex = stateKeys.indexOf(stateKey);
+
+                if (currentIndex > 0) {
+                    const prevStateKey = stateKeys[currentIndex - 1];
+                    prevState = trace.states[prevStateKey];
+                }
+            }
 
             sortedVars.forEach(([varName, value]) => {
                 const row = document.createElement('tr');
+
+                let valueClass = '';
+                if (prevState && prevState.variables) {
+                    const prevValue = prevState.variables[varName];
+                    if (prevValue !== undefined && prevValue !== value) {
+                        valueClass = 'style="background-color: rgba(255, 220, 100, 0.3); font-weight: bold;"';
+                    }
+                }
+
                 row.innerHTML = `
                     <td class="variable-name">${varName}</td>
-                    <td>${value}</td>
+                    <td ${valueClass}>${value}</td>
                 `;
                 tbody.appendChild(row);
             });
