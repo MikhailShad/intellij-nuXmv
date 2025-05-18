@@ -9,7 +9,7 @@ abstract class BaseCommandOutputParser : CommandOutputParser {
     }
 
     fun parseTraceStates(traceText: String): List<CounterexampleState> {
-        return STATE_REGEX.findAll(traceText).map { match ->
+        val states = STATE_REGEX.findAll(traceText).map { match ->
             val isLoopStart = match.value.contains("Loop starts here")
             val stateNumber = match.groupValues[1]
             val variablesBlock = match.groupValues[2]
@@ -23,5 +23,18 @@ abstract class BaseCommandOutputParser : CommandOutputParser {
 
             CounterexampleState(stateNumber, isLoopStart, variables)
         }.toList()
+
+        states.forEachIndexed { index, state ->
+            if (index != 0) {
+                val previousState = states[index - 1]
+                for ((previousVariable, previousVariableValue) in previousState.variables) {
+                    if (state.variables[previousVariable] == null) {
+                        state.variables[previousVariable] = previousVariableValue
+                    }
+                }
+            }
+        }
+
+        return states
     }
 }

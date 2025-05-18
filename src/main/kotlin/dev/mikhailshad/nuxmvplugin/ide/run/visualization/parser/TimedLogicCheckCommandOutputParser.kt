@@ -12,7 +12,7 @@ object TimedLogicCheckCommandOutputParser : BaseCommandOutputParser() {
     private val TRACE_NUMBER_REGEX = Regex("""->\s*State:\s*(\d+)\.\d+\s*<-""")
 
     override fun parseOutput(output: String): List<CounterexampleTrace> {
-        logger.debug("Parsing show_traces output, length=${output.length}")
+        logger.debug("Parsing timed check output, length=${output.length}")
         if (output.isBlank()) {
             return emptyList()
         }
@@ -47,7 +47,7 @@ object TimedLogicCheckCommandOutputParser : BaseCommandOutputParser() {
             }
         }
 
-        logger.info("Parsed ${traces.size} traces from show_traces output")
+        logger.info("Parsed ${traces.size} traces from timed check output")
         return traces
     }
 }

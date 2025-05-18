@@ -6,6 +6,7 @@ import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Key
 import dev.mikhailshad.nuxmvplugin.ide.run.visualization.model.CounterexampleTrace
+import dev.mikhailshad.nuxmvplugin.ide.run.visualization.parser.InvarCheckCommandOutputParser
 import dev.mikhailshad.nuxmvplugin.ide.run.visualization.parser.ShowTracesOutputParser
 import dev.mikhailshad.nuxmvplugin.ide.run.visualization.parser.TimedLogicCheckCommandOutputParser
 import java.io.BufferedWriter
@@ -88,6 +89,13 @@ class NuXmvProcessListener(
                 }
 
                 when {
+                    currentCommand.contains("invar") -> {
+                        InvarCheckCommandOutputParser.parseOutput(output).forEach { trace ->
+                            // Add trace data to the map
+                            tracesByNumber[trace.traceNumber] = trace
+                        }
+                    }
+
                     currentCommand.contains("ctl") || currentCommand.contains("ltl") -> {
                         // Add trace data to the map
                         TimedLogicCheckCommandOutputParser.parseOutput(output).forEach { trace ->
