@@ -30,8 +30,8 @@
             position: relative;
             flex: 1;
             width: 100%;
-            height: calc(100% - 60px); /* Account for control panel height */
-            padding-top: 60px; /* Space for top control panel */
+            height: calc(100% - 80px); /* Account for control panel height */
+            padding-top: 80px; /* Space for top control panel */
             box-sizing: border-box;
             background-color: transparent !important;
         }
@@ -41,7 +41,7 @@
             width: 100%;
             height: 100%;
             position: absolute;
-            top: 60px; /* Pushed down for control panel */
+            top: 80px; /* Pushed down for control panel */
             left: 0;
             background-color: transparent !important;
         }
@@ -124,22 +124,47 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 50px;
+            min-height: 50px;
             z-index: 10;
             background-color: rgba(255, 255, 255, 0.95);
             padding: 5px 10px;
             border-bottom: 1px solid #ddd;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
             font-size: 13px;
+            gap: 10px;
+        }
+
+        .trace-selector {
+            flex: 0 1 auto;
+            min-width: 200px;
+            margin-right: 10px;
         }
 
         .trace-navigation {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             gap: 10px;
+            flex: 1 1 auto;
+        }
+
+        .layout-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex: 0 1 auto;
+            white-space: nowrap;
+        }
+
+        .nav-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: nowrap;
         }
 
         .nav-button {
@@ -159,6 +184,26 @@
         .nav-button:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
+        }
+
+        .state-label {
+            display: inline-block;
+            padding: 4px 8px;
+            margin: 0 5px;
+            min-width: 100px;
+            text-align: center;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .layout-select {
+            padding: 4px 8px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            background-color: white;
+            font-size: 12px;
+            min-width: 160px;
+            cursor: pointer;
         }
 
         /* Compact state details panel in the bottom right corner */
@@ -265,6 +310,8 @@
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dagre/0.8.5/dagre.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.min.js"></script>
 </head>
 <body>
 <div id="controls" class="control-panel hidden">
@@ -276,10 +323,18 @@
         Model verification successful! No counterexamples found.
     </div>
     <div class="trace-navigation">
-        <button id="prev-state" class="nav-button" disabled>◀ Previous</button>
-        <span id="state-info">State: -</span>
-        <button id="next-state" class="nav-button" disabled>Next ▶</button>
-        <button id="play-button" class="nav-button" disabled>▶ Play</button>
+        <div class="nav-group">
+            <button id="prev-state" class="nav-button" disabled>◀ Previous</button>
+            <button id="next-state" class="nav-button" disabled>Next ▶</button>
+            <button id="play-button" class="nav-button" disabled>▶ Play</button>
+        </div>
+        <div id="layout-controls" class="layout-controls">
+            <label for="layout-select">Layout:</label>
+            <select id="layout-select" class="layout-select"></select>
+        </div>
+        <div id="legend-controls" class="nav-group">
+            <button id="legend-toggle" class="nav-button">Show Legend</button>
+        </div>
     </div>
 </div>
 
@@ -479,19 +534,15 @@
                 }
             ],
             layout: {
-                name: 'cose',
+                name: 'dagre',
                 animate: false,
                 nodeDimensionsIncludeLabels: true,
-                idealEdgeLength: 150,
-                nodeOverlap: 10,
                 padding: 50,
-                nodeRepulsion: 1000000,
-                edgeElasticity: 100,
-                gravity: 80,
-                numIter: 3000,
-                initialTemp: 200,
-                coolingFactor: 0.95,
-                minTemp: 1.0,
+                spacingFactor: 1.25,
+                rankDir: 'TB',
+                rankSep: 100,
+                edgeSep: 10,
+                fit: true,
                 randomize: false
             }
         });
@@ -517,7 +568,7 @@
             resizeTimeout = setTimeout(function () {
                 const containerWrapper = document.getElementById('cy-container');
                 if (containerWrapper) {
-                    containerWrapper.style.height = `${window.innerHeight - 60}px`;
+                    containerWrapper.style.height = `${window.innerHeight - 80}px`;
                 }
 
                 if (cy) {
@@ -534,6 +585,8 @@
                 const resizeObserver = new ResizeObserver(function () {
                     clearTimeout(resizeTimeout);
                     resizeTimeout = setTimeout(function () {
+                        containerWrapper.style.height = `${window.innerHeight - 80}px`;
+
                         if (cy) {
                             cy.resize();
                             cy.fit();
@@ -579,13 +632,17 @@
             // Show/hide UI elements based on trace existence
             if (hasTraces) {
                 traceSelector.classList.remove('hidden');
-                traceNavigation.classList.remove('hidden');
+                document.querySelector('.nav-group').classList.remove('hidden');
                 successMessage.classList.add('hidden');
             } else {
                 traceSelector.classList.add('hidden');
-                traceNavigation.classList.add('hidden');
+                document.querySelector('.nav-group').classList.add('hidden');
                 successMessage.classList.remove('hidden');
             }
+
+            // Always show layout controls and legend toggle
+            document.getElementById('layout-controls').classList.remove('hidden');
+            document.getElementById('legend-controls').classList.remove('hidden');
 
             generateLegend();
 
@@ -702,21 +759,16 @@
             cy.add(elements);
 
             const layout = cy.layout({
-                name: 'cose',
+                name: 'dagre',
                 animate: false,
                 nodeDimensionsIncludeLabels: true,
-                idealEdgeLength: 150,
-                nodeOverlap: 10,
                 padding: 50,
-                nodeRepulsion: 1000000,
-                edgeElasticity: 100,
-                gravity: 80,
-                numIter: 3000,
-                initialTemp: 200,
-                coolingFactor: 0.95,
-                minTemp: 1.0,
-                randomize: false,
-                fit: true
+                spacingFactor: 1.25,
+                rankDir: 'TB',
+                rankSep: 100,
+                edgeSep: 10,
+                fit: true,
+                randomize: false
             });
 
             layout.run();
@@ -932,13 +984,6 @@
             prevState = trace.states[prevStateKey];
         }
 
-        let stateLabel = `State: ${stateKey}`;
-        if (state.isLoopStart) {
-            stateLabel += ' (loop start)';
-        }
-
-        document.getElementById('state-info').textContent = stateLabel;
-
         const prevButton = document.getElementById('prev-state');
         const nextButton = document.getElementById('next-state');
         const playButton = document.getElementById('play-button');
@@ -1060,8 +1105,20 @@
             legendItems.appendChild(item);
         });
 
+        // If there are variables, set up the legend but don't show it yet
+        const legend = document.getElementById('legend');
+        const legendToggle = document.getElementById('legend-toggle');
+
         if (sortedVariables.length > 0) {
-            document.getElementById('legend').classList.remove('hidden');
+            legendToggle.disabled = false;
+            // Only show the legend if it was previously shown
+            if (!legend.classList.contains('hidden') && legendToggle.textContent === 'Hide Legend') {
+                legend.classList.remove('hidden');
+            }
+        } else {
+            // If no variables, disable the toggle button
+            legendToggle.disabled = true;
+            legend.classList.add('hidden');
         }
     }
 
@@ -1148,6 +1205,10 @@
                 const legend = document.getElementById('legend');
                 if (legend) {
                     legend.classList.add('hidden');
+                    const legendToggle = document.getElementById('legend-toggle');
+                    if (legendToggle) {
+                        legendToggle.textContent = 'Show Legend';
+                    }
                 }
             });
         }
@@ -1159,27 +1220,46 @@
             });
         }
 
-        const controlPanel = document.getElementById('controls');
-        if (controlPanel) {
-            const legendToggle = document.createElement('button');
-            legendToggle.className = 'nav-button';
-            legendToggle.textContent = 'Show Legend';
-            legendToggle.style.marginLeft = '10px';
+        // Set up legend toggle button
+        const legendToggle = document.getElementById('legend-toggle');
+        if (legendToggle) {
             legendToggle.addEventListener('click', function () {
                 const legend = document.getElementById('legend');
                 if (legend.classList.contains('hidden')) {
                     legend.classList.remove('hidden');
-                    legendToggle.textContent = 'Hide Legend';
+                    this.textContent = 'Hide Legend';
                 } else {
                     legend.classList.add('hidden');
-                    legendToggle.textContent = 'Show Legend';
+                    this.textContent = 'Show Legend';
                 }
             });
+        }
 
-            const navSection = document.querySelector('.trace-navigation');
-            if (navSection) {
-                navSection.appendChild(legendToggle);
-            }
+        // Set up layout selector
+        const layoutSelector = document.getElementById('layout-select');
+        if (layoutSelector) {
+            const layouts = [
+                {value: 'dagre-tb', text: 'Hierarchical (Top-Down)'},
+                {value: 'dagre-lr', text: 'Hierarchical (Left-Right)'},
+                {value: 'cose', text: 'Force-Directed'}
+            ];
+
+            // Clear any existing options
+            layoutSelector.innerHTML = '';
+
+            layouts.forEach(layout => {
+                const option = document.createElement('option');
+                option.value = layout.value;
+                option.text = layout.text;
+                if (layout.value === 'dagre-tb') {
+                    option.selected = true;
+                }
+                layoutSelector.appendChild(option);
+            });
+
+            layoutSelector.addEventListener('change', function () {
+                applyLayout(this.value);
+            });
         }
     }
 
@@ -1269,7 +1349,7 @@
             case 'resize':
                 const containerWrapper = document.getElementById('cy-container');
                 if (containerWrapper) {
-                    containerWrapper.style.height = `${window.innerHeight - 60}px`;
+                    containerWrapper.style.height = `${window.innerHeight - 80}px`;
                 }
 
                 setTimeout(() => {
@@ -1289,7 +1369,7 @@
 
         if (!controlPanel || !cy) return;
 
-        const topPadding = 60;
+        const topPadding = 80;
 
         const cyContainer = document.getElementById('cy-container');
         if (cyContainer) {
@@ -1298,6 +1378,100 @@
 
             cyContainer.style.width = '100%';
         }
+    }
+
+    function applyLayout(layoutName) {
+        if (!cy) return;
+
+        cy.startBatch();
+
+        let layoutOptions = {
+            name: 'dagre',
+            animate: false,
+            nodeDimensionsIncludeLabels: true,
+            padding: 50,
+            spacingFactor: 1.25,
+            edgeSep: 10,
+            fit: true,
+            rankDir: 'TB'
+        };
+
+        switch (layoutName) {
+            case 'dagre-tb':
+                layoutOptions.rankDir = 'TB'; // Top to Bottom
+                break;
+            case 'dagre-lr':
+                layoutOptions.rankDir = 'LR'; // Left to Right
+                break;
+            case 'cose':
+                layoutOptions = {
+                    name: 'cose',
+                    animate: false,
+                    nodeDimensionsIncludeLabels: true,
+                    idealEdgeLength: 150,
+                    nodeOverlap: 10,
+                    padding: 50,
+                    nodeRepulsion: 1000000,
+                    edgeElasticity: 100,
+                    gravity: 80,
+                    numIter: 3000,
+                    initialTemp: 200,
+                    coolingFactor: 0.95,
+                    minTemp: 1.0,
+                    randomize: false,
+                    fit: true
+                };
+                break;
+        }
+
+        // Save current highlighted elements and their classes
+        const highlightedNodes = cy.nodes('.highlighted, .current-trace-path, .trace-path, .initial-state');
+        const highlightedEdges = cy.edges('.transition, .current-trace-edge, .trace-edge');
+
+        const savedHighlights = [];
+
+        highlightedNodes.forEach(node => {
+            savedHighlights.push({
+                id: node.id(),
+                classes: [...node.classes()].filter(cls =>
+                        ['highlighted', 'current-trace-path', 'trace-path', 'initial-state'].includes(cls))
+            });
+        });
+
+        highlightedEdges.forEach(edge => {
+            savedHighlights.push({
+                id: edge.id(),
+                classes: [...edge.classes()].filter(cls =>
+                        ['transition', 'current-trace-edge', 'trace-edge'].includes(cls))
+            });
+        });
+
+        // Apply new layout
+        const layout = cy.layout(layoutOptions);
+        layout.run();
+
+        // Restore highlights after layout is complete
+        setTimeout(() => {
+            savedHighlights.forEach(item => {
+                const element = cy.getElementById(item.id);
+                if (element.length > 0) {
+                    item.classes.forEach(cls => {
+                        element.addClass(cls);
+                    });
+                }
+            });
+
+            // Set z-index for highlighted nodes and edges
+            cy.nodes('.highlighted, .current-trace-path').forEach(node => {
+                node.style('z-index', 999);
+            });
+
+            cy.edges('.transition, .current-trace-edge').forEach(edge => {
+                edge.style('z-index', 999);
+            });
+        }, 100);
+
+        cy.endBatch();
     }
 
     // Export functions for Java to call
