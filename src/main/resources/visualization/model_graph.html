@@ -279,6 +279,7 @@
         <button id="prev-state" class="nav-button" disabled>◀ Previous</button>
         <span id="state-info">State: -</span>
         <button id="next-state" class="nav-button" disabled>Next ▶</button>
+        <button id="play-button" class="nav-button" disabled>▶ Play</button>
     </div>
 </div>
 
@@ -313,6 +314,8 @@
     let currentStateKey = null;
     let currentKeyIndex = -1;
     let isMovingForward = true;
+    let playInterval = null;
+    let isPlaying = false;
 
     function initCytoscape() {
         if (cy !== null) {
@@ -498,6 +501,12 @@
         initCytoscape();
         setupUIEventHandlers();
         setupResizeHandler();
+
+        window.addEventListener('beforeunload', function () {
+            if (isPlaying && playInterval) {
+                clearInterval(playInterval);
+            }
+        });
     });
 
     function setupResizeHandler() {
@@ -824,6 +833,10 @@
             return;
         }
 
+        if (isPlaying) {
+            togglePlayback();
+        }
+
         cy.elements().removeClass('trace-path').removeClass('trace-edge')
                 .removeClass('highlighted').removeClass('transition')
                 .removeClass('current-trace-path').removeClass('current-trace-edge');
@@ -843,6 +856,7 @@
 
         const prevButton = document.getElementById('prev-state');
         const nextButton = document.getElementById('next-state');
+        const playButton = document.getElementById('play-button');
 
         let loopStartKey = null;
         for (const key of stateKeys) {
@@ -871,6 +885,11 @@
             }
         };
 
+        if (stateKeys.length > 0) {
+            playButton.disabled = false;
+        } else {
+            playButton.disabled = true;
+        }
 
         currentKeyIndex = -1;
         currentStateKey = null;
@@ -919,28 +938,34 @@
         }
 
         document.getElementById('state-info').textContent = stateLabel;
-        document.getElementById('prev-state').disabled = (currentKeyIndex === 0);
 
-        let loopStartKey = null;
-        for (const key of stateKeys) {
-            if (trace.states[key].isLoopStart) {
-                loopStartKey = key;
-                break;
-            }
-        }
-
-        const isLastState = (currentKeyIndex === stateKeys.length - 1);
+        const prevButton = document.getElementById('prev-state');
         const nextButton = document.getElementById('next-state');
+        const playButton = document.getElementById('play-button');
 
-        if (isLastState && loopStartKey) {
-            nextButton.disabled = false;
-            nextButton.textContent = "Loop ↻";
-        } else if (isLastState && !loopStartKey) {
-            nextButton.disabled = true;
-            nextButton.textContent = "Next ▶";
-        } else {
-            nextButton.disabled = false;
-            nextButton.textContent = "Next ▶";
+        if (!isPlaying) {
+            prevButton.disabled = (currentKeyIndex === 0);
+
+            let loopStartKey = null;
+            for (const key of stateKeys) {
+                if (trace.states[key].isLoopStart) {
+                    loopStartKey = key;
+                    break;
+                }
+            }
+
+            const isLastState = (currentKeyIndex === stateKeys.length - 1);
+
+            if (isLastState && loopStartKey) {
+                nextButton.disabled = false;
+                nextButton.textContent = "Loop ↻";
+            } else if (isLastState && !loopStartKey) {
+                nextButton.disabled = true;
+                nextButton.textContent = "Next ▶";
+            } else {
+                nextButton.disabled = false;
+                nextButton.textContent = "Next ▶";
+            }
         }
 
         highlightState(state, prevState, stateKey, prevStateKey, isMovingForward);
@@ -1127,6 +1152,13 @@
             });
         }
 
+        const playButton = document.getElementById('play-button');
+        if (playButton) {
+            playButton.addEventListener('click', function () {
+                togglePlayback();
+            });
+        }
+
         const controlPanel = document.getElementById('controls');
         if (controlPanel) {
             const legendToggle = document.createElement('button');
@@ -1149,6 +1181,71 @@
                 navSection.appendChild(legendToggle);
             }
         }
+    }
+
+    function togglePlayback() {
+        const playButton = document.getElementById('play-button');
+        const nextButton = document.getElementById('next-state');
+        const prevButton = document.getElementById('prev-state');
+
+        if (isPlaying) {
+            clearInterval(playInterval);
+            playInterval = null;
+            isPlaying = false;
+            playButton.textContent = '▶ Play';
+            nextButton.disabled = (currentKeyIndex === Object.keys(getTraceStates()).length - 1);
+            prevButton.disabled = (currentKeyIndex === 0);
+        } else {
+            isPlaying = true;
+            playButton.textContent = '⏸ Pause';
+            nextButton.disabled = true;
+            prevButton.disabled = true;
+
+            playInterval = setInterval(function () {
+                const stateKeys = Object.keys(getTraceStates()).sort((a, b) => parseFloat(a) - parseFloat(b));
+
+                if (currentKeyIndex < stateKeys.length - 1) {
+                    isMovingForward = true;
+                    currentKeyIndex++;
+                    showState(stateKeys[currentKeyIndex]);
+                } else {
+                    let loopStartKey = null;
+                    const traces = JSON.parse(modelData.traces || '[]');
+                    const trace = traces.find(t => t.traceNumber.toString() === activeTrace.toString());
+
+                    if (trace) {
+                        for (const key of stateKeys) {
+                            if (trace.states[key].isLoopStart) {
+                                loopStartKey = key;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (loopStartKey) {
+                        currentKeyIndex = stateKeys.indexOf(loopStartKey);
+                        showState(loopStartKey, true);
+                    } else {
+                        togglePlayback();
+                    }
+                }
+            }, 1000);
+        }
+    }
+
+    function getTraceStates() {
+        if (!modelData || !modelData.traces) {
+            return {};
+        }
+
+        const traces = JSON.parse(modelData.traces || '[]');
+        const trace = traces.find(t => t.traceNumber.toString() === activeTrace.toString());
+
+        if (!trace || !trace.states) {
+            return {};
+        }
+
+        return trace.states;
     }
 
     function handleCommand(command, data) {
