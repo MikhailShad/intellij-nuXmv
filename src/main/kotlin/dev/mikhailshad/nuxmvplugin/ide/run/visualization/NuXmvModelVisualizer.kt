@@ -39,7 +39,6 @@ class NuXmvModelVisualizer(private val project: Project) : Disposable {
     private val pendingUpdates = java.util.concurrent.ConcurrentLinkedQueue<String>()
 
     private lateinit var modelGraph: ModelGraph
-    private lateinit var modelGraphWithTraces: ModelGraph
 
     init {
         browser.component.preferredSize = java.awt.Dimension(600, 400)
@@ -221,11 +220,8 @@ class NuXmvModelVisualizer(private val project: Project) : Disposable {
                 return
             }
 
-            if (!this::modelGraphWithTraces.isInitialized) {
-                modelGraphWithTraces = modelGraph.copy(traces = traces)
-            }
-
-            updateVisualization(modelGraphWithTraces.toJson().toString())
+            modelGraph = modelGraph.copy(traces = traces)
+            updateVisualization(modelGraph.toJson().toString())
         } catch (e: Exception) {
             logger.error(e) { "Error visualizing multiple traces" }
         }

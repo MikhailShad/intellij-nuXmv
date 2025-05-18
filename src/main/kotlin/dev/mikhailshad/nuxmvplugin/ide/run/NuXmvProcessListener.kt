@@ -100,12 +100,7 @@ class NuXmvProcessListener(
                         val allTraces = ShowTracesOutputParser.parseOutput(output)
                         for (trace in allTraces) {
                             val storedTrace = tracesByNumber[trace.traceNumber]
-                            if (storedTrace != null) {
-                                for ((stateNumber, state) in trace.states) {
-                                    val storedState = storedTrace.states[stateNumber]
-                                    storedState?.variables?.putAll(state.variables)
-                                }
-                            }
+                            storedTrace?.states?.putAll(trace.states)
                         }
                     }
 

@@ -2,8 +2,9 @@ import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.9.25"
     id("org.jetbrains.intellij.platform") version "2.4.0"
+    kotlin("jvm") version "2.1.21"
+    kotlin("plugin.serialization") version "2.1.21"
 }
 
 group = "dev.MikhailShad"
@@ -35,6 +36,8 @@ dependencies {
 
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
     implementation("org.json:json:20231013")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+
     testImplementation("junit:junit:4.13.2")
 }
 

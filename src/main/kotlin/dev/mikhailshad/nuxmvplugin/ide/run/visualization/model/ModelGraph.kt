@@ -1,5 +1,7 @@
 package dev.mikhailshad.nuxmvplugin.ide.run.visualization.model
 
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -37,7 +39,7 @@ data class ModelGraph(
                 if (variable.initialValue == value) {
                     valueNode.put("isInitialState", true)
                 }
-                
+
                 nodes.put(valueNode)
             }
         }
@@ -59,11 +61,7 @@ data class ModelGraph(
         }
         json.put("edges", edges)
 
-        val tracesJson = JSONArray()
-        for (trace in traces) {
-            tracesJson.put(trace.toJson())
-        }
-        json.put("traces", tracesJson)
+        json.put("traces", Json.encodeToString(traces))
 
         return json
 
