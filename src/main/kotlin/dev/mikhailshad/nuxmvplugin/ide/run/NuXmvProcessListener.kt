@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Key
 import dev.mikhailshad.nuxmvplugin.ide.run.visualization.model.CounterexampleTrace
 import dev.mikhailshad.nuxmvplugin.ide.run.visualization.parser.ShowTracesOutputParser
+import dev.mikhailshad.nuxmvplugin.ide.run.visualization.parser.TimedLogicCheckCommandOutputParser
 import java.io.BufferedWriter
 import java.io.IOException
 import java.io.OutputStreamWriter
@@ -15,13 +16,15 @@ class NuXmvProcessListener(
     private val console: NuXmvSplitConsole,
     commands: List<String>
 ) : ProcessListener {
-    private val logger = Logger.getInstance(NuXmvProcessListener::class.java)
+    companion object {
+        private val logger = Logger.getInstance(NuXmvProcessListener::class.java)
+    }
+
     private val commandsIt = commands.iterator()
     private var currentCommand = ""
     private var currentOutputBuffer = StringBuilder()
-    private var allTraces = mutableListOf<CounterexampleTrace>()
+    private var tracesByNumber = mutableMapOf<Int, CounterexampleTrace>()
     private var wasCommandPrinted = false
-    private var failedSpecifications = false
 
     override fun startNotified(event: ProcessEvent) {}
 
@@ -75,35 +78,40 @@ class NuXmvProcessListener(
 
             try {
                 if (currentCommand.contains("check_")) {
-                    if (output.contains(" is false") ||
+                    if (output.contains("is false") ||
                         output.contains("is violated") ||
                         output.contains("-- no proof or counterexample found with bound") ||
                         output.contains("-- invariant violated at depth")
                     ) {
-
-                        failedSpecifications = true
                         logger.info("Found failed specifications in command: $currentCommand")
                     }
                 }
 
-                val baseCommand = currentCommand.split(" ").firstOrNull() ?: ""
+                when {
+                    currentCommand.contains("ctl") || currentCommand.contains("ltl") -> {
+                        // Add trace data to the map
+                        TimedLogicCheckCommandOutputParser.parseOutput(output).forEach { trace ->
+                            tracesByNumber[trace.traceNumber] = trace
+                        }
+                    }
 
-                val traces = if (baseCommand == "show_traces") {
-                    val showTracesParser = ShowTracesOutputParser()
-                    showTracesParser.parseOutput(output)
-                } else {
-                    // TODO: Add other parsers for different commands in the future
-                    emptyList()
-                }
+                    currentCommand.contains("show_traces") -> {
+                        // Merge full traces with already stored ones
+                        val allTraces = ShowTracesOutputParser.parseOutput(output)
+                        for (trace in allTraces) {
+                            val storedTrace = tracesByNumber[trace.traceNumber]
+                            if (storedTrace != null) {
+                                for ((stateNumber, state) in trace.states) {
+                                    val storedState = storedTrace.states[stateNumber]
+                                    storedState?.variables?.putAll(state.variables)
+                                }
+                            }
+                        }
+                    }
 
-                if (traces.isNotEmpty()) {
-                    allTraces.addAll(traces)
-                    logger.info("Found ${traces.size} traces in command output for '$currentCommand', total traces: ${allTraces.size}")
-
-                    console.print(
-                        "\nParsed ${traces.size} counterexample traces\n",
-                        ConsoleViewContentType.SYSTEM_OUTPUT
-                    )
+                    else -> {
+                        // TODO: Add other parsers for different commands in the future
+                    }
                 }
             } catch (e: Exception) {
                 logger.error("Error parsing command output for '$currentCommand': ${e.message}", e)
@@ -112,9 +120,9 @@ class NuXmvProcessListener(
     }
 
     private fun visualizeAllTraces() {
-        if (allTraces.isNotEmpty() && console.modelFile != null) {
-            logger.info("Visualizing ${allTraces.size} traces for model ${console.modelFile.path}")
-            console.visualizeModuleWithTraces(console.modelFile, allTraces)
+        if (tracesByNumber.isNotEmpty() && console.modelFile != null) {
+            logger.info("Visualizing ${tracesByNumber.size} traces for model ${console.modelFile.path}")
+            console.visualizeModuleWithTraces(console.modelFile, tracesByNumber.values.toList())
         } else {
             logger.info("No traces to visualize or model file is null")
         }

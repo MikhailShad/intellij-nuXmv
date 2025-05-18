@@ -14,3 +14,4 @@ interface CommandOutputParser {
      */
     fun parseOutput(output: String): List<CounterexampleTrace>
 }
+
