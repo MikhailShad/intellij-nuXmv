@@ -205,7 +205,7 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // BaseIdentifier (DOT SimpleIdentifier) * (LBRACKET Expr RBRACKET)?
+    // BaseIdentifier (DOT SimpleIdentifier) * (LBRACKET Expr RBRACKET)*
     static boolean ComplexIdentifier(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "ComplexIdentifier")) return false;
         if (!nextTokenIs(b, "", IDENTIFIER, SELF_KW)) return false;
@@ -240,10 +240,14 @@ public class NuXmvParser implements PsiParser, LightPsiParser {
         return r;
     }
 
-    // (LBRACKET Expr RBRACKET)?
+    // (LBRACKET Expr RBRACKET)*
     private static boolean ComplexIdentifier_2(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "ComplexIdentifier_2")) return false;
-        ComplexIdentifier_2_0(b, l + 1);
+        while (true) {
+            int c = current_position_(b);
+            if (!ComplexIdentifier_2_0(b, l + 1)) break;
+            if (!empty_element_parsed_guard_(b, "ComplexIdentifier_2", c)) break;
+        }
         return true;
     }
 

@@ -60,27 +60,34 @@ abstract class NuXmvForLoopMacroMixin(node: ASTNode) : ASTWrapperPsiElement(node
             }.flatten()
 
     override fun expand(): String {
-        val variableName = loopVariableName
-        val range = loopRange
-        val body = loopBody
+        return innerExpand(mutableSetOf(loopVariableName))
+    }
 
-        if (range.isEmpty() || body.isEmpty()) {
-            return "-- Empty FOR macro expansion"
+    private fun innerExpand(nestedLoopVariableNames: Set<String>): String {
+        if (loopRange.isEmpty() || loopBody.isEmpty()) {
+            return ""
         }
 
         val bodyExpandedStringBuilder = StringBuilder()
-        for (element in body) {
-            val visitor = LoopVariableReplacementVisitor(variableName)
-            element.accept(visitor)
-            bodyExpandedStringBuilder.append(visitor.text)
+        for (element in loopBody) {
+            if (element is NuXmvForLoopMacro) {
+                val nestedForMacro = element as NuXmvForLoopMacroMixin
+                val nestedLoopVariableName = nestedForMacro.forLoopVariable?.name ?: ""
+                val nestedExpanded = nestedForMacro.innerExpand(nestedLoopVariableNames + nestedLoopVariableName)
+                bodyExpandedStringBuilder.append(nestedExpanded)
+            } else {
+                val visitor = LoopVariableReplacementVisitor(nestedLoopVariableNames)
+                element.accept(visitor)
+                bodyExpandedStringBuilder.append(visitor.text)
+            }
         }
         val bodyExpandedString = bodyExpandedStringBuilder.toString()
 
         val macroExpandedStringBuilder = StringBuilder()
-        for (i in range) {
+        for (i in loopRange) {
             macroExpandedStringBuilder.append(
                 bodyExpandedString.replace(
-                    "$LOOP_VARIABLE_REPLACEMENT$variableName",
+                    "$LOOP_VARIABLE_REPLACEMENT$loopVariableName",
                     i.toString()
                 )
             )
@@ -89,7 +96,7 @@ abstract class NuXmvForLoopMacroMixin(node: ASTNode) : ASTWrapperPsiElement(node
         return macroExpandedStringBuilder.toString()
     }
 
-    private inner class LoopVariableReplacementVisitor(private val variableName: String) : NuXmvVisitor() {
+    private inner class LoopVariableReplacementVisitor(private val variableNames: Set<String>) : NuXmvVisitor() {
         private val stringBuilder = StringBuilder()
 
         val text: String
@@ -108,7 +115,7 @@ abstract class NuXmvForLoopMacroMixin(node: ASTNode) : ASTWrapperPsiElement(node
         }
 
         private fun expandIdentifierIfNeeded(identifier: String?) {
-            if (identifier == variableName) {
+            if (variableNames.contains(identifier)) {
                 stringBuilder.append(LOOP_VARIABLE_REPLACEMENT)
             }
             stringBuilder.append(identifier)

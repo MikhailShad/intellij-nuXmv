@@ -549,6 +549,6 @@ ReferenceBasicExpr ::= IdentifierUsage
 IdentifierUsage ::= ComplexIdentifier | SimpleIdentifier {
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvIdentifierUsageMixin"
 }
-private ComplexIdentifier ::= BaseIdentifier (DOT SimpleIdentifier) * (LBRACKET Expr RBRACKET)?
+private ComplexIdentifier ::= BaseIdentifier (DOT SimpleIdentifier) * (LBRACKET Expr RBRACKET)*
 private BaseIdentifier ::= SimpleIdentifier | SELF_KW
 private SimpleIdentifier ::= IDENTIFIER

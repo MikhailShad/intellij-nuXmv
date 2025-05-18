@@ -2,11 +2,13 @@
 package dev.mikhailshad.nuxmvplugin.language.psi;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public interface NuXmvIdentifierUsage extends PsiElement {
 
-    @Nullable
-    NuXmvExpr getExpr();
+    @NotNull
+    List<NuXmvExpr> getExprList();
 
 }

@@ -3,12 +3,14 @@ package dev.mikhailshad.nuxmvplugin.language.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvDefineName;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr;
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVisitor;
 import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class NuXmvDefineNameImpl extends NuXmvNamedElementMixin implements NuXmvDefineName {
 
@@ -27,9 +29,9 @@ public class NuXmvDefineNameImpl extends NuXmvNamedElementMixin implements NuXmv
     }
 
     @Override
-    @Nullable
-    public NuXmvExpr getExpr() {
-        return findChildByClass(NuXmvExpr.class);
+    @NotNull
+    public List<NuXmvExpr> getExprList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, NuXmvExpr.class);
     }
 
 }
