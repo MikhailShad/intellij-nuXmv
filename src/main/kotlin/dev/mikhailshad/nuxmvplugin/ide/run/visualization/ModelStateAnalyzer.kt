@@ -2,6 +2,7 @@ package dev.mikhailshad.nuxmvplugin.ide.run.visualization
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import dev.mikhailshad.nuxmvplugin.ide.run.visualization.model.ModelGraph
@@ -9,13 +10,8 @@ import dev.mikhailshad.nuxmvplugin.ide.run.visualization.model.StateVariable
 import dev.mikhailshad.nuxmvplugin.ide.run.visualization.model.Transition
 import dev.mikhailshad.nuxmvplugin.language.psi.*
 import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvBuiltInType
-import io.github.oshai.kotlinlogging.KotlinLogging
 
 class ModelStateAnalyzer(private val project: Project) {
-    companion object {
-        private val logger = KotlinLogging.logger {}
-    }
-
     fun analyzeModelFile(file: VirtualFile): ModelGraph {
         val psiFile = PsiManager.getInstance(project).findFile(file) as? NuXmvFile
             ?: throw Exception("Not a nuXmv file")
@@ -76,12 +72,16 @@ class ModelStateAnalyzer(private val project: Project) {
                 val sourceStates = extractSourceStateFromCondition(condition, stateVariable)
                 val targetState = targetExpr.text
 
+                val conditionVisitor = ConditionVisitor(stateVariable)
+                condition.accept(conditionVisitor)
+                val conditionText = conditionVisitor.conditionText
+
                 val transitions = sourceStates.map {
                     val transition = Transition(
                         from = it,
                         to = targetState,
                     )
-                    transition.condition = condition.text
+                    transition.condition = conditionText
                     transition
                 }
 
@@ -196,5 +196,25 @@ class ModelStateAnalyzer(private val project: Project) {
             }.filter { it != null }
             .map { it!! }
             .toSet()
+    }
+
+    private inner class ConditionVisitor(private val stateVariable: StateVariable) : NuXmvVisitor() {
+        private val stringBuilder = StringBuilder()
+
+        val conditionText: String get() = stringBuilder.toString()
+
+        override fun visitElement(element: PsiElement) {
+            for (child in element.children) {
+                if (child is NuXmvReferenceBasicExpr || child is NuXmvLiteralBasicExpr) {
+                    continue
+                }
+
+                if (child.text.contains(stateVariable.name)) {
+                    child.accept(this)
+                } else {
+                    stringBuilder.append(child.text)
+                }
+            }
+        }
     }
 }
