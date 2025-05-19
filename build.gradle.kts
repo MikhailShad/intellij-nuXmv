@@ -7,8 +7,10 @@ plugins {
     kotlin("plugin.serialization") version "2.1.21"
 }
 
+val intellijIdeaBuild = 243
+
 group = "dev.MikhailShad"
-version = "0.0.2"
+version = "0.0.2+IJ.$intellijIdeaBuild"
 
 repositories {
     mavenCentral()
@@ -49,8 +51,8 @@ intellijPlatform {
     pluginConfiguration {
         version = project.version.toString()
         ideaVersion {
-            sinceBuild = "243"
-            untilBuild = "243.*"
+            sinceBuild = "$intellijIdeaBuild"
+            untilBuild = "$intellijIdeaBuild.*"
         }
     }
 }
