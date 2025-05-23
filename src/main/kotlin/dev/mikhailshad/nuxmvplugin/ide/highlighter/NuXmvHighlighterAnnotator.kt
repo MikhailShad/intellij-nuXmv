@@ -43,7 +43,7 @@ class NuXmvHighlighterAnnotator : Annotator {
                     .create()
             }
 
-            is NuXmvDefineName, is NuXmvEnumerationTypeValue -> {
+            is NuXmvDefineName, is NuXmvEnumerationTypeValue, is NuXmvConstant -> {
                 holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                     .textAttributes(NuXmvSyntaxHighlighter.CONSTANT_NAME_ATTRIBUTE)
                     .range(element)
