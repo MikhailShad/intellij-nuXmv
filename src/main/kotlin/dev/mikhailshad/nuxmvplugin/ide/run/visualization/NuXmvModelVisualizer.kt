@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBColor
 import com.intellij.ui.jcef.JBCefBrowser
+import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JBCefJSQuery
 import dev.mikhailshad.nuxmvplugin.ide.run.visualization.model.CounterexampleTrace
 import dev.mikhailshad.nuxmvplugin.ide.run.visualization.model.ModelGraph
@@ -29,7 +30,7 @@ class NuXmvModelVisualizer(private val project: Project) : Disposable {
     // Создаем браузер с прозрачным фоном
     private val browser: JBCefBrowser = JBCefBrowser()
     private val panel = JPanel(BorderLayout())
-    private val jsQuery: JBCefJSQuery = JBCefJSQuery.create(browser)
+    private val jsQuery: JBCefJSQuery = JBCefJSQuery.create(browser as JBCefBrowserBase)
     private val stateAnalyzer = ModelStateAnalyzer(project)
 
     // Флаг готовности страницы
