@@ -7,10 +7,11 @@ plugins {
     kotlin("plugin.serialization") version "2.1.21"
 }
 
-val intellijIdeaBuild = 243
+val sinceIntellijIdeaBuild = 243
+val untilIntellijIdeaBuild = 251
 
 group = "dev.MikhailShad"
-version = "0.0.2+IJ.$intellijIdeaBuild"
+version = "0.0.2"
 
 repositories {
     mavenCentral()
@@ -30,7 +31,7 @@ sourceSets {
 
 dependencies {
     intellijPlatform {
-        intellijIdeaCommunity("2024.3.5")
+        intellijIdeaCommunity("2025.1.1.1")
         bundledPlugin("com.intellij.java")
 
         testFramework(TestFrameworkType.Platform)
@@ -51,14 +52,14 @@ intellijPlatform {
     pluginConfiguration {
         version = project.version.toString()
         ideaVersion {
-            sinceBuild = "$intellijIdeaBuild"
-            untilBuild = "$intellijIdeaBuild.*"
+            sinceBuild = "$sinceIntellijIdeaBuild"
+            untilBuild = "$untilIntellijIdeaBuild.*"
         }
     }
 }
 
 val runIdeWithPsiViewer by intellijPlatformTesting.runIde.registering {
     plugins {
-        plugin("PsiViewer", "243.7768")
+        plugin("PsiViewer", "$untilIntellijIdeaBuild.175")
     }
 }
