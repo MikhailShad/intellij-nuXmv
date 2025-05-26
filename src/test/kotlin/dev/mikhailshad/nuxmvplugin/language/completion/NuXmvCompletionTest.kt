@@ -92,11 +92,30 @@ class NuXmvCompletionTest : NuXmvCodeInsightFixtureTestCase() {
     }
 
     fun testVariableCompletion() {
-        myFixture.configureByFiles("assignCompletion.smv")
+        myFixture.configureByFiles("variableCompletion.smv")
         myFixture.complete(CompletionType.BASIC)
         val lookupElementStrings: MutableList<String>? = myFixture.lookupElementStrings
         assertNotNull(lookupElementStrings)
-        assertTrue(lookupElementStrings!!.containsAll(listOf("x")))
+        assertTrue(
+            lookupElementStrings!!.containsAll(
+                listOf(
+                    "x",
+                    "state",
+                    "counter",
+                    "input_signal",
+                    "config",
+                    "is_active"
+                )
+            )
+        )
+    }
+
+    fun testValueCompletion() {
+        myFixture.configureByFiles("valueCompletion.smv")
+        myFixture.complete(CompletionType.BASIC)
+        val lookupElementStrings: MutableList<String>? = myFixture.lookupElementStrings
+        assertNotNull(lookupElementStrings)
+        assertTrue(lookupElementStrings!!.containsAll(listOf("TRUE", "FALSE")))
     }
 
     fun testLtlOperatorCompletion() {

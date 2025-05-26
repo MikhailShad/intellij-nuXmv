@@ -9,14 +9,15 @@ class ParenthesisInsertHandler private constructor(private val withParameters: B
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val editor = context.editor
         val document = editor.document
+        val caretModel = editor.caretModel
         val offset = context.tailOffset
 
         document.insertString(offset, "()")
 
         if (withParameters) {
-            editor.caretModel.moveToOffset(offset + 1)
+            caretModel.moveToOffset(offset + 1)
         } else {
-            editor.caretModel.moveToOffset(offset + 2)
+            caretModel.moveToOffset(offset + 2)
         }
     }
 

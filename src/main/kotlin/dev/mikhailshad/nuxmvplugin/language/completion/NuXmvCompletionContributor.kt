@@ -71,9 +71,8 @@ class NuXmvCompletionContributor : CompletionContributor() {
 
         extend(
             CompletionType.BASIC,
-            psiElement().andOr(
-                psiElement().inside(NuXmvExpr::class.java),
-            ),
+            psiElement()
+                .inside(NuXmvExpr::class.java),
             NuXmvFunctionCompletionProvider
         )
 
@@ -100,13 +99,7 @@ class NuXmvCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             psiElement()
-                .inside(NuXmvExpr::class.java)
-                .afterLeaf(
-                    StandardPatterns.or(
-                        psiElement(NuXmvTypes.ASSIGN),
-                        // TODO: по умному смотреть на операторы
-                    )
-                ),
+                .inside(NuXmvExpr::class.java),
             NuXmvVariableCompletionProvider
         )
     }
