@@ -19,13 +19,13 @@ class NuXmvIdentifierReference(element: NuXmvIdentifierUsage) :
         }
 
         // At first look for as-is declaration of identifier
-        val asIsDeclaration = findDeclarationsInScope(file, identifier)
+        var currentModule: PsiElement = element.findParentOfType<NuXmvModule>() ?: element.containingFile
+        val asIsDeclaration = findDeclarationsInScope(currentModule, identifier)
         if (asIsDeclaration.isNotEmpty()) {
             return asIsDeclaration
         }
 
         // then we try to resolve partial declaration (module + identifier)
-        var currentModule: PsiElement = element.findParentOfType<NuXmvModule>() ?: element.containingFile
         val partsIdentifier = identifier.split('.')
         for (i in 0 until partsIdentifier.size - 1) {
             val partName = partsIdentifier[i]
@@ -74,29 +74,14 @@ class NuXmvIdentifierReference(element: NuXmvIdentifierUsage) :
     }
 
     private fun findDeclarationsInScope(scope: PsiElement, name: String): List<PsiElement> {
-        val result = mutableListOf<PsiElement>()
-        result.addAll(
-            PsiTreeUtil.findChildrenOfType(scope, NuXmvModuleParameter::class.java)
-                .filter { it.text == name })
-        result.addAll(
-            PsiTreeUtil.findChildrenOfType(scope, NuXmvVarName::class.java)
-                .filter { it.text == name })
-        result.addAll(
-            PsiTreeUtil.findChildrenOfType(scope, NuXmvNamedSpecification::class.java)
-                .filter { it.text == name })
-        result.addAll(
-            PsiTreeUtil.findChildrenOfType(scope, NuXmvFunctionName::class.java)
-                .filter { it.text == name })
-        result.addAll(
-            PsiTreeUtil.findChildrenOfType(scope, NuXmvDefineName::class.java)
-                .filter { it.text == name })
-        result.addAll(
-            PsiTreeUtil.findChildrenOfType(scope, NuXmvConstant::class.java)
-                .filter { it.text == name })
-        result.addAll(
+        return listOf(
+            PsiTreeUtil.findChildrenOfType(scope, NuXmvModuleParameter::class.java),
+            PsiTreeUtil.findChildrenOfType(scope, NuXmvVarName::class.java),
+            PsiTreeUtil.findChildrenOfType(scope, NuXmvFunctionName::class.java),
+            PsiTreeUtil.findChildrenOfType(scope, NuXmvDefineName::class.java),
+            PsiTreeUtil.findChildrenOfType(scope, NuXmvConstant::class.java),
             PsiTreeUtil.findChildrenOfType(scope, NuXmvEnumerationTypeValue::class.java)
-                .filter { it.text == name })
-        return result
+        ).flatten().filter { it.text == name }.distinct()
     }
 
 }

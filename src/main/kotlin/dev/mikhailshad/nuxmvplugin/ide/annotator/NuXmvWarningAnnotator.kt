@@ -3,10 +3,10 @@ package dev.mikhailshad.nuxmvplugin.ide.annotator
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import dev.mikhailshad.nuxmvplugin.language.psi.*
-import dev.mikhailshad.nuxmvplugin.language.reference.NuXmvReference
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvIdentifierUsage
+import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvIdentifierUsageMixin
 
 class NuXmvWarningAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
@@ -14,7 +14,7 @@ class NuXmvWarningAnnotator : Annotator {
             return
         }
 
-//        checkValidReferences(element, holder)
+        checkValidReferences(element, holder)
 //        checkValidTypes(element, holder)
     }
 
@@ -30,18 +30,13 @@ class NuXmvWarningAnnotator : Annotator {
     }
 
     private fun checkValidReferences(element: PsiElement, holder: AnnotationHolder) {
-        if (element !is NuXmvNamedElement) {
+        if (element !is NuXmvIdentifierUsage) {
             return
         }
 
-        val parent = element.parent
-        if (parent is NuXmvVarDeclaration || parent is NuXmvIvarDeclaration || parent is NuXmvModule) {
-            return
-        }
+        val identifierUsage = element as NuXmvIdentifierUsageMixin
 
-        val reference = NuXmvReference(element, TextRange(0, element.text.length))
-
-        if (reference.resolve() == null) {
+        if (identifierUsage.reference?.resolve() == null) {
             holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved reference: ${element.text}")
                 .range(element)
                 .create()
