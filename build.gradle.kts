@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.4.0"
     kotlin("jvm") version "2.1.21"
     kotlin("plugin.serialization") version "2.1.21"
+    id("co.uzzu.dotenv.gradle") version "4.0.0"
 }
 
 val sinceIntellijIdeaBuild = 243
@@ -31,7 +32,7 @@ sourceSets {
 
 dependencies {
     intellijPlatform {
-        intellijIdeaCommunity("2025.1.1.1")
+        intellijIdeaCommunity("2025.1.2")
         bundledPlugin("com.intellij.java")
 
         testFramework(TestFrameworkType.Platform)
@@ -55,6 +56,16 @@ intellijPlatform {
             sinceBuild = "$sinceIntellijIdeaBuild"
             untilBuild = "$untilIntellijIdeaBuild.*"
         }
+    }
+
+    signing {
+        certificateChainFile = file(env.CERTIFICATE_CHAIN_FILE.value)
+        privateKeyFile = file(env.PRIVATE_KEY_FILE.value)
+        password = env.PRIVATE_KEY_PASSWORD.value
+    }
+
+    publishing {
+        token = env.PUBLISH_TOKEN.value
     }
 }
 
