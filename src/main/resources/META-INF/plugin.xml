@@ -99,9 +99,6 @@
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.ide.structure.NuXmvStructureViewFactory"/>
         <navbar implementation="dev.mikhailshad.nuxmvplugin.ide.structure.NuXmvStructureAwareNavbar"/>
-        <psi.referenceContributor
-                language="nuXmv"
-                implementation="dev.mikhailshad.nuxmvplugin.language.reference.NuXmvReferenceContributor"/>
         <lang.refactoringSupport
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.ide.refactoring.NuxmvRefactoringSupportProvider"/>

@@ -7,9 +7,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import com.intellij.psi.util.PsiTreeUtil
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFile
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvForLoopMacro
+import dev.mikhailshad.nuxmvplugin.language.psi.scope.NuXmvScopes
 import java.io.File
 import java.nio.file.Path
 
@@ -27,8 +26,7 @@ class MacroExpansionService(private val project: Project) {
             return modelFile
         }
 
-        // Find all FOR macros in the file
-        val forMacros = PsiTreeUtil.findChildrenOfType(psiFile, NuXmvForLoopMacro::class.java)
+        val forMacros = NuXmvScopes.forLoopMacrosIn(psiFile)
         if (forMacros.isEmpty()) {
             logger.info("No FOR macros found in file: ${modelFile.path}")
             return modelFile

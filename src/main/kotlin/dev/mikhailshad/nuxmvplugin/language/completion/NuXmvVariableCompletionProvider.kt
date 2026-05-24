@@ -5,9 +5,10 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
-import dev.mikhailshad.nuxmvplugin.language.psi.*
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFile
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModule
 
 object NuXmvVariableCompletionProvider : CompletionProvider<CompletionParameters>() {
 
@@ -17,57 +18,42 @@ object NuXmvVariableCompletionProvider : CompletionProvider<CompletionParameters
         resultSet: CompletionResultSet
     ) {
         val position = parameters.position
-        val file = position.containingFile
+        if (position.containingFile !is NuXmvFile) return
 
-        if (file !is NuXmvFile) return
+        val containingModule = position.parentOfType<NuXmvModule>() ?: return
+        val moduleBody = containingModule.moduleBody ?: return
 
-        val varDeclarations = PsiTreeUtil.findChildrenOfType(file, NuXmvSingleVarDeclaration::class.java)
-        val ivarDeclarations = PsiTreeUtil.findChildrenOfType(file, NuXmvSingleIvarDeclaration::class.java)
-        val frozenVarDeclarations = PsiTreeUtil.findChildrenOfType(file, NuXmvSingleIvarDeclaration::class.java)
-            .filter { it.parent is NuXmvFrozenVarDeclaration }
-
-        val defineDeclarations = PsiTreeUtil.findChildrenOfType(file, NuXmvDefineBody::class.java)
-
-        val containingModule = PsiTreeUtil.getParentOfType(position, NuXmvModule::class.java) ?: return
-
-        varDeclarations.forEach { declaration ->
-            if (PsiTreeUtil.isAncestor(containingModule, declaration, false)) {
-                val varName = declaration.varName.text
-                val typeText = declaration.typeSpecifier?.text
+        for (decl in moduleBody.varDeclarationList) {
+            for (single in decl.singleVarDeclarationList) {
                 resultSet.addElement(
-                    LookupElementBuilder.create(varName)
-                        .withTypeText("VAR: $typeText")
+                    LookupElementBuilder.create(single.varName.text)
+                        .withTypeText("VAR: ${single.typeSpecifier?.text}")
                 )
             }
         }
 
-        ivarDeclarations.forEach { declaration ->
-            if (PsiTreeUtil.isAncestor(containingModule, declaration, false)) {
-                val varName = declaration.varName.text
-                val typeText = declaration.simpleTypeSpecifier?.text
+        for (decl in moduleBody.ivarDeclarationList) {
+            for (single in decl.singleIvarDeclarationList) {
                 resultSet.addElement(
-                    LookupElementBuilder.create(varName)
-                        .withTypeText("IVAR: $typeText")
+                    LookupElementBuilder.create(single.varName.text)
+                        .withTypeText("IVAR: ${single.simpleTypeSpecifier?.text}")
                 )
             }
         }
 
-        frozenVarDeclarations.forEach { declaration ->
-            if (PsiTreeUtil.isAncestor(containingModule, declaration, false)) {
-                val varName = declaration.varName.text
-                val typeText = declaration.simpleTypeSpecifier?.text
+        for (decl in moduleBody.frozenVarDeclarationList) {
+            for (single in decl.singleIvarDeclarationList) {
                 resultSet.addElement(
-                    LookupElementBuilder.create(varName)
-                        .withTypeText("FROZENVAR: $typeText")
+                    LookupElementBuilder.create(single.varName.text)
+                        .withTypeText("FROZENVAR: ${single.simpleTypeSpecifier?.text}")
                 )
             }
         }
 
-        defineDeclarations.forEach { declaration ->
-            if (PsiTreeUtil.isAncestor(containingModule, declaration, false)) {
-                val defineName = declaration.defineName.text
+        for (decl in moduleBody.defineDeclarationList) {
+            for (define in decl.defineBodyList) {
                 resultSet.addElement(
-                    LookupElementBuilder.create(defineName)
+                    LookupElementBuilder.create(define.defineName.text)
                         .withTypeText("DEFINE")
                 )
             }

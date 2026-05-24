@@ -2,106 +2,56 @@ package dev.mikhailshad.nuxmvplugin.language.reference
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.findParentOfType
-import dev.mikhailshad.nuxmvplugin.language.psi.*
-import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvIdentifierUsageMixin
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvElementFactory
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFile
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvIdentifierUsage
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModule
+import dev.mikhailshad.nuxmvplugin.language.psi.scope.NuXmvScopes
+import dev.mikhailshad.nuxmvplugin.language.psi.scope.scope
+import dev.mikhailshad.nuxmvplugin.language.psi.scope.submoduleTypeOf
 
+/**
+ * Resolves dotted identifier usages such as `submodule.field.subfield` against the cached
+ * module scope. Each hop is an O(1) map lookup; nothing here walks the PSI subtree.
+ */
 class NuXmvIdentifierReference(element: NuXmvIdentifierUsage) :
     NuXmvReferenceBase(element, TextRange.from(0, element.textLength)) {
+
     override fun resolveInner(incompleteCode: Boolean): List<PsiElement> {
-        val file = element.containingFile
-        val identifierUsage = element as NuXmvIdentifierUsageMixin
-        var identifier = identifierUsage.text
-        val braceIndex = identifier.indexOf('[')
-        if (braceIndex >= 0) {
-            identifier = identifier.substring(0, braceIndex)
+        val file = element.containingFile as? NuXmvFile ?: return emptyList()
+        val rawIdentifier = element.text ?: return emptyList()
+        val identifier = stripArrayIndex(rawIdentifier)
+
+        var currentModule: NuXmvModule = element.findParentOfType<NuXmvModule>()
+            ?: return resolveAtFileScope(file, identifier)
+
+        currentModule.scope().declarations[identifier]?.let { return listOf(it) }
+
+        val parts = identifier.split('.')
+        for (i in 0 until parts.size - 1) {
+            val partName = parts[i]
+            val scope = currentModule.scope()
+            scope.variables[partName] ?: return emptyList()
+            val moduleType = currentModule.submoduleTypeOf(partName) ?: return emptyList()
+            currentModule = NuXmvScopes.modulesIn(file)[moduleType] ?: return emptyList()
         }
 
-        // At first look for as-is declaration of identifier
-        var currentModule: PsiElement = element.findParentOfType<NuXmvModule>() ?: element.containingFile
-        val asIsDeclaration = findDeclarationsInScope(currentModule, identifier)
-        if (asIsDeclaration.isNotEmpty()) {
-            return asIsDeclaration
-        }
-
-        // then we try to resolve partial declaration (module + identifier)
-        val partsIdentifier = identifier.split('.')
-        for (i in 0 until partsIdentifier.size - 1) {
-            val partName = partsIdentifier[i]
-            val variable = findVariableInScope(currentModule, partName)
-                ?: return emptyList()
-            val moduleType = getModuleTypeOfVariable(variable)
-                ?: return emptyList()
-            currentModule = findModule(file, moduleType)
-                ?: return emptyList()
-        }
-
-        val lastPart = partsIdentifier.last()
-        return findDeclarationsInScope(currentModule, lastPart)
+        val lastPart = parts.last()
+        return currentModule.scope().declarations[lastPart]?.let { listOf(it) } ?: emptyList()
     }
 
     override fun handleElementRename(newElementName: String): PsiElement {
         return psiElement.replace(NuXmvElementFactory.createIdentifier(psiElement.project, newElementName))
     }
 
-    private fun findVariableInScope(scope: PsiElement, name: String): PsiElement? {
-        return PsiTreeUtil.findChildrenOfType(scope, NuXmvVarName::class.java)
-            .firstOrNull { it.text == name }
+    private fun resolveAtFileScope(file: NuXmvFile, identifier: String): List<PsiElement> {
+        val module = NuXmvScopes.modulesIn(file)[identifier] ?: return emptyList()
+        return listOf(module)
     }
 
-    private fun getModuleTypeOfVariable(variable: PsiElement): String? {
-        val declaration = variable.parent
-        if (declaration is NuXmvSingleVarDeclaration) {
-            val moduleType = declaration.typeSpecifier?.moduleTypeSpecifier
-            if (moduleType != null) {
-                return moduleType.identifier.text
-            }
-        }
-        return null
-    }
-
-    private fun findModule(file: PsiElement, moduleName: String): PsiElement? {
-        val modules = PsiTreeUtil.findChildrenOfType(file, NuXmvModuleDeclaration::class.java)
-        for (module in modules) {
-            val name = module.moduleName?.text
-            if (name == moduleName) {
-                return module.findParentOfType<NuXmvModule>()
-            }
-        }
-
-        return null
-    }
-
-    private fun findDeclarationsInScope(scope: PsiElement, name: String): List<PsiElement> {
-        for (namedElementType in NUXMV_NAMED_ELEMENT_TYPES) {
-            val namedElement = findDeclarationOfType(scope, name, namedElementType)
-            if (namedElement != null) {
-                return listOf(namedElement)
-            }
-        }
-
-        return emptyList()
-    }
-
-    private fun <T : NuXmvNamedElement> findDeclarationOfType(
-        scope: PsiElement,
-        name: String,
-        expectedType: Class<T>
-    ): T? {
-        return PsiTreeUtil.findChildrenOfType(scope, expectedType)
-            .firstOrNull { it.text == name }
-    }
-
-    companion object {
-        val NUXMV_NAMED_ELEMENT_TYPES = listOf(
-            NuXmvConstant::class.java,
-            NuXmvModuleParameter::class.java,
-            NuXmvVarName::class.java,
-            NuXmvFunctionName::class.java,
-            NuXmvDefineName::class.java,
-            NuXmvFunctionName::class.java,
-            NuXmvEnumerationTypeValue::class.java,
-        )
+    private fun stripArrayIndex(identifier: String): String {
+        val bracket = identifier.indexOf('[')
+        return if (bracket >= 0) identifier.substring(0, bracket) else identifier
     }
 }

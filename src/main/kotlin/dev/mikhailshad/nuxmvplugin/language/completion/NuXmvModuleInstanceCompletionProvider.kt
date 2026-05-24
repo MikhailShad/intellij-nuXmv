@@ -5,10 +5,9 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFile
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModuleDeclaration
+import dev.mikhailshad.nuxmvplugin.language.psi.scope.NuXmvScopes
 
 object NuXmvModuleInstanceCompletionProvider : CompletionProvider<CompletionParameters>() {
 
@@ -17,18 +16,11 @@ object NuXmvModuleInstanceCompletionProvider : CompletionProvider<CompletionPara
         context: ProcessingContext,
         resultSet: CompletionResultSet
     ) {
-        val position = parameters.position
-        val file = position.containingFile
+        val file = parameters.position.containingFile as? NuXmvFile ?: return
 
-        if (file !is NuXmvFile) return
-
-        val moduleDeclarations = PsiTreeUtil.findChildrenOfType(file, NuXmvModuleDeclaration::class.java)
-
-        moduleDeclarations.forEach { module ->
-            val moduleName = module.moduleName?.name ?: return
-
-            val moduleParams = module.moduleParameterList
-            val paramList = moduleParams.let { " $it" }
+        for ((moduleName, module) in NuXmvScopes.modulesIn(file)) {
+            val moduleParams = module.moduleDeclaration.moduleParameterList
+            val paramList = " $moduleParams"
 
             resultSet.addElement(
                 LookupElementBuilder.create(moduleName)
