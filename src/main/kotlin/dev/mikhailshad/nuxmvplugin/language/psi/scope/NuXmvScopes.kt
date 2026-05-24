@@ -94,6 +94,33 @@ object NuXmvScopes {
         val assignConstraints = body?.assignConstraintList.orEmpty()
 
         if (body != null) {
+            for (decl in body.constantsDeclarationList) {
+                for (constant in decl.constantList) {
+                    register(constant.name, constant)
+                }
+            }
+
+            for (decl in body.defineDeclarationList) {
+                for (define in decl.defineBodyList) {
+                    val name = define.defineName.name ?: continue
+                    defines.putIfAbsent(name, define.defineName)
+                    register(name, define.defineName)
+                }
+            }
+
+            for (decl in body.functionDeclarationList) {
+                for (spec in decl.functionSpecificationList) {
+                    register(spec.functionName.name, spec.functionName)
+                }
+            }
+
+            for (constraint in assignConstraints) {
+                for (single in constraint.singleAssignConstraintList) {
+                    val lhsName = assignedVariableName(single) ?: continue
+                    assignmentsByVar.getOrPut(lhsName) { ArrayList() }.add(single)
+                }
+            }
+
             for (decl in body.varDeclarationList) {
                 for (single in decl.singleVarDeclarationList) {
                     registerVar(single, variables, ::register)
@@ -122,33 +149,6 @@ object NuXmvScopes {
                     variables.putIfAbsent(name, varName)
                     register(name, varName)
                     collectEnumValues(single.simpleTypeSpecifier, ::register)
-                }
-            }
-
-            for (decl in body.defineDeclarationList) {
-                for (define in decl.defineBodyList) {
-                    val name = define.defineName.name ?: continue
-                    defines.putIfAbsent(name, define.defineName)
-                    register(name, define.defineName)
-                }
-            }
-
-            for (decl in body.constantsDeclarationList) {
-                for (constant in decl.constantList) {
-                    register(constant.name, constant)
-                }
-            }
-
-            for (decl in body.functionDeclarationList) {
-                for (spec in decl.functionSpecificationList) {
-                    register(spec.functionName.name, spec.functionName)
-                }
-            }
-
-            for (constraint in assignConstraints) {
-                for (single in constraint.singleAssignConstraintList) {
-                    val lhsName = assignedVariableName(single) ?: continue
-                    assignmentsByVar.getOrPut(lhsName) { ArrayList() }.add(single)
                 }
             }
         }

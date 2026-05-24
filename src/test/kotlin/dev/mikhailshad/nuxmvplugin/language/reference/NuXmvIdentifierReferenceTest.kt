@@ -88,6 +88,33 @@ class NuXmvIdentifierReferenceTest : NuXmvCodeInsightFixtureTestCase() {
         assertEquals("main", target.enclosingModuleName())
     }
 
+    fun testEnumLiteralResolvesIntoSubmoduleAfterT2Event() {
+        myFixture.configureByFile("fib_bench_safe_v1.smv")
+        val target = resolveSegment("t2.EVENT = not_timed_or_stutter", "not_timed_or_stutter")
+        assertEquals("not_timed_or_stutter", target.text)
+        assertEquals("T2", target.enclosingModuleName())
+    }
+
+    fun testEnumLiteralResolvesIntoSubmoduleAfterT1Event() {
+        myFixture.configureByFile("fib_bench_safe_v1.smv")
+        val target = resolveSegment("t1.EVENT = stutter", "stutter")
+        assertEquals("stutter", target.text)
+        assertEquals("T1", target.enclosingModuleName())
+    }
+
+    fun testEnumLiteralUnknownNameReturnsNull() {
+        myFixture.configureByFile("enum_unknown_value.smv")
+        val ref = referenceAt("sub.flag = bogus_value", "bogus_value")
+        assertNull("Unknown name in submodule type must not resolve", ref.resolve())
+    }
+
+    fun testBareIdentifierWithoutContextStaysUnresolved() {
+        val source = "MODULE main\nVAR\nx : boolean;\nINVAR x = stranger\n"
+        myFixture.configureByText(NuXmvFileType, source)
+        val ref = referenceAt("x = stranger", "stranger")
+        assertNull("Bare name with no context-providing operand must not resolve", ref.resolve())
+    }
+
     fun testDottedIdentifierProducesOneReferencePerSegment() {
         myFixture.configureByFile("fib_bench_safe_v1.smv")
         val text = myFixture.file.text

@@ -1,0 +1,6 @@
+MODULE main
+VAR
+state : {idle, busy};
+TRANS (state = busy -> next(state) = idle)
+INVAR (state != busy)
+CONSTANTS bu<caret>sy, ready, error;
