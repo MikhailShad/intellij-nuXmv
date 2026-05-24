@@ -52,12 +52,11 @@ object NuXmvFunctionCompletionProvider : CompletionProvider<CompletionParameters
         context: ProcessingContext,
         resultSet: CompletionResultSet
     ) {
+        addFunctionCompletions(assignFunctionTemplates, resultSet)
+
         val positionHolder = parameters.position.parent.parent // identifier -> IdentifierUsage -> holder
         val isAssignLhs = PsiTreeUtil.findFirstParent(positionHolder, true) { it is NuXmvAssignConstraint } != null
                 && PsiTreeUtil.findSiblingBackward(positionHolder, NuXmvTypes.ASSIGN) {} == null
-
-        addFunctionCompletions(assignFunctionTemplates, resultSet)
-
         if (!isAssignLhs) {
             addFunctionCompletions(functionTemplates, resultSet)
         }

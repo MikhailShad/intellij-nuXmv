@@ -1,3 +1,6 @@
+# Generated classes
+/src/main/gen/
+
 .tmp
 .gradle
 build/

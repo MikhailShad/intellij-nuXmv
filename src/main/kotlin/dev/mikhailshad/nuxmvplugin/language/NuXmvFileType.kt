@@ -6,7 +6,7 @@ import javax.swing.Icon
 object NuXmvFileType : LanguageFileType(NuXmvLanguage) {
     override fun getName(): String = "NuXmv File"
 
-    override fun getDescription(): String = "NuXmv language file"
+    override fun getDescription(): String = "NuXmv model file"
 
     override fun getDefaultExtension(): String = "smv"
 

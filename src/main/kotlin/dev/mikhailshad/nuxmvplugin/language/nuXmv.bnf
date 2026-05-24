@@ -17,7 +17,7 @@
 
   tokens=[
     WHITESPACE      ='regexp:\s+'
-    BLOCK_COMMENT   = 'regexp:/--(.|\r|\n)*--/'
+    BLOCK_COMMENT   = 'regexp:/--([.\r\n])*--/'
     LINE_COMMENT    = 'regexp:--[^\r\n]*'
 
     NOT             = '!'

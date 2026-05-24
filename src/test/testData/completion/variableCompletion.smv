@@ -1,0 +1,13 @@
+MODULE main
+VAR
+    x: boolean;
+    state: {idle, running, stopped};
+    counter: 0..10;
+IVAR
+    input_signal: boolean;
+FROZENVAR
+    config: boolean;
+DEFINE
+    is_active := x;
+ASSIGN
+    <caret>
