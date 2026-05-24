@@ -74,14 +74,34 @@ class NuXmvIdentifierReference(element: NuXmvIdentifierUsage) :
     }
 
     private fun findDeclarationsInScope(scope: PsiElement, name: String): List<PsiElement> {
-        return listOf(
-            PsiTreeUtil.findChildrenOfType(scope, NuXmvModuleParameter::class.java),
-            PsiTreeUtil.findChildrenOfType(scope, NuXmvVarName::class.java),
-            PsiTreeUtil.findChildrenOfType(scope, NuXmvFunctionName::class.java),
-            PsiTreeUtil.findChildrenOfType(scope, NuXmvDefineName::class.java),
-            PsiTreeUtil.findChildrenOfType(scope, NuXmvConstant::class.java),
-            PsiTreeUtil.findChildrenOfType(scope, NuXmvEnumerationTypeValue::class.java)
-        ).flatten().filter { it.text == name }.distinct()
+        for (namedElementType in NUXMV_NAMED_ELEMENT_TYPES) {
+            val namedElement = findDeclarationOfType(scope, name, namedElementType)
+            if (namedElement != null) {
+                return listOf(namedElement)
+            }
+        }
+
+        return emptyList()
     }
 
+    private fun <T : NuXmvNamedElement> findDeclarationOfType(
+        scope: PsiElement,
+        name: String,
+        expectedType: Class<T>
+    ): T? {
+        return PsiTreeUtil.findChildrenOfType(scope, expectedType)
+            .firstOrNull { it.text == name }
+    }
+
+    companion object {
+        val NUXMV_NAMED_ELEMENT_TYPES = listOf(
+            NuXmvConstant::class.java,
+            NuXmvModuleParameter::class.java,
+            NuXmvVarName::class.java,
+            NuXmvFunctionName::class.java,
+            NuXmvDefineName::class.java,
+            NuXmvFunctionName::class.java,
+            NuXmvEnumerationTypeValue::class.java,
+        )
+    }
 }

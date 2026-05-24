@@ -1,6 +1,6 @@
 ## [0.0.3]
 
-- Added support to the newest IntelliJ IDEA versions
+- Fixed missing referencing for constants in SPEC blocks
 
 ## [0.0.2]
 
