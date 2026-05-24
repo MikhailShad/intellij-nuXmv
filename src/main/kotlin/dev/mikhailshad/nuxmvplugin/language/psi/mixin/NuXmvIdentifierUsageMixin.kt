@@ -8,14 +8,14 @@ import dev.mikhailshad.nuxmvplugin.language.reference.NuXmvForMacroLoopVarRefere
 import dev.mikhailshad.nuxmvplugin.language.reference.NuXmvIdentifierReference
 
 abstract class NuXmvIdentifierUsageMixin(node: ASTNode) : ASTWrapperPsiElement(node), NuXmvIdentifierUsage {
-    override fun getReference(): PsiReference? {
+    override fun getReference(): PsiReference? = references.firstOrNull()
+
+    override fun getReferences(): Array<PsiReference> {
         if (NuXmvForMacroLoopVarReference.isLoopVarReference(this)) {
-            val forMacro = NuXmvForMacroLoopVarReference.getContainingForMacro(this)
-            if (forMacro != null) {
-                return NuXmvForMacroLoopVarReference(this, forMacro)
+            NuXmvForMacroLoopVarReference.getContainingForMacro(this)?.let {
+                return arrayOf(NuXmvForMacroLoopVarReference(this, it))
             }
         }
-
-        return NuXmvIdentifierReference(this)
+        return NuXmvIdentifierReference.referencesFor(this)
     }
 }

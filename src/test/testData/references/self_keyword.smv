@@ -1,0 +1,4 @@
+MODULE main
+VAR
+x : boolean;
+INVAR self.x

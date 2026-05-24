@@ -1,6 +1,7 @@
 ## [0.0.3]
 
 - Fixed missing referencing for constants in SPEC blocks
+- Support multiple references for complex identifiers
 
 ## [0.0.2]
 
