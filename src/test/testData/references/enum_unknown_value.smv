@@ -1,0 +1,8 @@
+MODULE main
+VAR
+sub : Sub(TRUE);
+INVAR (sub.flag = bogus_value)
+
+MODULE Sub(arg)
+IVAR
+flag : {on, off};

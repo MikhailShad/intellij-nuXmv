@@ -1,0 +1,9 @@
+MODULE main
+VAR
+    x: boolean;
+    state: {idle, running, stopped};
+    counter: 0..10;
+CONSTANTS
+    MAX_VALUE;
+ASSIGN
+    init(x) := <caret>

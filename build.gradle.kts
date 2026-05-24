@@ -1,18 +1,22 @@
+import org.jetbrains.grammarkit.tasks.GenerateLexerTask
+import org.jetbrains.grammarkit.tasks.GenerateParserTask
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+fun property(key: String) = providers.gradleProperty(key).get()
 
 plugins {
     id("java")
-    id("org.jetbrains.intellij.platform") version "2.4.0"
     kotlin("jvm") version "2.1.21"
     kotlin("plugin.serialization") version "2.1.21"
+    id("org.jetbrains.grammarkit") version "2022.3.2.2"
+    id("org.jetbrains.intellij.platform") version "2.16.0"
+    id("org.jetbrains.changelog") version "2.5.0"
     id("co.uzzu.dotenv.gradle") version "4.0.0"
 }
 
-val sinceIntellijIdeaBuild = 243
-val untilIntellijIdeaBuild = 251
-
-group = "dev.MikhailShad"
-version = "0.0.2"
+group = property("pluginGroup")
+version = property("pluginVersion")
 
 repositories {
     mavenCentral()
@@ -24,9 +28,17 @@ repositories {
 
 sourceSets {
     main {
-        java {
-            srcDirs("src/main/gen")
-        }
+        kotlin.srcDirs("src/main/kotlin")
+        java.srcDirs("src/main/gen")
+    }
+    test {
+        kotlin.srcDirs("src/test/kotlin")
+    }
+}
+
+idea {
+    module {
+        generatedSourceDirs.add(file("src/main/gen"))
     }
 }
 
@@ -51,10 +63,12 @@ intellijPlatform {
     projectName = project.name
 
     pluginConfiguration {
-        version = project.version.toString()
+        id = property("pluginId")
+        name = property("pluginName")
+        version = property("pluginVersion")
+
         ideaVersion {
-            sinceBuild = "$sinceIntellijIdeaBuild"
-            untilBuild = "$untilIntellijIdeaBuild.*"
+            sinceBuild = property("pluginSinceBuild")
         }
     }
 
@@ -69,8 +83,42 @@ intellijPlatform {
     }
 }
 
+val cleanNuXmvGrammarOutputs = tasks.register<Delete>("cleanNuXmvGrammarOutputs") {
+    delete(
+        file("src/main/gen/dev/mikhailshad/nuxmvplugin/language/parser/NuXmvParser.java"),
+        file("src/main/gen/dev/mikhailshad/nuxmvplugin/language/psi"),
+        file("src/main/gen/dev/mikhailshad/nuxmvplugin/language/lexer/_NuXmvLexer.java"),
+        file("src/main/gen/dev/mikhailshad/nuxmvplugin/language/lexer/_NuXmvLexer.java~")
+    )
+}
+
+val generateNuXmvParser = tasks.register<GenerateParserTask>("generateNuXmvParser") {
+    sourceFile.set(file("src/main/kotlin/dev/mikhailshad/nuxmvplugin/language/nuXmv.bnf"))
+    pathToParser.set("/parser/NuXmvParser.java")
+    pathToPsiRoot.set("/gen/psi")
+    targetRootOutputDir.set(file("src/main/gen"))
+    purgeOldFiles.set(true)
+    dependsOn(cleanNuXmvGrammarOutputs)
+}
+
+val generateNuXmvLexer = tasks.register<GenerateLexerTask>("generateNuXmvLexer") {
+    sourceFile.set(file("src/main/kotlin/dev/mikhailshad/nuxmvplugin/language/nuXmv.flex"))
+    targetOutputDir.set(file("src/main/gen/dev/mikhailshad/nuxmvplugin/language/psi"))
+    purgeOldFiles.set(false)
+
+    dependsOn(generateNuXmvParser)
+}
+
+tasks.clean {
+    dependsOn(cleanNuXmvGrammarOutputs)
+}
+
 val runIdeWithPsiViewer by intellijPlatformTesting.runIde.registering {
     plugins {
-        plugin("PsiViewer", "$untilIntellijIdeaBuild.175")
+        plugin("PsiViewer", property("psiViewerPluginVersion"))
     }
+}
+
+tasks.named<KotlinCompile>("compileKotlin") {
+    dependsOn(generateNuXmvLexer)
 }

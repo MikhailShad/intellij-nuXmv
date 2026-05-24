@@ -27,9 +27,7 @@ abstract class NuXmvReferenceBase(@JvmField protected val psiElement: PsiElement
         return if (resolveResults.size == 1) resolveResults[0].element else null
     }
 
-    override fun getVariants(): Array<Any> {
-        return resolveInner(true).toTypedArray()
-    }
+    override fun getVariants(): Array<Any> = emptyArray()
 
     override fun bindToElement(element: PsiElement): PsiElement {
         return if (element is PsiNamedElement && psiElement !is PsiNamedElement) {

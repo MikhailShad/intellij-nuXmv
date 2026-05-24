@@ -1,3 +1,6 @@
+# Generated classes
+/src/main/gen/
+
 .tmp
 .gradle
 build/
@@ -5,6 +8,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 .intellijPlatform
+.kotlin
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

@@ -1,0 +1,9 @@
+MODULE main
+VAR
+sub : Sub(TRUE);
+TRANS
+ (sub.unknown_field)
+
+MODULE Sub(arg)
+VAR
+y : boolean;

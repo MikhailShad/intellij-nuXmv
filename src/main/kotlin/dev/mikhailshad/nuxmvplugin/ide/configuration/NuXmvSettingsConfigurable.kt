@@ -15,7 +15,7 @@ class NuXmvSettingsConfigurable : Configurable {
     override fun createComponent(): JComponent {
         nuXmvExecutablePathField = TextFieldWithBrowseButton().apply {
             val descriptor = FileChooserDescriptorFactory.createSingleFileDescriptor()
-                .withTitle("Select nuXmv Executable")
+                .withTitle("Select NuXmv Executable")
                 .withDescription("Choose the nuXmv executable file")
                 .withShowHiddenFiles(true)
 
@@ -43,5 +43,5 @@ class NuXmvSettingsConfigurable : Configurable {
         nuXmvExecutablePathField?.text = NuXmvSettingsState.getInstance().state.nuXmvExecutablePath
     }
 
-    override fun getDisplayName(): String = "nuXmv"
+    override fun getDisplayName(): String = "NuXmv"
 }

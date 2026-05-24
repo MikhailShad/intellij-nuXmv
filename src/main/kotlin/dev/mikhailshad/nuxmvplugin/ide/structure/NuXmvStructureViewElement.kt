@@ -7,10 +7,9 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement
 import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
-import com.intellij.util.containers.toArray
 import dev.mikhailshad.nuxmvplugin.language.psi.*
+import dev.mikhailshad.nuxmvplugin.language.psi.scope.NuXmvScopes
 
 class NuXmvStructureViewElement(private val element: NavigatablePsiElement) :
     StructureViewTreeElement, SortableTreeElement {
@@ -44,48 +43,51 @@ class NuXmvStructureViewElement(private val element: NavigatablePsiElement) :
 
         when (element) {
             is NuXmvFile -> {
-                result.addAll(PsiTreeUtil.findChildrenOfType(element, NuXmvModule::class.java))
+                result.addAll(NuXmvScopes.modulesIn(element).values)
             }
 
             is NuXmvModule -> {
                 val moduleBody = element.moduleBody
                 if (moduleBody != null) {
-                    result.addAll(
-                        sequenceOf(
-                            PsiTreeUtil.findChildrenOfType(moduleBody, NuXmvVarDeclaration::class.java),
-                            PsiTreeUtil.findChildrenOfType(moduleBody, NuXmvIvarDeclaration::class.java),
-                            PsiTreeUtil.findChildrenOfType(moduleBody, NuXmvFrozenVarDeclaration::class.java),
-                            PsiTreeUtil.findChildrenOfType(moduleBody, NuXmvDefineDeclaration::class.java),
-                            PsiTreeUtil.findChildrenOfType(moduleBody, NuXmvConstantsDeclaration::class.java),
-                            PsiTreeUtil.findChildrenOfType(moduleBody, NuXmvCtlSpecification::class.java),
-                            PsiTreeUtil.findChildrenOfType(moduleBody, NuXmvLtlSpecification::class.java),
-                            PsiTreeUtil.findChildrenOfType(moduleBody, NuXmvInvarSpecification::class.java)
-                        ).flatten()
-                    )
+                    result.addAll(moduleBody.varDeclarationList)
+                    result.addAll(moduleBody.ivarDeclarationList)
+                    result.addAll(moduleBody.frozenVarDeclarationList)
+                    result.addAll(moduleBody.defineDeclarationList)
+                    result.addAll(moduleBody.constantsDeclarationList)
+                    result.addAll(moduleBody.ctlSpecificationList)
+                    result.addAll(moduleBody.ltlSpecificationList)
+                    result.addAll(moduleBody.invarSpecificationList)
                 }
             }
 
             is NuXmvVarDeclaration -> {
-                result.addAll(PsiTreeUtil.findChildrenOfType(element, NuXmvSingleVarDeclaration::class.java))
+                result.addAll(element.singleVarDeclarationList)
             }
 
-            is NuXmvIvarDeclaration, is NuXmvFrozenVarDeclaration -> {
-                result.addAll(PsiTreeUtil.findChildrenOfType(element, NuXmvSingleIvarDeclaration::class.java))
+            is NuXmvIvarDeclaration -> {
+                result.addAll(element.singleIvarDeclarationList)
+            }
+
+            is NuXmvFrozenVarDeclaration -> {
+                result.addAll(element.singleIvarDeclarationList)
             }
 
             is NuXmvDefineDeclaration -> {
-                result.addAll(PsiTreeUtil.findChildrenOfType(element, NuXmvDefineBody::class.java))
+                result.addAll(element.defineBodyList)
             }
 
             is NuXmvConstantsDeclaration -> {
-                result.addAll(PsiTreeUtil.findChildrenOfType(element, NuXmvConstant::class.java))
+                result.addAll(element.constantList)
             }
         }
 
-        return if (result.isNotEmpty())
-            result.map { NuXmvStructureViewElement(it as NavigatablePsiElement) }
-                .toArray(arrayOf())
-        else
-            emptyArray<TreeElement>()
+        if (result.isEmpty()) return emptyArray()
+
+        val array = arrayOfNulls<TreeElement>(result.size)
+        for (i in result.indices) {
+            array[i] = NuXmvStructureViewElement(result[i] as NavigatablePsiElement)
+        }
+        @Suppress("UNCHECKED_CAST")
+        return array as Array<TreeElement>
     }
 }

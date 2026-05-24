@@ -54,21 +54,6 @@
     <p>This plugin is not affiliated with the official NuXmv project.</p>
   ]]></description>
 
-    <change-notes><![CDATA[
-    <h3>0.0.2</h3>
-    <ul>
-      <li>Improved visualization of the model graph and control panel</li>
-      <li>Fixed bug with unescaped nested FOR macro</li>
-    </ul>
-    <h3>0.0.1</h3>
-    <ul>
-      <li>Initial release with language support for NuXmv</li>
-      <li>Run configuration for model verification</li>
-      <li>Interactive model visualization</li>
-      <li>FOR loop macro extension for compact model description</li>
-    </ul>
-  ]]></change-notes>
-
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
@@ -114,9 +99,6 @@
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.ide.structure.NuXmvStructureViewFactory"/>
         <navbar implementation="dev.mikhailshad.nuxmvplugin.ide.structure.NuXmvStructureAwareNavbar"/>
-        <psi.referenceContributor
-                language="nuXmv"
-                implementation="dev.mikhailshad.nuxmvplugin.language.reference.NuXmvReferenceContributor"/>
         <lang.refactoringSupport
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.ide.refactoring.NuxmvRefactoringSupportProvider"/>
@@ -151,7 +133,7 @@
                 parentId="tools"
                 instance="dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvSettingsConfigurable"
                 id="dev.mikhailshad.nuxmvplugin.settings.NuXmvSettingsConfigurable"
-                displayName="nuXmv"/>
+                displayName="NuXmv"/>
         <applicationService
                 serviceImplementation="dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvSettingsState"/>
 
