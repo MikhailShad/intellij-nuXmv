@@ -32,6 +32,7 @@
 - Formatter keeps PSL bodies intact and formats LTL bounds as `G [0, 5] p`, `F [2, +oo) p`
 - Fixed navigation bar on IntelliJ 2026.2+ (`StructureAwareNavBarModelExtension` was removed from the platform)
 - Structure view navigation no longer calls the override-only `Navigatable.navigate` (IntelliJ 2026.3)
+- Replaced deprecated `FileChooserDescriptorFactory.createSingleFileDescriptor()` in the nuXmv executable setting
 
 ## [0.0.3]
 
