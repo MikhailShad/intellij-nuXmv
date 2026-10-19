@@ -22,6 +22,9 @@
 - `MIRROR` now references a declared variable instead of declaring a new one
 - Fixed `time_until(p = q)` / `time_since(…)` with a non-trivial argument
 - Improved error recovery after a broken module section
+- Support bounded LTL operators `G/F/H/O [l, u]`, `U/V/S/T [l, u]` and `[l, +oo)` intervals
+- Support RTCTL operators (`EBF/ABF/EBG/ABG m..n`, `A [p BU m..n q]`) in `CTLSPEC`
+- Fixed CTL until `E [p U q]` / `A [p U q]`
 
 ## [0.0.3]
 

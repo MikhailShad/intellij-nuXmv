@@ -409,10 +409,7 @@ IsaDeclaration ::= ISA_KW IDENTIFIER {pin=1}
 PredDeclaration ::= PRED_KW (LESS IDENTIFIER GREATER ASSIGN)? Expr SEMICOLON? {pin=1}
 
 ComputeSpecification ::= COMPUTE_KW NamedSpecification? ComputeExpr SEMICOLON? {pin=1}
-ComputeExpr ::= (MIN_KW | MAX_KW) LBRACKET RtCtlExpr COMMA RtCtlExpr RBRACKET
-RtCtlExpr ::= Expr
-    | (RTCTL_EBF | RTCTL_ABF | RTCTL_EBG | RTCTL_ABG) RangeConstant RtCtlExpr
-    | (CTL_FORALL | CTL_EXISTS) LBRACKET RtCtlExpr RTCTL_BU RtCtlExpr RBRACKET
+ComputeExpr ::= (MIN_KW | MAX_KW) LBRACKET Expr COMMA Expr RBRACKET {pin=1}
 
 // parameter_synth_problem
 ParameterSynthProblemDeclaration ::= PARSYNTH_KW ParameterSynthProblem SEMICOLON? {pin=1}
@@ -542,11 +539,14 @@ BasicExprList ::= Expr (COMMA Expr)* {pin(".*")=1}
 // CTL SPEC
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 private CtlExprGroup ::= UnaryCtlExpr
+    | RtCtlUnaryExpr
     | UntilCtlExpr
 UnaryCtlExpr ::= UnaryCtlOp Expr
 private UnaryCtlOp ::= CTL_EXISTS_GLOBALLY | CTL_EXISTS_NEXT | CTL_EXISTS_FINALLY
     | CTL_FORALL_GLOBALLY | CTL_FORALL_NEXT | CTL_FORALL_FINALLY
-UntilCtlExpr ::= UntilCtlOp LBRACKET Expr TL_UNTIL Expr RBRACKET
+RtCtlUnaryExpr ::= RtCtlOp RangeConstant Expr
+private RtCtlOp ::= RTCTL_EBF | RTCTL_ABF | RTCTL_EBG | RTCTL_ABG
+UntilCtlExpr ::= UntilCtlOp LBRACKET Expr (RTCTL_BU RangeConstant Expr)? RBRACKET
 private UntilCtlOp ::= CTL_EXISTS | CTL_FORALL
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -555,11 +555,12 @@ private UntilCtlOp ::= CTL_EXISTS | CTL_FORALL
 private LtlExprGroup ::= UnaryLtlExpr
     | BinaryLtlExpr
     | TimedLtlExpr
-UnaryLtlExpr ::= UnaryLtlOp Expr
+UnaryLtlExpr ::= UnaryLtlOp Bound? Expr
 UnaryLtlOp ::= LTL_TIMED_NEXT | LTL_TIMED_PREVIOUS | LTL_ONCE | LTL_HISTORICALLY | LTL_NOT_PREVIOUS| LTL_PREVIOUS | LTL_FINALLY | LTL_GLOBALLY | LTL_NEXT
-BinaryLtlExpr ::= Expr BinaryLtlOp Expr
+BinaryLtlExpr ::= Expr BinaryLtlOp Bound? Expr
 BinaryLtlOp ::= LTL_AT_LAST | LTL_AT_NEXT | LTL_TRIGGERED | LTL_SINCE | LTL_RELEASES | TL_UNTIL
 TimedLtlExpr ::= TimeLtlOp ParenthesisBasicExpr
+Bound ::= LBRACKET Expr COMMA (Expr RBRACKET | PLUS_INFINITY RPAREN) {pin=1}
 TimeLtlOp ::= LTL_TIME_SINCE | LTL_TIME_UNTIL
 
 private PrimaryBasicExprGroup ::= ReferenceBasicExpr | LiteralBasicExpr | ParenthesisBasicExpr | SetBasicExpr

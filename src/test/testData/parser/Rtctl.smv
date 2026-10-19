@@ -1,0 +1,12 @@
+MODULE main
+VAR
+    p : boolean;
+    q : boolean;
+CTLSPEC E [p U q];
+CTLSPEC A [p U (q & p)];
+CTLSPEC EBF 1..3 p;
+CTLSPEC AG (p -> ABF 0..2 q);
+CTLSPEC EBG 0..4 p & ABG 1..2 q;
+CTLSPEC A [p BU 1..3 q];
+SPEC NAME r := E [p BU 0..5 q];
+COMPUTE MIN [p, q];
