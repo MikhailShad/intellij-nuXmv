@@ -17,6 +17,7 @@
       "mcp__idea__reformat_*"
     ],
     "ask": [
+      "Bash(git commit:*)",
       "mcp__idea__execute_terminal_command"
     ],
     "deny": [

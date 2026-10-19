@@ -58,7 +58,7 @@ NuXmv has two domain modes the plugin distinguishes throughout: **Finite** (BDD-
 
 ## Regenerating the Lexer and Parser
 
-Regeneration is part of the Gradle build: `compileKotlin` depends on `generateNuXmvLexer` → `generateNuXmvParser` → `cleanNuXmvGrammarOutputs` (see `build.gradle.kts`). Any `./gradlew compileKotlin`/`test`/`build` rewrites `src/main/gen/` from the grammar — no IDE action is needed. The generated lexer currently lands in `gen/.../language/psi/_NuXmvLexer.java` although its package is `...language.lexer`.
+Regeneration is part of the Gradle build: `compileKotlin` depends on `generateNuXmvLexer` → `generateNuXmvParser` → `cleanNuXmvGrammarOutputs` (see `build.gradle.kts`). Any `./gradlew compileKotlin`/`test`/`build` rewrites `src/main/gen/` from the grammar — no IDE action is needed. The generated lexer lands in `gen/.../language/lexer/_NuXmvLexer.java`, the parser in `gen/.../language/parser/`, PSI in `gen/.../language/psi/`.
 
 For the full checklist of adding a language construct (lexer → grammar → mixin → highlighting/completion/references → tests), use the `add-language-feature` skill.
 

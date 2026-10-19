@@ -110,7 +110,7 @@ val generateNuXmvParser = tasks.register<GenerateParserTask>("generateNuXmvParse
 
 val generateNuXmvLexer = tasks.register<GenerateLexerTask>("generateNuXmvLexer") {
     sourceFile.set(file("src/main/kotlin/dev/mikhailshad/nuxmvplugin/language/nuXmv.flex"))
-    targetOutputDir.set(file("src/main/gen/dev/mikhailshad/nuxmvplugin/language/psi"))
+    targetOutputDir.set(file("src/main/gen/dev/mikhailshad/nuxmvplugin/language/lexer"))
     purgeOldFiles.set(false)
 
     dependsOn(generateNuXmvParser)

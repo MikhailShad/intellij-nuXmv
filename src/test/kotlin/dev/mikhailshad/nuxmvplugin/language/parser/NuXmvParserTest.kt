@@ -5,11 +5,11 @@ import com.intellij.testFramework.ParsingTestCase
 class NuXmvParserTest : ParsingTestCase("", "smv", NuXmvParserDefinition()) {
 
     fun testExample() {
-        doTest(true)
+        doTest(true, true)
     }
 
     fun testMultiModule() {
-        doTest(true)
+        doTest(true, true)
     }
 
     override fun getTestDataPath(): String {

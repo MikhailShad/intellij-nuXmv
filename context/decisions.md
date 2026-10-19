@@ -21,7 +21,7 @@
 - **Контекст.** Раньше `src/main/gen` генерировался действиями IDE (Run JFlex Generator, Generate Parser Code) и хранился в git. Результат зависел от ручного шага, и правку грамматики нельзя было проверить без IDE.
 - **Решение.** Генерацией управляют Gradle-задачи `generateNuXmvParser` и `generateNuXmvLexer` из `build.gradle.kts`, а `compileKotlin` зависит от `generateNuXmvLexer`. Каталог `src/main/gen` указан в `.gitignore` и пересоздаётся при каждой сборке.
 - **Альтернативы.** Генерация из IDE с коммитом результата: воспроизводимость ниже, в diff появляется шум.
-- **Последствия.** Любой `./gradlew compileKotlin`, `test` или `build` перегенерирует парсер. Сгенерированный код нельзя править вручную: это проверяет хук `.claude/hooks/guard-gen.sh`. Открытый вопрос из этапа 1 плана 2.2.0: лексер генерируется в каталог `psi/`, хотя его пакет `...language.lexer`, а `cleanNuXmvGrammarOutputs` удаляет весь каталог `psi`.
+- **Последствия.** Любой `./gradlew compileKotlin`, `test` или `build` перегенерирует парсер. Сгенерированный код нельзя править вручную: это проверяет хук `.claude/hooks/guard-gen.sh`. Лексер генерируется в `gen/.../language/lexer/`, в соответствии со своим пакетом (исправлено 2026-10-20; раньше он попадал в `psi/`, который целиком удаляет `cleanNuXmvGrammarOutputs`).
 
 ### D-002. Мягкий разбор PSL
 
