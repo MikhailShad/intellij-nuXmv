@@ -16,7 +16,7 @@ abstract class NuXmvSimpleTypeSpecifierMixin(node: ASTNode) : ASTWrapperPsiEleme
         }
 
         return when (firstChild.elementType) {
-            NuXmvTypes.CLOCK_TYPE -> NuXmvBuiltInType.CLOCK
+            NuXmvTypes.IDENTIFIER -> if (firstChild.text == CLOCK_TYPE_NAME) NuXmvBuiltInType.CLOCK else NuXmvBuiltInType.CUSTOM
             NuXmvTypes.INTEGER_TYPE -> NuXmvBuiltInType.INTEGER
             NuXmvTypes.REAL_TYPE -> NuXmvBuiltInType.REAL
             NuXmvTypes.BOOLEAN_TYPE -> NuXmvBuiltInType.BOOLEAN
@@ -24,5 +24,9 @@ abstract class NuXmvSimpleTypeSpecifierMixin(node: ASTNode) : ASTWrapperPsiEleme
             NuXmvTypes.WORD_TYPE, NuXmvTypes.SIGNED_WORD_TYPE -> NuXmvBuiltInType.WORD
             else -> NuXmvBuiltInType.CUSTOM
         }
+    }
+
+    private companion object {
+        const val CLOCK_TYPE_NAME = "clock"
     }
 }

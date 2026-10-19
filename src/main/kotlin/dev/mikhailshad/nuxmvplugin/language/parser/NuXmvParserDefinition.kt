@@ -81,7 +81,10 @@ class NuXmvParserDefinition : ParserDefinition {
             NuXmvTypes.LTL_PREVIOUS,
             NuXmvTypes.LTL_NOT_PREVIOUS,
             NuXmvTypes.LTL_HISTORICALLY,
-            NuXmvTypes.LTL_HISTORICALLY,
+            NuXmvTypes.LTL_ONCE,
+            NuXmvTypes.LTL_TIMED_NEXT,
+            NuXmvTypes.LTL_TIMED_PREVIOUS,
+            NuXmvTypes.PLUS_INFINITY,
             NuXmvTypes.LTL_SINCE,
             NuXmvTypes.LTL_TRIGGERED,
             NuXmvTypes.LTL_TIME_SINCE,
@@ -115,7 +118,6 @@ class NuXmvParserDefinition : ParserDefinition {
         @JvmStatic
         val NUMBERS = TokenSet.create(
             NuXmvTypes.POSITIVE_INTEGER_NUMBER,
-            NuXmvTypes.INTEGER_NUMBER,
             NuXmvTypes.FLOAT_NUMBER,
             NuXmvTypes.FRACTIONAL_NUMBER,
             NuXmvTypes.EXPONENTIAL_NUMBER
@@ -123,7 +125,6 @@ class NuXmvParserDefinition : ParserDefinition {
 
         @JvmStatic
         val CONSTANTS = TokenSet.create(
-            NuXmvTypes.TIME,
             NuXmvTypes.PI,
             NuXmvTypes.ENUMERATION_TYPE_VALUE,
             NuXmvTypes.TRUE_KW,
@@ -134,7 +135,6 @@ class NuXmvParserDefinition : ParserDefinition {
         val TYPES = TokenSet.create(
             NuXmvTypes.INTEGER_TYPE,
             NuXmvTypes.REAL_TYPE,
-            NuXmvTypes.CLOCK_TYPE,
             NuXmvTypes.BOOLEAN_TYPE,
             NuXmvTypes.SIGNED_WORD_TYPE,
             NuXmvTypes.UNSIGNED_WORD_TYPE,
@@ -147,8 +147,6 @@ class NuXmvParserDefinition : ParserDefinition {
                 NuXmvTypes.LTLSPEC_KW,
                 NuXmvTypes.CTLSPEC_KW,
                 NuXmvTypes.SPEC_KW,
-                NuXmvTypes.INVARSPEC_KW,
-
                 NuXmvTypes.INVARSPEC_KW,
                 NuXmvTypes.PSLSPEC_KW,
                 NuXmvTypes.MODULE_KW,
@@ -168,6 +166,7 @@ class NuXmvParserDefinition : ParserDefinition {
                 NuXmvTypes.COMPASSION_KW,
                 NuXmvTypes.TIME_DOMAIN_KW,
                 NuXmvTypes.MIRROR_KW,
+                NuXmvTypes.PRED_KW,
                 NuXmvTypes.ISA_KW,
                 NuXmvTypes.NAME_KW,
                 NuXmvTypes.COMPUTE_KW,
@@ -180,7 +179,6 @@ class NuXmvParserDefinition : ParserDefinition {
                 NuXmvTypes.MONONEG_KW,
                 NuXmvTypes.CASE_KW,
                 NuXmvTypes.ESAC_KW,
-                NuXmvTypes.CLOCK_KW,
                 NuXmvTypes.COMPID_KW,
                 NuXmvTypes.COMPWFF_KW,
                 NuXmvTypes.CONSTRAINT_KW,
@@ -233,6 +231,10 @@ class NuXmvParserDefinition : ParserDefinition {
             NuXmvTypes.FLOOR_FUN,
             NuXmvTypes.EXTEND_FUN,
             NuXmvTypes.RESIZE_FUN,
+            NuXmvTypes.READ_FUN,
+            NuXmvTypes.WRITE_FUN,
+            NuXmvTypes.CONSTARRAY_FUN,
+            NuXmvTypes.TYPE_OF_FUN,
         )
 
         @JvmStatic

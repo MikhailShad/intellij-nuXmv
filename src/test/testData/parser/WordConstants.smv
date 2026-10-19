@@ -1,0 +1,12 @@
+MODULE main
+VAR
+    w : unsigned word[8];
+DEFINE
+    a := 0b_1011;
+    b := 0ud8_11;
+    c := 0h8_b;
+    d := 0sb5_10111;
+    e := 0b_0101_1111;
+    f := 0uo6_37;
+    g := 0sh12_a9;
+INIT w = 0ub8_00001011;

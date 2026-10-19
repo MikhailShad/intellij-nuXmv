@@ -1,0 +1,16 @@
+MODULE main
+VAR
+    x : -5..5;
+    e : {-2, 0, 3};
+    a : array -1..2 of boolean;
+DEFINE
+    d1 := x -1;
+    d2 := 3-1;
+    d3 := (x)-1;
+    d4 := -1;
+    d5 := x - -1;
+    d6 := x * -2;
+INIT x = -3;
+#FOR i IN -1..2
+    DEFINE m$i := i;
+#END

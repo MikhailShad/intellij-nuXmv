@@ -24,8 +24,8 @@ abstract class NuXmvForLoopMacroMixin(node: ASTNode) : ASTWrapperPsiElement(node
             return if (wholeNumbers == null || wholeNumbers.size < 2) {
                 IntRange.EMPTY
             } else {
-                val from = wholeNumbers[0].text.toInt()
-                val to = wholeNumbers[1].text.toInt()
+                val from = wholeNumbers[0].text.filterNot { it.isWhitespace() }.toInt()
+                val to = wholeNumbers[1].text.filterNot { it.isWhitespace() }.toInt()
                 IntRange(from, to)
             }
         }

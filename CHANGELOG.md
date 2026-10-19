@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+- Fixed binary minus before a number (`x -1`, `3-1`): the sign is no longer glued to the number by the lexer
+- Fixed word constants without a sign specifier and with `_` separators (`0b_0101_1111`)
+- Fixed fractional (`f'1/3`) and exponential with fractional mantissa (`1.5E-7`) real constants
+- Fixed `O` (once) being treated as `H`, and swapped `AX`/`AG` token types
+- Support `PRED`, `READ`, `WRITE`, `CONSTARRAY`, `typeof`, `pi` keywords, `@TIME_DOMAIN`, `X~`, `Y~`, `+oo`
+- `at next` / `at last` accept any amount of whitespace between words
+- `time`, `clock`, `Clock` are no longer reserved outside timed models
+
 ## [0.0.3]
 
 - Fixed missing referencing for constants in SPEC blocks

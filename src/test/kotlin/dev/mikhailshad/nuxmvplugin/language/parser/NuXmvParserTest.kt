@@ -12,6 +12,26 @@ class NuXmvParserTest : ParsingTestCase("", "smv", NuXmvParserDefinition()) {
         doTest(true, true)
     }
 
+    fun testWordConstants() {
+        doTest(true, true)
+    }
+
+    fun testRealConstants() {
+        doTest(true, true)
+    }
+
+    fun testNegativeNumbers() {
+        doTest(true, true)
+    }
+
+    fun testLtlOperators() {
+        doTest(true, true)
+    }
+
+    fun testTimeAsIdentifier() {
+        doTest(true, true)
+    }
+
     override fun getTestDataPath(): String {
         return "src/test/testData/parser"
     }

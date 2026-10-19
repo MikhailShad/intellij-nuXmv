@@ -273,6 +273,83 @@ class NuXmvLexerAdapterTest : LexerTestCase() {
         )
     }
 
+    fun testTemporalOperators() {
+        doTest(
+            "X~ Y~ X Y O H AX AG at  next at\tlast @F~ @O~ +oo",
+            """
+                NuXmvTokenType.X~ ('X~')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.Y~ ('Y~')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.X ('X')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.Y ('Y')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.O ('O')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.H ('H')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.AX ('AX')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.AG ('AG')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.@F~ ('at  next')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.@O~ ('at${"\t"}last')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.@F~ ('@F~')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.@O~ ('@O~')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.+oo ('+oo')
+            """.trimIndent()
+        )
+    }
+
+    fun testNumbers() {
+        doTest(
+            "3-1 x-1 0b_0101_1111 0ud8_11 f'1/3 1.5E-7 12e3",
+            """
+                NuXmvTokenType.POSITIVE_INTEGER_NUMBER ('3')
+                NuXmvTokenType.- ('-')
+                NuXmvTokenType.POSITIVE_INTEGER_NUMBER ('1')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.identifier ('x-1')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.WORD ('0b_0101_1111')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.WORD ('0ud8_11')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.FRACTIONAL_NUMBER ('f'1/3')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.EXPONENTIAL_NUMBER ('1.5E-7')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.EXPONENTIAL_NUMBER ('12e3')
+            """.trimIndent()
+        )
+    }
+
+    fun testContextualWordsAreIdentifiers() {
+        doTest(
+            "time clock Clock PRED pi typeof @TIME_DOMAIN",
+            """
+                NuXmvTokenType.identifier ('time')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.identifier ('clock')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.identifier ('Clock')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.PRED ('PRED')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.pi ('pi')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.typeof ('typeof')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.@TIME_DOMAIN ('@TIME_DOMAIN')
+            """.trimIndent()
+        )
+    }
+
     override fun createLexer(): Lexer = NuXmvLexerAdapter()
 
     override fun getDirPath(): String = "src/test/testData/parser"

@@ -42,6 +42,19 @@ class NuXmvForMacroMixinTest : NuXmvCodeInsightFixtureTestCase() {
         )
     }
 
+    fun testNegativeRange() {
+        val modelText = """
+            MODULE main
+            #FOR i IN -1..1
+              DEFINE
+                d${'$'}i := i;
+            #END
+        """.trimIndent()
+        val file = myFixture.configureByText(NuXmvFileType, modelText)
+        val forMacro = PsiTreeUtil.findChildrenOfType(file, NuXmvForLoopMacro::class.java).first()
+        assertEquals(-1..1, (forMacro as NuXmvForLoopMacroMixin).loopRange)
+    }
+
     fun testEmptyBody() {
         val emptyBodyText = """
             MODULE main

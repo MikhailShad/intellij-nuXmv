@@ -28,12 +28,11 @@ DIGIT=[0-9]
 IDENTIFIER={LETTER} ({LETTER} | {DIGIT} | [\$\-\#])*
 
 POSITIVE_INTEGER_NUMBER = {DIGIT}+
-INTEGER_NUMBER = "-"? {POSITIVE_INTEGER_NUMBER}
 FLOAT_NUMBER = {POSITIVE_INTEGER_NUMBER} "." {POSITIVE_INTEGER_NUMBER}
-FRACTIONAL_NUMBER = [fF] "’" {POSITIVE_INTEGER_NUMBER} "/" {POSITIVE_INTEGER_NUMBER}
-EXPONENTIAL_NUMBER = ({POSITIVE_INTEGER_NUMBER} | {FRACTIONAL_NUMBER}) [eE] {INTEGER_NUMBER}
+FRACTIONAL_NUMBER = [fF] "'" {POSITIVE_INTEGER_NUMBER} "/" {POSITIVE_INTEGER_NUMBER}
+EXPONENTIAL_NUMBER = ({POSITIVE_INTEGER_NUMBER} | {FLOAT_NUMBER}) [eE] "-"? {POSITIVE_INTEGER_NUMBER}
 HEX_NUMBER = [0-9a-fA-F]+
-WORD = 0 [us] [bBdDoOhH] {DIGIT}* _ {HEX_NUMBER}
+WORD = 0 [us]? [bBdDoOhH] {DIGIT}* _ [0-9a-fA-F_]+
 
 EOL_WS           = \n | \r | \r\n
 LINE_WS          = [\ \t]
@@ -95,7 +94,6 @@ LINE_COMMENT=("--")[^\r\n]*
     "signed word"    {return SIGNED_WORD_TYPE;}
     "integer"        {return INTEGER_TYPE;}
     "real"           {return REAL_TYPE;}
-    "clock"          {return CLOCK_TYPE;}
     "array"          {return ARRAY_TYPE;}
     "of"             {return ARRAY_OF;}
 
@@ -109,10 +107,13 @@ LINE_COMMENT=("--")[^\r\n]*
 
     // LTL Specific Keywords
     "LTLSPEC"     {return LTLSPEC_KW; }
-    "at next"     {return LTL_AT_NEXT;}
+    "at" {LINE_WS}+ "next"   {return LTL_AT_NEXT;}
     "@F~"         {return LTL_AT_NEXT;}
-    "at last"     {return LTL_AT_LAST;}
+    "at" {LINE_WS}+ "last"   {return LTL_AT_LAST;}
     "@O~"         {return LTL_AT_LAST;}
+    "X~"          {return LTL_TIMED_NEXT;}
+    "Y~"          {return LTL_TIMED_PREVIOUS;}
+    "+oo"         {return PLUS_INFINITY;}
     "X"           {return LTL_NEXT;}
     "G"           {return LTL_GLOBALLY;}
     "F"           {return LTL_FINALLY;}
@@ -120,7 +121,7 @@ LINE_COMMENT=("--")[^\r\n]*
     "Y"           {return LTL_PREVIOUS;}
     "Z"           {return LTL_NOT_PREVIOUS;}
     "H"           {return LTL_HISTORICALLY;}
-    "O"           {return LTL_HISTORICALLY;}
+    "O"           {return LTL_ONCE;}
     "S"           {return LTL_SINCE;}
     "T"           {return LTL_TRIGGERED;}
     "time_since"  {return LTL_TIME_SINCE;}
@@ -134,8 +135,8 @@ LINE_COMMENT=("--")[^\r\n]*
     "EG"        {return CTL_EXISTS_GLOBALLY;}
     "EX"        {return CTL_EXISTS_NEXT;}
     "EF"        {return CTL_EXISTS_FINALLY;}
-    "AX"        {return CTL_FORALL_GLOBALLY;}
-    "AG"        {return CTL_FORALL_NEXT;}
+    "AX"        {return CTL_FORALL_NEXT;}
+    "AG"        {return CTL_FORALL_GLOBALLY;}
     "AF"        {return CTL_FORALL_FINALLY;}
     "EBF"       {return RTCTL_EBF;}
     "ABF"       {return RTCTL_ABF;}
@@ -171,6 +172,11 @@ LINE_COMMENT=("--")[^\r\n]*
     "floor"      {return FLOOR_FUN;}
     "extend"     {return EXTEND_FUN;}
     "resize"     {return RESIZE_FUN;}
+    "READ"       {return READ_FUN;}
+    "WRITE"      {return WRITE_FUN;}
+    "CONSTARRAY" {return CONSTARRAY_FUN;}
+    "typeof"     {return TYPE_OF_FUN;}
+    "pi"         {return PI;}
 
     // Other Reserved Keywords
     "INVARSPEC"      {return INVARSPEC_KW;}
@@ -189,7 +195,8 @@ LINE_COMMENT=("--")[^\r\n]*
     "FAIRNESS"       {return FAIRNESS_KW;}
     "JUSTICE"        {return JUSTICE_KW;}
     "COMPASSION"     {return COMPASSION_KW;}
-    "@TIME DOMAIN"   {return TIME_DOMAIN_KW;}
+    "@TIME_DOMAIN"   {return TIME_DOMAIN_KW;}
+    "PRED"           {return PRED_KW;}
     "MIRROR"         {return MIRROR_KW;}
     "ISA"            {return ISA_KW;}
     "NAME"           {return NAME_KW;}
@@ -203,7 +210,6 @@ LINE_COMMENT=("--")[^\r\n]*
     "MONONEG"        {return MONONEG_KW;}
     "case"           {return CASE_KW;}
     "esac"           {return ESAC_KW;}
-    "Clock"          {return CLOCK_KW;}
     "COMPID"         {return COMPID_KW;}
     "COMPWFF"        {return COMPWFF_KW;}
     "CONSTRAINT"     {return CONSTRAINT_KW;}
@@ -230,7 +236,6 @@ LINE_COMMENT=("--")[^\r\n]*
     {IDENTIFIER}                 {return IDENTIFIER;}
     {WORD}                       {return WORD;}
     {POSITIVE_INTEGER_NUMBER}    {return POSITIVE_INTEGER_NUMBER;}
-    {INTEGER_NUMBER}             {return INTEGER_NUMBER;}
     {FLOAT_NUMBER}               {return FLOAT_NUMBER;}
     {FRACTIONAL_NUMBER}          {return FRACTIONAL_NUMBER;}
     {EXPONENTIAL_NUMBER}         {return EXPONENTIAL_NUMBER;}

@@ -1,0 +1,8 @@
+MODULE main
+VAR
+    time : boolean;
+    clock : 0..3;
+    Clock : boolean;
+ASSIGN
+    next(time) := !time;
+INVARSPEC time | clock = 0 | Clock;
