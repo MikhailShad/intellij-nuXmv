@@ -86,6 +86,7 @@ LINE_COMMENT=("--")[^\r\n]*
     "union"      {return UNION;}
     "in"         {return IN;}
     "?"          {return QUESTION_MARK;}
+    "%"          {return PERCENT;}
 
     // Type Spcifier
     "boolean"        {return BOOLEAN_TYPE;}

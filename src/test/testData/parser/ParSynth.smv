@@ -1,0 +1,12 @@
+MODULE main
+FROZENVAR
+    p1 : 0..10;
+    p2 : 0..10;
+VAR
+    x : 0..20;
+ASSIGN
+    init(x) := 0;
+    next(x) := x < p1 ? x + 1 : x;
+PARSYNTH ps1 := { p1, p2 | G (x <= p1 + p2) };
+PARSYNTH ps2 := { p1 | VALID F x = p1, MONOPOS };
+PARSYNTH ps3 := { p1, p2 | SAT G x < 15, MAX(p1 + p2), MONONEG }

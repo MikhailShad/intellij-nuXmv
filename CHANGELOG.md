@@ -16,6 +16,12 @@
 - Fixed range constants inside expressions (`x in 1..3`)
 - Fixed parsing of a `FUN` section following another module section
 - `unsigned word[N]` variables are recognized as words
+- Support `@TIME_DOMAIN` annotation, `URGENT` constraints and `clock` type of timed models
+- Support `PSLSPEC` (tolerant parsing, SEREs with `;` inside braces)
+- Support `COMPUTE NAME id := …`, `PARSYNTH` without options, `PRED <name> := …`
+- `MIRROR` now references a declared variable instead of declaring a new one
+- Fixed `time_until(p = q)` / `time_since(…)` with a non-trivial argument
+- Improved error recovery after a broken module section
 
 ## [0.0.3]
 

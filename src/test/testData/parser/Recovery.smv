@@ -1,0 +1,9 @@
+MODULE main
+VAR
+    x : boolean
+    y : 0..3;
+URGENT x = ;
+PSLSPEC AG x;
+DEFINE d := x &;
+FUN f : real -> real;
+LTLSPEC G x;

@@ -53,7 +53,9 @@ abstract class NuXmvForLoopMacroMixin(node: ASTNode) : ASTWrapperPsiElement(node
                 mirrorDeclarationList,
                 parameterSynthProblemDeclarationList,
                 predDeclarationList,
+                pslSpecificationList,
                 transConstraintList,
+                urgentConstraintList,
                 varDeclarationList
             ).filter {
                 it.isNotEmpty()

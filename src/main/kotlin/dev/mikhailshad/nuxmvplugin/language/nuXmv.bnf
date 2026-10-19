@@ -62,6 +62,7 @@
     UNION           = 'union'
     IN              = 'in'
     QUESTION_MARK   = '?'
+    PERCENT         = '%'
 
     // Type Specifier
     BOOLEAN_TYPE        = 'boolean'
@@ -225,7 +226,8 @@ CODE FORMATTING
 - meta rules and recoverWhile predicates should be in snake_case
  */
 
-File ::= !<<eof>> Module+ {pin=1}
+File ::= !<<eof>> TimeDomainAnnotation? Module+ {pin=1}
+TimeDomainAnnotation ::= TIME_DOMAIN_KW IDENTIFIER {pin=1}
 Module ::= ModuleDeclaration ModuleBody?
 ModuleDeclaration ::= MODULE_KW ModuleName (LPAREN ModuleParameter (COMMA ModuleParameter)* RPAREN)? {
     pin=1
@@ -249,12 +251,14 @@ private ModuleElement ::= VarDeclaration
     | TransConstraint
     | InitConstraint
     | InvarConstraint
+    | UrgentConstraint
     | FairnessConstraint
     | JusticeConstraint
     | CompassionConstraint
     | CtlSpecification
     | LtlSpecification
     | InvarSpecification
+    | PslSpecification
     | ComputeSpecification
     | ParameterSynthProblemDeclaration
     | IsaDeclaration
@@ -266,8 +270,9 @@ private ModuleElement ::= VarDeclaration
 private module_element_recover ::= !(
     SEMICOLON | RBRACKET | RPAREN
     | VAR_KW | IVAR_KW | FROZENVAR_KW | FUN_KW
-    | DEFINE_KW | CONSTANTS_KW | ASSIGN_KW | TRANS_KW | INIT_KW | INVAR_KW | COMPASSION_KW | FAIRNESS_KW | JUSTICE_KW
-    | LTLSPEC_KW | CTLSPEC_KW | SPEC_KW | INVARSPEC_KW
+    | DEFINE_KW | CONSTANTS_KW | ASSIGN_KW | TRANS_KW | INIT_KW | INVAR_KW | URGENT_KW | COMPASSION_KW | FAIRNESS_KW | JUSTICE_KW
+    | LTLSPEC_KW | CTLSPEC_KW | SPEC_KW | INVARSPEC_KW | PSLSPEC_KW
+    | TIME_DOMAIN_KW
     | COMPUTE_KW | PARSYNTH_KW
     | ISA_KW | PRED_KW | MIRROR_KW
     | MODULE_KW
@@ -302,6 +307,27 @@ InvarSpecification ::= INVARSPEC_KW NamedSpecification? Expr SEMICOLON? {
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvInvarSpecificationMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
 }
+
+PslSpecification ::= PSLSPEC_KW NamedSpecification? PslBody SEMICOLON? {
+    pin=1
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvPslSpecificationMixin"
+    implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
+}
+PslBody ::= psl_item+
+private psl_item ::= psl_group | !psl_body_end psl_atom
+private psl_group ::= LBRACE psl_group_item* RBRACE
+    | LPAREN psl_group_item* RPAREN
+    | LBRACKET psl_group_item* RBRACKET
+private psl_group_item ::= psl_group | !(RBRACE | RPAREN | RBRACKET | psl_section_keyword) psl_atom
+private psl_atom ::= <<pslKeyword>> | IdentifierUsage | <<anyToken>>
+private psl_body_end ::= SEMICOLON | RBRACE | RPAREN | RBRACKET | psl_section_keyword
+private psl_section_keyword ::= VAR_KW | IVAR_KW | FROZENVAR_KW | FUN_KW
+    | DEFINE_KW | CONSTANTS_KW | ASSIGN_KW | TRANS_KW | INIT_KW | INVAR_KW | URGENT_KW | COMPASSION_KW | FAIRNESS_KW | JUSTICE_KW
+    | LTLSPEC_KW | CTLSPEC_KW | SPEC_KW | INVARSPEC_KW | PSLSPEC_KW
+    | COMPUTE_KW | PARSYNTH_KW
+    | ISA_KW | PRED_KW | MIRROR_KW
+    | MODULE_KW
+    | FOR_MACRO_KW | END_MACRO_KW
 
 NamedSpecification ::=  NAME_KW SimpleIdentifier ASSIGN {
     mixin ="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NamedSpecificationMixin"
@@ -370,7 +396,9 @@ TransConstraint ::= TRANS_KW Expr SEMICOLON? {pin=1}
 
 InitConstraint ::= INIT_KW Expr SEMICOLON? {pin=1}
 
-InvarConstraint ::= INVAR_KW Expr (IMPLICATION Expr)? SEMICOLON? {pin=1}
+InvarConstraint ::= INVAR_KW Expr SEMICOLON? {pin=1}
+
+UrgentConstraint ::= URGENT_KW Expr SEMICOLON? {pin=1}
 
 FairnessConstraint ::= FAIRNESS_KW Expr SEMICOLON? {pin=1}
 JusticeConstraint ::= JUSTICE_KW Expr SEMICOLON? {pin=1}
@@ -378,10 +406,9 @@ CompassionConstraint ::= COMPASSION_KW LPAREN Expr COMMA Expr RPAREN SEMICOLON? 
 
 IsaDeclaration ::= ISA_KW IDENTIFIER {pin=1}
 
-PredDeclaration ::= PRED_KW [LESS Expr GREATER ASSIGN] Expr SEMICOLON? {pin=1}
+PredDeclaration ::= PRED_KW (LESS IDENTIFIER GREATER ASSIGN)? Expr SEMICOLON? {pin=1}
 
-ComputeSpecification ::= COMPUTE_KW ComputeExpr SEMICOLON?
-    | COMPUTE_KW NAME_KW identifier ASSIGN ComplexIdentifier SEMICOLON? {pin=1}
+ComputeSpecification ::= COMPUTE_KW NamedSpecification? ComputeExpr SEMICOLON? {pin=1}
 ComputeExpr ::= (MIN_KW | MAX_KW) LBRACKET RtCtlExpr COMMA RtCtlExpr RBRACKET
 RtCtlExpr ::= Expr
     | (RTCTL_EBF | RTCTL_ABF | RTCTL_EBG | RTCTL_ABG) RangeConstant RtCtlExpr
@@ -389,14 +416,13 @@ RtCtlExpr ::= Expr
 
 // parameter_synth_problem
 ParameterSynthProblemDeclaration ::= PARSYNTH_KW ParameterSynthProblem SEMICOLON? {pin=1}
-ParameterSynthProblem ::= identifier ASSIGN LBRACE IdList OR [VALID_KW | SAT_KW] Expr SynthOpts RBRACE
-IdList ::= identifier (COMMA identifier)*
-SynthOpts ::= SynthOpt (COMMA SynthOpt)*
+ParameterSynthProblem ::= IDENTIFIER ASSIGN LBRACE IdList OR (VALID_KW | SAT_KW)? Expr (COMMA SynthOpt?)* RBRACE {pin=3}
+IdList ::= IdentifierUsage (COMMA IdentifierUsage)*
 SynthOpt ::= MONONEG_KW
     | MONOPOS_KW
     | (MIN_KW | MAX_KW) LPAREN Expr RPAREN {pin=1}
 
-MirrorDeclaration ::= MIRROR_KW VarName SEMICOLON? {pin=1}
+MirrorDeclaration ::= MIRROR_KW IdentifierUsage SEMICOLON? {pin=1}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Types
@@ -533,7 +559,7 @@ UnaryLtlExpr ::= UnaryLtlOp Expr
 UnaryLtlOp ::= LTL_TIMED_NEXT | LTL_TIMED_PREVIOUS | LTL_ONCE | LTL_HISTORICALLY | LTL_NOT_PREVIOUS| LTL_PREVIOUS | LTL_FINALLY | LTL_GLOBALLY | LTL_NEXT
 BinaryLtlExpr ::= Expr BinaryLtlOp Expr
 BinaryLtlOp ::= LTL_AT_LAST | LTL_AT_NEXT | LTL_TRIGGERED | LTL_SINCE | LTL_RELEASES | TL_UNTIL
-TimedLtlExpr ::= TimeLtlOp LPAREN Expr RPAREN
+TimedLtlExpr ::= TimeLtlOp ParenthesisBasicExpr
 TimeLtlOp ::= LTL_TIME_SINCE | LTL_TIME_UNTIL
 
 private PrimaryBasicExprGroup ::= ReferenceBasicExpr | LiteralBasicExpr | ParenthesisBasicExpr | SetBasicExpr

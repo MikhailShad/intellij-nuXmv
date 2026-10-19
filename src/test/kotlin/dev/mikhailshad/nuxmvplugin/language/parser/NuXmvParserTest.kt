@@ -60,6 +60,30 @@ class NuXmvParserTest : ParsingTestCase("", "smv", NuXmvParserDefinition()) {
         doTest(true, true)
     }
 
+    fun testTimedModel() {
+        doTest(true, true)
+    }
+
+    fun testPslSpec() {
+        doTest(true, true)
+    }
+
+    fun testCompute() {
+        doTest(true, true)
+    }
+
+    fun testParSynth() {
+        doTest(true, true)
+    }
+
+    fun testPredMirror() {
+        doTest(true, true)
+    }
+
+    fun testRecovery() {
+        doTest(true, false)
+    }
+
     override fun getTestDataPath(): String {
         return "src/test/testData/parser"
     }

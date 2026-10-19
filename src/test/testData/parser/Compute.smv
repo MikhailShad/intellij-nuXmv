@@ -1,0 +1,10 @@
+MODULE main
+VAR
+    s : 0..3;
+ASSIGN
+    init(s) := 0;
+    next(s) := (s + 1) mod 4;
+COMPUTE MIN [s = 0, s = 3];
+COMPUTE NAME longest := MAX [s = 0, s = 3]
+COMPUTE MIN [s = 0, EBF 1..3 s = 2]
+CTLSPEC AG s < 4;

@@ -1,0 +1,27 @@
+package dev.mikhailshad.nuxmvplugin.language.psi.mixin
+
+import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.lang.ASTNode
+import com.intellij.navigation.ItemPresentation
+import dev.mikhailshad.nuxmvplugin.language.NuXmvIcons
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPslSpecification
+import javax.swing.Icon
+
+abstract class NuXmvPslSpecificationMixin(node: ASTNode) : ASTWrapperPsiElement(node), NuXmvPslSpecification,
+    NuXmvPresentableElement {
+    override fun getPresentation(): ItemPresentation {
+        return object : ItemPresentation {
+            override fun getPresentableText(): String {
+                val sb = StringBuilder("PSL Specification")
+                val namedSpec = namedSpecification
+                if (namedSpec != null) {
+                    sb.append(" ${namedSpec.name}")
+                }
+                return sb.toString()
+            }
+
+            override fun getIcon(unused: Boolean): Icon = NuXmvIcons.OTHER_SPEC
+        }
+    }
+}

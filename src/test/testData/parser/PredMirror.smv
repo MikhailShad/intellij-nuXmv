@@ -1,0 +1,19 @@
+MODULE main
+VAR
+    x : integer;
+    y : integer;
+    s : boolean;
+ASSIGN
+    next(x) := x + 1;
+PRED x > 0;
+PRED <py> := y < x;
+PRED x = y
+MIRROR s;
+MIRROR x
+INVARSPEC x >= 0;
+
+MODULE base
+VAR z : boolean;
+
+MODULE derived
+ISA base
