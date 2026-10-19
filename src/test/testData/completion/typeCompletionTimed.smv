@@ -1,0 +1,4 @@
+@TIME_DOMAIN continuous
+MODULE main
+VAR
+    foo: <caret>

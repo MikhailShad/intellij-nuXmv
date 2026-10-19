@@ -63,6 +63,10 @@ class NuXmvColourSettingsPage : ColorSettingsPage {
                 AG(bar -> AF(!bar));
             LTLSPEC
                 G(bar -> X(!bar)) & F(baz > 1.0);
+            LTLSPEC
+                G [0, 5] bar -> O [1, +oo) (baz > pi);
+            PSLSPEC
+                always (bar -> next! bar);
     """.trimIndent()
 
     override fun getAdditionalHighlightingTagToDescriptorMap(): MutableMap<String, TextAttributesKey>? = null

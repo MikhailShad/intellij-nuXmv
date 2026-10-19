@@ -57,6 +57,7 @@ class NuXmvStructureViewElement(private val element: NavigatablePsiElement) :
                     result.addAll(moduleBody.ctlSpecificationList)
                     result.addAll(moduleBody.ltlSpecificationList)
                     result.addAll(moduleBody.invarSpecificationList)
+                    result.addAll(moduleBody.pslSpecificationList)
                 }
             }
 

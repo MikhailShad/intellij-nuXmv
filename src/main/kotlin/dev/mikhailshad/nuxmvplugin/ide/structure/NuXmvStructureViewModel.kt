@@ -32,7 +32,8 @@ class NuXmvStructureViewModel(psiFile: NuXmvFile, editor: Editor?) :
             NuXmvConstantsDeclaration::class.java,
             NuXmvCtlSpecification::class.java,
             NuXmvLtlSpecification::class.java,
-            NuXmvInvarSpecification::class.java
+            NuXmvInvarSpecification::class.java,
+            NuXmvPslSpecification::class.java
         )
     }
 }

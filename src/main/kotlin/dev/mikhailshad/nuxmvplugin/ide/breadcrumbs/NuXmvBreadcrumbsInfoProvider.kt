@@ -19,7 +19,8 @@ class NuXmvBreadcrumbsInfoProvider : BreadcrumbsProvider {
                 element is NuXmvAssignConstraint ||
                 element is NuXmvLtlSpecification ||
                 element is NuXmvCtlSpecification ||
-                element is NuXmvInvarSpecification
+                element is NuXmvInvarSpecification ||
+                element is NuXmvPslSpecification
     }
 
     override fun getElementInfo(element: PsiElement): String {
@@ -39,6 +40,7 @@ class NuXmvBreadcrumbsInfoProvider : BreadcrumbsProvider {
             }
 
             is NuXmvInvarSpecification -> "INVARSPEC"
+            is NuXmvPslSpecification -> "PSLSPEC"
             else -> element.text.take(20)
         }
     }
@@ -57,6 +59,7 @@ class NuXmvBreadcrumbsInfoProvider : BreadcrumbsProvider {
             is NuXmvLtlSpecification -> "Linear Temporal Logic specification"
             is NuXmvCtlSpecification -> "Computation Tree Logic specification"
             is NuXmvInvarSpecification -> "Invariant specification"
+            is NuXmvPslSpecification -> "Property Specification Language specification"
             else -> element.text
         }
     }

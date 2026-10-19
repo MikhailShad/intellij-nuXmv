@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.util.ProcessingContext
+import dev.mikhailshad.nuxmvplugin.language.psi.isInTimedModel
 
 object NuXmvLtlOperatorCompletionProvider : CompletionProvider<CompletionParameters>() {
     private val operators = mapOf(
@@ -22,13 +23,18 @@ object NuXmvLtlOperatorCompletionProvider : CompletionProvider<CompletionParamet
         "@F~" to "LTL: At Next",
         "@O~" to "LTL: At Last"
     )
+    private val timedOperators = mapOf(
+        "X~" to "LTL: Timed Next",
+        "Y~" to "LTL: Timed Previous"
+    )
 
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
         resultSet: CompletionResultSet
     ) {
-        operators.forEach { (op, desc) ->
+        val available = if (parameters.originalFile.isInTimedModel) operators + timedOperators else operators
+        available.forEach { (op, desc) ->
             val element = LookupElementBuilder.create(op)
                 .withTypeText(desc)
                 .bold()

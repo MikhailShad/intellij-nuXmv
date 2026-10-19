@@ -8,7 +8,9 @@ import com.intellij.codeInsight.template.impl.TextExpression
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvAssignConstraint
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFile
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes
+import dev.mikhailshad.nuxmvplugin.language.psi.isInTimedModel
 
 object NuXmvFunctionCompletionProvider : CompletionProvider<CompletionParameters>() {
     // Map of function names to their parameter documentation
@@ -44,8 +46,14 @@ object NuXmvFunctionCompletionProvider : CompletionProvider<CompletionParameters
         "resize" to listOf("WORD_EXPR", "SIZE"),
         "READ" to listOf("ARRAY", "INDEX"),
         "WRITE" to listOf("ARRAY", "INDEX", "VALUE"),
-        "CONSTARRAY" to listOf("TYPE", "VALUE")
+        "CONSTARRAY" to listOf("TYPE", "VALUE"),
+        "typeof" to listOf("ARRAY_VAR")
     )
+    private val timedFunctionTemplates = mapOf(
+        "time_until" to listOf("LTL_EXPR"),
+        "time_since" to listOf("LTL_EXPR"),
+    )
+    private const val PI_CONSTANT = "pi"
 
     override fun addCompletions(
         parameters: CompletionParameters,
@@ -59,7 +67,16 @@ object NuXmvFunctionCompletionProvider : CompletionProvider<CompletionParameters
                 && PsiTreeUtil.findSiblingBackward(positionHolder, NuXmvTypes.ASSIGN) {} == null
         if (!isAssignLhs) {
             addFunctionCompletions(functionTemplates, resultSet)
+            addConstantCompletion(PI_CONSTANT, resultSet)
+            if (parameters.originalFile.isInTimedModel) {
+                addFunctionCompletions(timedFunctionTemplates, resultSet)
+                addConstantCompletion(NuXmvFile.TIME_VARIABLE, resultSet)
+            }
         }
+    }
+
+    private fun addConstantCompletion(name: String, resultSet: CompletionResultSet) {
+        resultSet.addElement(LookupElementBuilder.create(name).withTypeText("constant"))
     }
 
     private fun addFunctionCompletions(

@@ -30,6 +30,26 @@ class NuXmvFormattingTest : NuXmvCodeInsightFixtureTestCase() {
         assertEquals(after, myFixture.file.text)
     }
 
+    fun testTimedAndPslFormatting() {
+        val before = "@TIME_DOMAIN   continuous\nMODULE main\nVAR c:clock;\np:boolean;\nURGENT    c=0;\n" +
+                "LTLSPEC G[0,5]p;\nLTLSPEC F  [ 2 , +oo )  p;\nLTLSPEC p U[1,3]p;\nPSLSPEC {p; p[*]}  |=> {p};"
+        val after = """
+            @TIME_DOMAIN continuous
+            MODULE main
+              VAR
+                c : clock;
+                p : boolean;
+              URGENT c = 0;
+              LTLSPEC G [0, 5] p;
+              LTLSPEC F [2, +oo) p;
+              LTLSPEC p U [1, 3] p;
+              PSLSPEC {p; p[*]}  |=> {p};
+        """.trimIndent()
+        myFixture.configureByText(NuXmvFileType, before)
+        myFixture.performEditorAction("ReformatCode")
+        assertEquals(after, myFixture.file.text)
+    }
+
     fun testComplexFormatting() {
         val files = Files.walk(Paths.get(testDataPath, "input")).filter { it.isRegularFile() }.map { it.name }.toList()
 

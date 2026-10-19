@@ -25,6 +25,11 @@
 - Support bounded LTL operators `G/F/H/O [l, u]`, `U/V/S/T [l, u]` and `[l, +oo)` intervals
 - Support RTCTL operators (`EBF/ABF/EBG/ABG m..n`, `A [p BU m..n q]`) in `CTLSPEC`
 - Fixed CTL until `E [p U q]` / `A [p U q]`
+- Timed models: `time` is a built-in constant; `clock`, `URGENT`, `X~`, `Y~`, `time_until`, `time_since` are reported outside `@TIME_DOMAIN continuous`; unknown time domains are errors
+- Identifiers inside `PSLSPEC` are not reported as unresolved; PSL keywords are highlighted
+- Completion: `FUN`, `PSLSPEC`, `PARSYNTH`, `URGENT` sections, `typeof`, `pi`, word/int array types; `clock`, `X~`, `Y~`, `time`, `time_until`, `time_since` in timed models only
+- Folding, structure view and breadcrumbs for `PSLSPEC`, `URGENT`, `PARSYNTH`
+- Formatter keeps PSL bodies intact and formats LTL bounds as `G [0, 5] p`, `F [2, +oo) p`
 
 ## [0.0.3]
 

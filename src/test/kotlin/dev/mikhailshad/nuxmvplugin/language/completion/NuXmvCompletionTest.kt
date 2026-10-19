@@ -42,6 +42,7 @@ class NuXmvCompletionTest : NuXmvCodeInsightFixtureTestCase() {
             "DEFINE",
             "FAIRNESS",
             "FROZENVAR",
+            "FUN",
             "INIT",
             "INVAR",
             "INVARSPEC",
@@ -51,7 +52,9 @@ class NuXmvCompletionTest : NuXmvCodeInsightFixtureTestCase() {
             "LTLSPEC",
             "MIRROR",
             "MODULE",
+            "PARSYNTH",
             "PRED",
+            "PSLSPEC",
             "TRANS",
             "VAR",
             "#FOR"
@@ -63,17 +66,13 @@ class NuXmvCompletionTest : NuXmvCodeInsightFixtureTestCase() {
         myFixture.configureByFiles("typeCompletion.smv")
         myFixture.complete(CompletionType.BASIC)
         val lookupElementStrings = myFixture.lookupElementStrings!!
-        val expected = listOf(
-            "array N..M of type",
-            "boolean",
-            "clock",
-            "integer",
-            "real",
-            "signed word[N]",
-            "unsigned word[N]",
-            "word[N]"
-        )
-        assertSameElements(lookupElementStrings, expected)
+        assertSameElements(lookupElementStrings, basicTypes)
+    }
+
+    fun testTypeCompletionInTimedModel() {
+        myFixture.configureByFiles("typeCompletionTimed.smv")
+        myFixture.complete(CompletionType.BASIC)
+        assertSameElements(myFixture.lookupElementStrings!!, basicTypes + "clock")
     }
 
     fun testFunctionCompletion() {
@@ -149,4 +148,16 @@ class NuXmvCompletionTest : NuXmvCodeInsightFixtureTestCase() {
 //        assertNotNull(lookupElementStrings)
 //        assertTrue(lookupElementStrings!!.containsAll(listOf("#FOR")))
 //    }
+
+    private val basicTypes = listOf(
+        "array N..M of type",
+        "array word[N] of type",
+        "array integer of type",
+        "boolean",
+        "integer",
+        "real",
+        "signed word[N]",
+        "unsigned word[N]",
+        "word[N]"
+    )
 }

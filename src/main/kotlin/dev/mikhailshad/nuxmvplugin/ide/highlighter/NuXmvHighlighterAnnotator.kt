@@ -3,8 +3,11 @@ package dev.mikhailshad.nuxmvplugin.ide.highlighter
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.elementType
 import dev.mikhailshad.nuxmvplugin.language.psi.*
+import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvBuiltInType
 
 class NuXmvHighlighterAnnotator : Annotator {
 
@@ -12,11 +15,33 @@ class NuXmvHighlighterAnnotator : Annotator {
         when (element) {
             is NuXmvIdentifierUsage -> {
                 val resolved = element.reference?.resolve()
-                innerAnnotate(element, holder, resolved)
+                if (resolved == null && element.text == NuXmvFile.TIME_VARIABLE && element.isInTimedModel) {
+                    highlight(element, holder, NuXmvSyntaxHighlighter.CONSTANT_NAME_ATTRIBUTE)
+                } else {
+                    innerAnnotate(element, holder, resolved)
+                }
             }
 
-            else -> innerAnnotate(element, holder)
+            is NuXmvSimpleTypeSpecifier -> if (element.resolveType() == NuXmvBuiltInType.CLOCK) {
+                highlight(element, holder, NuXmvSyntaxHighlighter.KEYWORD_ATTRIBUTE)
+            }
+
+            else -> if (isPslKeyword(element)) {
+                highlight(element, holder, NuXmvSyntaxHighlighter.KEYWORD_ATTRIBUTE)
+            } else {
+                innerAnnotate(element, holder)
+            }
         }
+    }
+
+    private fun isPslKeyword(element: PsiElement): Boolean =
+        element.elementType == NuXmvTypes.IDENTIFIER && element.parent is NuXmvPslBody
+
+    private fun highlight(element: PsiElement, holder: AnnotationHolder, attributes: TextAttributesKey) {
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+            .textAttributes(attributes)
+            .range(element)
+            .create()
     }
 
     private fun innerAnnotate(element: PsiElement, holder: AnnotationHolder, reference: PsiElement? = null) {

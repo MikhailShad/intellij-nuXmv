@@ -4,9 +4,11 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvExpr
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvIdentifierUsage
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.elementType
+import dev.mikhailshad.nuxmvplugin.language.psi.*
 import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvIdentifierUsageMixin
+import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvBuiltInType
 
 class NuXmvWarningAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
@@ -15,6 +17,8 @@ class NuXmvWarningAnnotator : Annotator {
         }
 
         checkValidReferences(element, holder)
+        checkTimeDomain(element, holder)
+        checkTimedConstructs(element, holder)
 //        checkValidTypes(element, holder)
     }
 
@@ -33,6 +37,12 @@ class NuXmvWarningAnnotator : Annotator {
         if (element !is NuXmvIdentifierUsage) {
             return
         }
+        if (PsiTreeUtil.getParentOfType(element, NuXmvPslBody::class.java) != null) {
+            return
+        }
+        if (element.text == NuXmvFile.TIME_VARIABLE && element.isInTimedModel) {
+            return
+        }
 
         val identifierUsage = element as NuXmvIdentifierUsageMixin
 
@@ -41,5 +51,39 @@ class NuXmvWarningAnnotator : Annotator {
                 .range(element)
                 .create()
         }
+    }
+
+    private fun checkTimeDomain(element: PsiElement, holder: AnnotationHolder) {
+        if (element !is NuXmvTimeDomainAnnotation) {
+            return
+        }
+        val domain = element.identifier ?: return
+        if (domain.text != NuXmvFile.CONTINUOUS_TIME_DOMAIN && domain.text != NuXmvFile.NONE_TIME_DOMAIN) {
+            holder.newAnnotation(
+                HighlightSeverity.ERROR,
+                "Unknown time domain '${domain.text}', expected '${NuXmvFile.NONE_TIME_DOMAIN}' or '${NuXmvFile.CONTINUOUS_TIME_DOMAIN}'"
+            )
+                .range(domain)
+                .create()
+        }
+    }
+
+    private fun checkTimedConstructs(element: PsiElement, holder: AnnotationHolder) {
+        val construct = when {
+            element is NuXmvUrgentConstraint -> element.firstChild
+            element is NuXmvTimedLtlExpr -> element.timeLtlOp
+            element.elementType == NuXmvTypes.LTL_TIMED_NEXT || element.elementType == NuXmvTypes.LTL_TIMED_PREVIOUS -> element
+            element is NuXmvSimpleTypeSpecifier && element.resolveType() == NuXmvBuiltInType.CLOCK -> element
+            else -> null
+        } ?: return
+        if (element.isInTimedModel) {
+            return
+        }
+        holder.newAnnotation(
+            HighlightSeverity.WARNING,
+            "'${construct.text}' is available only in timed models (@TIME_DOMAIN ${NuXmvFile.CONTINUOUS_TIME_DOMAIN})"
+        )
+            .range(construct)
+            .create()
     }
 }

@@ -29,6 +29,7 @@ class NuXmvFoldingBuilder : FoldingBuilderEx() {
             is NuXmvJusticeConstraint,
             is NuXmvTransConstraint,
             is NuXmvInvarConstraint,
+            is NuXmvUrgentConstraint,
             is NuXmvFairnessConstraint,
             is NuXmvCompassionConstraint,
             is NuXmvConstantsDeclaration,
@@ -43,6 +44,8 @@ class NuXmvFoldingBuilder : FoldingBuilderEx() {
             is NuXmvCtlSpecification,
             is NuXmvInvarSpecification,
             is NuXmvLtlSpecification,
+            is NuXmvPslSpecification,
+            is NuXmvParameterSynthProblemDeclaration,
             is NuXmvForLoopMacro -> {
                 val range = element.textRange
                 if (range.length > 50 || element.children.size > 10) {
@@ -66,6 +69,7 @@ class NuXmvFoldingBuilder : FoldingBuilderEx() {
             is NuXmvJusticeConstraint -> "JUSTICE..."
             is NuXmvTransConstraint -> "TRANS..."
             is NuXmvInvarConstraint -> "INVAR..."
+            is NuXmvUrgentConstraint -> "URGENT..."
             is NuXmvFairnessConstraint -> "FAIRNESS..."
             is NuXmvCompassionConstraint -> "COMPASSION..."
             is NuXmvConstantsDeclaration -> "CONSTANTS..."
@@ -80,6 +84,8 @@ class NuXmvFoldingBuilder : FoldingBuilderEx() {
             is NuXmvCtlSpecification -> "CTL..."
             is NuXmvInvarSpecification -> "INVAR..."
             is NuXmvLtlSpecification -> "LTL..."
+            is NuXmvPslSpecification -> "PSL..."
+            is NuXmvParameterSynthProblemDeclaration -> "PARSYNTH..."
             is NuXmvForLoopMacroMixin -> "FOR ${psiNode.loopVariableName} IN ${psiNode.loopRange} ..."
 
             else -> "..."

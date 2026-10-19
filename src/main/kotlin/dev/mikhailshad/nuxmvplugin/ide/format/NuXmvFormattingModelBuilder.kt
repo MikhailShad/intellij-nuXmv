@@ -35,6 +35,12 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
         customSettings: NuXmvCodeStyleSettings
     ): SpacingBuilder {
         return SpacingBuilder(settings, NuXmvLanguage).apply {
+            // Temporal bounds
+            around(BOUND).spaces(1)
+            afterInside(LBRACKET, BOUND).none()
+            beforeInside(RBRACKET, BOUND).none()
+            afterInside(PLUS_INFINITY, BOUND).none()
+
             // Punctuation spacing
             before(SEMICOLON).none()
             after(SEMICOLON).lineBreakInCode()
@@ -83,6 +89,8 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
             around(NuXmvParserDefinition.Util.TL_OPERATORS).spaces(1)
 
             // Module-level spacing
+            afterInside(TIME_DOMAIN_KW, TIME_DOMAIN_ANNOTATION).spaces(1)
+            after(TIME_DOMAIN_ANNOTATION).lineBreakInCode()
             after(MODULE_KW).spaces(1)
             after(MODULE_DECLARATION).lineBreakInCode()
             between(MODULE, MODULE).blankLines(customSettings.BLANK_LINES_BETWEEN_MODULES)
@@ -98,12 +106,14 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
             before(TRANS_CONSTRAINT).lineBreakInCode()
             before(INIT_CONSTRAINT).lineBreakInCode()
             before(INVAR_CONSTRAINT).lineBreakInCode()
+            before(URGENT_CONSTRAINT).lineBreakInCode()
             before(FAIRNESS_CONSTRAINT).lineBreakInCode()
             before(JUSTICE_CONSTRAINT).lineBreakInCode()
             before(COMPASSION_CONSTRAINT).lineBreakInCode()
             before(CTL_SPECIFICATION).lineBreakInCode()
             before(LTL_SPECIFICATION).lineBreakInCode()
             before(INVAR_SPECIFICATION).lineBreakInCode()
+            before(PSL_SPECIFICATION).lineBreakInCode()
             before(COMPUTE_SPECIFICATION).lineBreakInCode()
             before(PARAMETER_SYNTH_PROBLEM_DECLARATION).lineBreakInCode()
             before(ISA_DECLARATION).lineBreakInCode()
@@ -127,12 +137,14 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
             before(TRANS_CONSTRAINT).blankLines(sectionBlankLines)
             before(INIT_CONSTRAINT).blankLines(sectionBlankLines)
             before(INVAR_CONSTRAINT).blankLines(sectionBlankLines)
+            before(URGENT_CONSTRAINT).blankLines(sectionBlankLines)
             before(FAIRNESS_CONSTRAINT).blankLines(sectionBlankLines)
             before(JUSTICE_CONSTRAINT).blankLines(sectionBlankLines)
             before(COMPASSION_CONSTRAINT).blankLines(sectionBlankLines)
             before(CTL_SPECIFICATION).blankLines(sectionBlankLines)
             before(LTL_SPECIFICATION).blankLines(sectionBlankLines)
             before(INVAR_SPECIFICATION).blankLines(sectionBlankLines)
+            before(PSL_SPECIFICATION).blankLines(sectionBlankLines)
             before(COMPUTE_SPECIFICATION).blankLines(sectionBlankLines)
             before(PARAMETER_SYNTH_PROBLEM_DECLARATION).blankLines(sectionBlankLines)
             before(ISA_DECLARATION).blankLines(sectionBlankLines)
@@ -157,6 +169,7 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
             afterInside(INIT_KW, INIT_CONSTRAINT).spaces(1)
             afterInside(TRANS_KW, TRANS_CONSTRAINT).spaces(1)
             afterInside(INVAR_KW, INVAR_CONSTRAINT).spaces(1)
+            afterInside(URGENT_KW, URGENT_CONSTRAINT).spaces(1)
             afterInside(FAIRNESS_KW, FAIRNESS_CONSTRAINT).spaces(1)
             afterInside(JUSTICE_KW, JUSTICE_CONSTRAINT).spaces(1)
             afterInside(COMPASSION_KW, COMPASSION_CONSTRAINT).spaces(1)
@@ -164,6 +177,8 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
             afterInside(SPEC_KW, CTL_SPECIFICATION).spaces(1)
             afterInside(LTLSPEC_KW, LTL_SPECIFICATION).spaces(1)
             afterInside(INVARSPEC_KW, INVAR_SPECIFICATION).spaces(1)
+            afterInside(PSLSPEC_KW, PSL_SPECIFICATION).spaces(1)
+            afterInside(PARSYNTH_KW, PARAMETER_SYNTH_PROBLEM_DECLARATION).spaces(1)
             afterInside(COMPUTE_KW, COMPUTE_SPECIFICATION).spaces(1)
             afterInside(FUN_KW, FUNCTION_DECLARATION).lineBreakInCode()
             afterInside(ISA_KW, ISA_DECLARATION).spaces(1)
@@ -260,6 +275,7 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
                     || parentType == JUSTICE_CONSTRAINT && nodeType != JUSTICE_KW
                     || parentType == TRANS_CONSTRAINT && nodeType != TRANS_KW
                     || parentType == INVAR_CONSTRAINT && nodeType != INVAR_KW
+                    || parentType == URGENT_CONSTRAINT && nodeType != URGENT_KW
                     || parentType == FAIRNESS_CONSTRAINT && nodeType != FAIRNESS_KW
                     || parentType == COMPASSION_CONSTRAINT && nodeType != COMPASSION_KW
                     || parentType == CONSTANTS_DECLARATION && nodeType != CONSTANTS_KW
@@ -273,6 +289,7 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
                     || parentType == CTL_SPECIFICATION && nodeType !in listOf(CTLSPEC_KW, SPEC_KW)
                     || parentType == INVAR_SPECIFICATION && nodeType != INVARSPEC_KW
                     || parentType == LTL_SPECIFICATION && nodeType != LTLSPEC_KW
+                    || parentType == PSL_SPECIFICATION && nodeType != PSLSPEC_KW
                     || parentType == FUNCTION_DECLARATION && nodeType != FUN_KW
                     || parentType == FOR_LOOP_MACRO && nodeType !in listOf(
                 FOR_MACRO_KW,
@@ -287,6 +304,9 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
         override fun getIndent(): Indent = indent
 
         override fun getSpacing(child1: Block?, child2: Block): Spacing? {
+            if (node.elementType == PSL_BODY) {
+                return null
+            }
             return spacingBuilder.getSpacing(this, child1, child2)
         }
 
