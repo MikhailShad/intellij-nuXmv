@@ -8,6 +8,9 @@ ___
 
 ### Language Support
 
+- Syntax of the [nuXmv 2.2.0 user manual](https://nuxmv.fbk.eu/downloads.html): expressions, types, all module
+  sections, CTL/RTCTL, LTL with bounded and past operators, timed models (`@TIME_DOMAIN continuous`); `PSLSPEC` is
+  parsed tolerantly
 - Syntax highlighting for NuXmv model files (`.smv`, `.xmv`, `.nuxmv`)
 - Code completion for keywords, operators, variables, and module names
 - Error highlighting and annotations
@@ -59,7 +62,7 @@ ___
 ### Prerequisites
 
 - IntelliJ IDEA 2023.1 or higher
-- NuXmv executable installed on your system
+- NuXmv executable installed on your system (the language support follows nuXmv 2.2.0)
 
 ### Install from JetBrains Marketplace
 

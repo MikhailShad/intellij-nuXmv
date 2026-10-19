@@ -30,6 +30,7 @@
 - Completion: `FUN`, `PSLSPEC`, `PARSYNTH`, `URGENT` sections, `typeof`, `pi`, word/int array types; `clock`, `X~`, `Y~`, `time`, `time_until`, `time_since` in timed models only
 - Folding, structure view and breadcrumbs for `PSLSPEC`, `URGENT`, `PARSYNTH`
 - Formatter keeps PSL bodies intact and formats LTL bounds as `G [0, 5] p`, `F [2, +oo) p`
+- Fixed navigation bar on IntelliJ 2026.2+ (`StructureAwareNavBarModelExtension` was removed from the platform)
 
 ## [0.0.3]
 
