@@ -47,8 +47,8 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-*.md
+# Any binaries
+*.jar
 
-jflex-*.jar
-
+# Plugin publishing credentials
 .env

@@ -1,0 +1,79 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git blame:*)",
+      "WebFetch(domain:plugins.jetbrains.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:docs.gradle.org)",
+      "WebFetch(domain:jflex.de)",
+      "WebFetch(domain:nuxmv.fbk.eu)",
+      "mcp__idea__get_*",
+      "mcp__idea__lint_*",
+      "mcp__idea__reformat_*"
+    ],
+    "ask": [
+      "mcp__idea__execute_terminal_command"
+    ],
+    "deny": [
+      "Bash(./gradlew publishPlugin:*)",
+      "Bash(./gradlew signPlugin:*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Edit(./.env)"
+    ]
+  },
+  "enabledPlugins": {
+    "kotlin-lsp@claude-plugins-official": false,
+    "jdtls-lsp@claude-plugins-official": false
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|mcp__idea__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-secrets.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|NotebookEdit|mcp__idea__(apply_patch|create_new_file)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-gen.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|mcp__idea__apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/compile-grammar.sh",
+            "timeout": 300,
+            "statusMessage": "Regenerating grammar and compiling..."
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Glass.aiff"
+          }
+        ]
+      }
+    ]
+  }
+}
