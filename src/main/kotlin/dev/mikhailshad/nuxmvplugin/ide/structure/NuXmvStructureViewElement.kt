@@ -8,6 +8,7 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
+import com.intellij.util.OpenSourceUtil
 import dev.mikhailshad.nuxmvplugin.language.psi.*
 import dev.mikhailshad.nuxmvplugin.language.psi.scope.NuXmvScopes
 
@@ -17,7 +18,7 @@ class NuXmvStructureViewElement(private val element: NavigatablePsiElement) :
     override fun getValue(): Any = element
 
     override fun navigate(requestFocus: Boolean) {
-        element.navigate(requestFocus)
+        OpenSourceUtil.navigate(requestFocus, element)
     }
 
     override fun canNavigate(): Boolean = element.canNavigate()
