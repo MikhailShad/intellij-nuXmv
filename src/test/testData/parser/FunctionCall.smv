@@ -1,0 +1,16 @@
+MODULE main
+VAR
+    x : real;
+    sub : helper;
+FUN
+    f : real -> real;
+    g : real * integer -> boolean;
+    sub.h : real -> real;
+DEFINE
+    y := f(x) + sub.h(x);
+    z := g(abs(x), 2);
+    t := sub.k(x);
+
+MODULE helper
+FUN
+    k : real -> real;

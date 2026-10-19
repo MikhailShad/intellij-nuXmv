@@ -29,7 +29,7 @@ FILE
           PsiWhiteSpace(' ')
           NuXmvTypeSpecifierImpl(NuXmvElementType.TYPE_SPECIFIER)
             NuXmvSimpleTypeSpecifierImpl(NuXmvElementType.SIMPLE_TYPE_SPECIFIER)
-              NuXmvRangeConstantImpl(NuXmvElementType.RANGE_CONSTANT)
+              NuXmvRangeTypeImpl(NuXmvElementType.RANGE_TYPE)
                 NuXmvWholeNumberImpl(NuXmvElementType.WHOLE_NUMBER)
                   PsiElement(NuXmvTokenType.POSITIVE_INTEGER_NUMBER)('0')
                 PsiElement(NuXmvTokenType...)('..')

@@ -1,0 +1,32 @@
+MODULE main
+CONSTANTS ok, fail;
+VAR
+    b : boolean;
+    e : {ok, fail, 1, -2};
+    i : integer;
+    r : real;
+    rng : -3..10;
+    w : word[8];
+    uw : unsigned word[8];
+    sw : signed word[(N + 1)];
+    ww : word[N];
+    dr : 0..N;
+    pr : (N - 1)..(N * 2);
+    arr : array 0..3 of boolean;
+    nested : array 1..8 of array -1..2 of unsigned word[5];
+    wa : array word[5] of unsigned word[3];
+    ia : array integer of unsigned word[8];
+    inst : counter;
+    pinst : counter_with(b, 3);
+IVAR
+    in1 : 0..3;
+FROZENVAR
+    p : real;
+DEFINE
+    N := 4;
+
+MODULE counter
+VAR c : 0..3;
+
+MODULE counter_with(en, limit)
+VAR c : 0..limit;

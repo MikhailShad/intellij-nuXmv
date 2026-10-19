@@ -1,0 +1,12 @@
+MODULE main
+VAR
+    a : boolean;
+    b : boolean;
+    x : 0..7;
+DEFINE
+    p1 := a -> b -> a;
+    p2 := a | b & a;
+    p3 := x + 1 * 2 = 3 & !a;
+    p4 := a ? b : a & b;
+    p5 := x << 1 + 1;
+    p6 := x in 1..3 union 5;

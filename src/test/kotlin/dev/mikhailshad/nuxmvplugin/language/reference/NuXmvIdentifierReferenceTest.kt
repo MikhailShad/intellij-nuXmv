@@ -130,6 +130,20 @@ class NuXmvIdentifierReferenceTest : NuXmvCodeInsightFixtureTestCase() {
         assertEquals("T2", (refs[1].resolve() as PsiElement).enclosingModuleName())
     }
 
+    fun testDefineInWordWidthResolves() {
+        val source = "MODULE main\nVAR\nw : unsigned word[N];\nr : 0..N;\nDEFINE\nN := 4;\n"
+        myFixture.configureByText(NuXmvFileType, source)
+        assertEquals("N", resolveSegment("word[N]", "N").text)
+        assertEquals("N", resolveSegment("0..N", "N").text)
+    }
+
+    fun testTypeOfArgumentResolvesToVariable() {
+        val source = "MODULE main\nVAR\na : array integer of integer;\nINIT a = CONSTARRAY(typeof(a), 0);\n"
+        myFixture.configureByText(NuXmvFileType, source)
+        val target = resolveSegment("typeof(a)", "a")
+        assertEquals("a", target.text)
+    }
+
     private fun resolveSegment(snippet: String, segment: String): PsiElement {
         val ref = referenceAt(snippet, segment)
         return checkNotNull(ref.resolve()) {

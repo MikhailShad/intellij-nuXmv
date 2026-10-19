@@ -1,0 +1,12 @@
+MODULE main
+VAR
+    x : 0..5;
+    s : {a, b, c};
+ASSIGN
+    init(x) := {0, 1};
+    next(x) := case
+        x < 5 : {x, x + 1};
+        TRUE : 0;
+    esac;
+    next(s) := x > 2 ? {a, b} : c;
+INVARSPEC x in {0, 1, 2} union 3..5;

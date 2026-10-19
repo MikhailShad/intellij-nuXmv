@@ -1,0 +1,14 @@
+MODULE main
+VAR
+    w : unsigned word[8];
+    v : signed word[4];
+    a : array 0..3 of unsigned word[8];
+    i : 0..2;
+DEFINE
+    lo := w[3:0];
+    hi := (w :: w)[15:8];
+    el := a[i + 1];
+    bit := a[i][0:0];
+    sw := signed word[4](3);
+    uw := unsigned word[8](i * 2);
+    cat := w[7:4] :: v;

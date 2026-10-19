@@ -11,7 +11,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.type.TypeResolvable
 abstract class NuXmvSimpleTypeSpecifierMixin(node: ASTNode) : ASTWrapperPsiElement(node), NuXmvSimpleTypeSpecifier,
     TypeResolvable {
     override fun resolveType(): NuXmvBuiltInType {
-        if (rangeConstant != null) {
+        if (rangeType != null) {
             return NuXmvBuiltInType.SET
         }
 
@@ -21,7 +21,7 @@ abstract class NuXmvSimpleTypeSpecifierMixin(node: ASTNode) : ASTWrapperPsiEleme
             NuXmvTypes.REAL_TYPE -> NuXmvBuiltInType.REAL
             NuXmvTypes.BOOLEAN_TYPE -> NuXmvBuiltInType.BOOLEAN
             NuXmvTypes.LBRACE -> NuXmvBuiltInType.SET
-            NuXmvTypes.WORD_TYPE, NuXmvTypes.SIGNED_WORD_TYPE -> NuXmvBuiltInType.WORD
+            NuXmvTypes.WORD_TYPE, NuXmvTypes.SIGNED_WORD_TYPE, NuXmvTypes.UNSIGNED_WORD_TYPE -> NuXmvBuiltInType.WORD
             else -> NuXmvBuiltInType.CUSTOM
         }
     }

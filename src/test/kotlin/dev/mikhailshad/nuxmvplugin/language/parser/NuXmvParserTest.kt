@@ -32,6 +32,34 @@ class NuXmvParserTest : ParsingTestCase("", "smv", NuXmvParserDefinition()) {
         doTest(true, true)
     }
 
+    fun testSetExpr() {
+        doTest(true, true)
+    }
+
+    fun testWordOps() {
+        doTest(true, true)
+    }
+
+    fun testBuiltins() {
+        doTest(true, true)
+    }
+
+    fun testArrayDefine() {
+        doTest(true, true)
+    }
+
+    fun testFunctionCall() {
+        doTest(true, true)
+    }
+
+    fun testTypes() {
+        doTest(true, true)
+    }
+
+    fun testPrecedence() {
+        doTest(true, true)
+    }
+
     override fun getTestDataPath(): String {
         return "src/test/testData/parser"
     }

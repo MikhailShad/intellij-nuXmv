@@ -265,7 +265,7 @@ private ModuleElement ::= VarDeclaration
 
 private module_element_recover ::= !(
     SEMICOLON | RBRACKET | RPAREN
-    | VAR_KW | IVAR_KW | FROZENVAR_KW
+    | VAR_KW | IVAR_KW | FROZENVAR_KW | FUN_KW
     | DEFINE_KW | CONSTANTS_KW | ASSIGN_KW | TRANS_KW | INIT_KW | INVAR_KW | COMPASSION_KW | FAIRNESS_KW | JUSTICE_KW
     | LTLSPEC_KW | CTLSPEC_KW | SPEC_KW | INVARSPEC_KW
     | COMPUTE_KW | PARSYNTH_KW
@@ -338,11 +338,13 @@ FunctionTypeSpecifier ::= FunctionArgTypesSpecifier IMPLICATION SimpleTypeSpecif
 FunctionArgTypesSpecifier ::= SimpleTypeSpecifier (MULT SimpleTypeSpecifier)*
 
 DefineDeclaration ::= DEFINE_KW DefineBody+ {pin=1}
-DefineBody ::= DefineName ASSIGN Expr SEMICOLON {
+DefineBody ::= DefineName ASSIGN (ArrayLiteral | Expr) SEMICOLON {
     pin=2
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvDefineBodyMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
 }
+ArrayLiteral ::= LBRACKET ArrayLiteralItem (COMMA ArrayLiteralItem)* RBRACKET {pin=1}
+private ArrayLiteralItem ::= ArrayLiteral | Expr
 DefineName ::= ComplexIdentifier {
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
@@ -400,31 +402,29 @@ MirrorDeclaration ::= MIRROR_KW VarName SEMICOLON? {pin=1}
 // Types
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-TypeSpecifier ::= ModuleTypeSpecifier | SimpleTypeSpecifier
+TypeSpecifier ::= SimpleTypeSpecifier | ModuleTypeSpecifier
 SimpleTypeSpecifier ::= BOOLEAN_TYPE
     | WordType
-    | UNSIGNED_WORD_TYPE LBRACKET WholeNumber RBRACKET
-    | SIGNED_WORD_TYPE LBRACKET WholeNumber RBRACKET
-    | IntegerType
+    | INTEGER_TYPE
     | REAL_TYPE
+    | ClockType
     | LBRACE EnumerationTypeBody RBRACE
-    | RangeConstant
-    | ARRAY_TYPE RangeConstant ARRAY_OF SimpleTypeSpecifier
-    | ARRAY_TYPE WordType ARRAY_OF SimpleTypeSpecifier
-    | ARRAY_TYPE IntegerType ARRAY_OF SimpleTypeSpecifier
-    | SimpleIdentifier // TODO: что-то придумать с проверкой, что тип корректный
+    | RangeType
+    | ARRAY_TYPE (RangeType | WordType | INTEGER_TYPE) ARRAY_OF SimpleTypeSpecifier
     {
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvSimpleTypeSpecifierMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.type.TypeResolvable"
 }
-private WordType ::= (WORD_TYPE | UNSIGNED_WORD_TYPE | SIGNED_WORD_TYPE) LBRACKET WholeNumber RBRACKET
-private IntegerType ::= INTEGER_TYPE
+private WordType ::= (WORD_TYPE | UNSIGNED_WORD_TYPE | SIGNED_WORD_TYPE) LBRACKET TypeBound RBRACKET
+private ClockType ::= <<clockTypeName>>
+RangeType ::= TypeBound RANGE TypeBound
+private TypeBound ::= WholeNumber | IdentifierUsage | LPAREN Expr RPAREN
 EnumerationTypeBody ::= EnumerationTypeValue (COMMA EnumerationTypeValue)*
 EnumerationTypeValue ::= WholeNumber | ComplexIdentifier {
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvEnumValueMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
 }
-ModuleTypeSpecifier ::= SimpleIdentifier ParameterList
+ModuleTypeSpecifier ::= SimpleIdentifier ParameterList?
 ParameterList ::= LPAREN [Expr (COMMA Expr)*] RPAREN
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -447,6 +447,8 @@ Expr ::= ImplicationBasicExpr
     | LogicalNotBasicExpr
     | IndexBasicExpr
     | CaseBasicExpr
+    | WordConversionBasicExpr
+    | ConstArrayBasicExpr
     | FunctionCallBasicExpr
     | CtlExprGroup
     | LtlExprGroup
@@ -492,17 +494,22 @@ ShiftRightBasicExpr ::= Expr SHIFT_RIGHT Expr
 LogicalNotBasicExpr ::= NOT Expr
 UnaryMinusBasicExpr ::= MINUS Expr
 
-IndexBasicExpr ::= Expr LBRACKET WholeNumber (SEMICOLON WholeNumber)? RBRACKET {pin=2}
+IndexBasicExpr ::= Expr LBRACKET Expr (COLON Expr)? RBRACKET {pin=2}
+
+WordConversionBasicExpr ::= (SIGNED_WORD_TYPE | UNSIGNED_WORD_TYPE) LBRACKET Expr RBRACKET LPAREN Expr RPAREN {pin=1}
+ConstArrayBasicExpr ::= CONSTARRAY_FUN LPAREN (TypeOfArgument | SimpleTypeSpecifier) COMMA Expr RPAREN {pin=1}
+TypeOfArgument ::= TYPE_OF_FUN LPAREN IdentifierUsage RPAREN {pin=1}
 
 FunctionCallBasicExpr ::= FunctionNameUsage LPAREN BasicExprList RPAREN  {pin=2}
 FunctionNameUsage ::= INIT_FUN|NEXT_FUN|ABS_FUN|MAX_FUN|MIN_FUN|SIN_FUN|COS_FUN
     |EXP_FUN|TAN_FUN|LN_FUN|POW_FUN|ASIN_FUN|ACOS_FUN|ATAN_FUN|SQRT_FUN
     |TO_WORD1_FUN|TO_BOOL_FUN|TO_INT_FUN|COUNT_FUN|SWCONST_FUN|UWCONST_FUN
     |TO_SIGNED_FUN|TO_UNSIGNED_FUN|SIZEOF_FUN|FLOOR_FUN|EXTEND_FUN|RESIZE_FUN
-    |READ_FUN|WRITE_FUN|CONSTARRAY_FUN|TYPE_OF_FUN
-    | SimpleIdentifier {
+    |READ_FUN|WRITE_FUN
+    | FunctionIdentifier {
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvFunctionNameUsageMixin"
 }
+private FunctionIdentifier ::= BaseIdentifier (DOT SimpleIdentifier)*
 BasicExprList ::= Expr (COMMA Expr)* {pin(".*")=1}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -529,13 +536,14 @@ BinaryLtlOp ::= LTL_AT_LAST | LTL_AT_NEXT | LTL_TRIGGERED | LTL_SINCE | LTL_RELE
 TimedLtlExpr ::= TimeLtlOp LPAREN Expr RPAREN
 TimeLtlOp ::= LTL_TIME_SINCE | LTL_TIME_UNTIL
 
-private PrimaryBasicExprGroup ::= ReferenceBasicExpr | LiteralBasicExpr | ParenthesisBasicExpr
+private PrimaryBasicExprGroup ::= ReferenceBasicExpr | LiteralBasicExpr | ParenthesisBasicExpr | SetBasicExpr
 ParenthesisBasicExpr ::= LPAREN Expr RPAREN
-LiteralBasicExpr ::= BooleanConstant
+SetBasicExpr ::= LBRACE Expr (COMMA Expr)* RBRACE
+LiteralBasicExpr ::= RangeConstant
+    | BooleanConstant
     | WholeNumber
     | RealNumber
     | WordConstant
-    | RangeConstant
     | BuiltInConstant
 BooleanConstant ::= TRUE_KW | FALSE_KW
 WordConstant ::= WORD

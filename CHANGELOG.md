@@ -9,6 +9,13 @@
 - Support `PRED`, `READ`, `WRITE`, `CONSTARRAY`, `typeof`, `pi` keywords, `@TIME_DOMAIN`, `X~`, `Y~`, `+oo`
 - `at next` / `at last` accept any amount of whitespace between words
 - `time`, `clock`, `Clock` are no longer reserved outside timed models
+- Support set expressions `{a, b}`, bit selection `w[7:4]`, `signed/unsigned word[N](e)` conversions, `CONSTARRAY(typeof(a), e)`, array DEFINEs `[[1, 2], [3, 4]]`
+- Support calls of functions declared with a complex identifier (`m.f(x)`)
+- Support module instances without parentheses (`VAR inst : counter;`) and constants/DEFINEs in word widths and range bounds (`word[N]`, `0..N`)
+- Support `array word[N] of …` and `array integer of …` types
+- Fixed range constants inside expressions (`x in 1..3`)
+- Fixed parsing of a `FUN` section following another module section
+- `unsigned word[N]` variables are recognized as words
 
 ## [0.0.3]
 

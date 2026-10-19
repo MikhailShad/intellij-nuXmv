@@ -1,0 +1,15 @@
+MODULE main
+VAR
+    r : real;
+    a : array integer of integer;
+    b : array word[4] of real;
+    m : unsigned word[4];
+DEFINE
+    circle := 2 * pi * r;
+    rd := READ(a, 3);
+    wr := WRITE(a, 3, 7);
+    rb := READ(b, m);
+    ca := CONSTARRAY(typeof(a), 0);
+    cb := CONSTARRAY(array word[4] of real, 1.5);
+    ci := CONSTARRAY(array integer of integer, 0);
+INIT a = CONSTARRAY(typeof(a), 0);
