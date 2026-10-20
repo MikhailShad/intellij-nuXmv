@@ -9,7 +9,7 @@ import com.intellij.psi.util.elementType
 import java.math.BigInteger
 import dev.mikhailshad.nuxmvplugin.language.psi.*
 import com.intellij.psi.util.parentOfType
-import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvIdentifierUsageMixin
+import dev.mikhailshad.nuxmvplugin.language.reference.NuXmvIdentifierReference
 import dev.mikhailshad.nuxmvplugin.language.psi.scope.isaModules
 import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvBuiltInType
 
@@ -54,13 +54,13 @@ class NuXmvWarningAnnotator : Annotator {
             return
         }
 
-        val identifierUsage = element as NuXmvIdentifierUsageMixin
-
-        if (identifierUsage.reference?.resolve() == null) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved reference: ${element.text}")
-                .range(element)
-                .create()
+        val unresolved = element.references.firstOrNull { it.resolve() == null } ?: return
+        if (unresolved is NuXmvIdentifierReference && unresolved.isQualified && unresolved.module == null) {
+            return
         }
+        holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved reference: ${unresolved.canonicalText}")
+            .range(unresolved.absoluteRange)
+            .create()
     }
 
     private fun checkNextUsage(element: PsiElement, holder: AnnotationHolder) {

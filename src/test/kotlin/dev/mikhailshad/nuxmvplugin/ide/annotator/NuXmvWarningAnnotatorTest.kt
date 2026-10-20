@@ -25,6 +25,33 @@ class NuXmvWarningAnnotatorTest : NuXmvCodeInsightFixtureTestCase() {
         myFixture.checkHighlighting(true, false, true)
     }
 
+    fun testUnresolvedReferences() {
+        myFixture.configureByText(
+            NuXmvFileType,
+            """
+            MODULE leaf
+            VAR
+                v : boolean;
+
+            MODULE node(p)
+            VAR
+                sub : leaf;
+            INVAR p.anything;
+
+            MODULE main
+            VAR
+                x : boolean;
+                con.s : boolean;
+                inst : node(x);
+            INVAR <error descr="Unresolved reference: y">y</error>;
+            INVAR inst.<error descr="Unresolved reference: nope">nope</error>;
+            INVAR inst.sub.<error descr="Unresolved reference: nope">nope</error>;
+            INVAR inst.sub.v & con.s & self.x;
+            """.trimIndent()
+        )
+        myFixture.checkHighlighting(true, false, true)
+    }
+
     fun testTimedConstructsOutsideTimedModel() {
         myFixture.configureByText(
             NuXmvFileType,

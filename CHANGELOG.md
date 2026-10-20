@@ -66,6 +66,8 @@
 - Quick documentation for temporal operators (LTL, CTL, RTCTL, timed) with their meaning from the nuXmv manual
 - Identifier completion offers constants, enum values, module parameters, functions and declarations included
   through `ISA`; after `instance.` it offers the fields of the instance module
+- Unresolved reference check covers every segment of a dotted name (`inst.nope`) and highlights only the unknown
+  segment
 
 ## [0.0.3]
 
