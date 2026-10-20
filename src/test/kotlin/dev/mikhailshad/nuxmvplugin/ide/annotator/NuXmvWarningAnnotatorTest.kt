@@ -136,4 +136,30 @@ class NuXmvWarningAnnotatorTest : NuXmvCodeInsightFixtureTestCase() {
         )
         assertNotNull(PsiTreeUtil.findChildOfType(file, PsiErrorElement::class.java))
     }
+
+    fun testIsaProblems() {
+        myFixture.configureByText(
+            NuXmvFileType,
+            """
+            MODULE withParams(p)
+            VAR z : boolean;
+
+            MODULE a
+            ISA <error descr="Module 'a' is recursively defined through ISA">b</error>
+
+            MODULE b
+            ISA <error descr="Module 'b' is recursively defined through ISA">a</error>
+
+            MODULE c
+            ISA <error descr="Unknown module 'nosuch'">nosuch</error>
+
+            MODULE d
+            ISA <error descr="ISA cannot include module 'withParams' with parameters">withParams</error>
+
+            MODULE main
+            VAR x : boolean;
+            """.trimIndent()
+        )
+        myFixture.checkHighlighting(true, false, true)
+    }
 }

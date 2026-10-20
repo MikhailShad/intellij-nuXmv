@@ -31,7 +31,7 @@
 | R9 | `word_value` с `_` в начале (`0b__1`), ширина 0 (`0b0_1`) | ✅ исправлено | ошибка | принимает | flex `WORD` или аннотатор |
 | R10 | Токен `HEX_NUMBER` | ✅ исправлено (токен удалён) | `12ab` — ошибка | лексится, но ни одно правило его не использует: ошибка разбора вместо понятной лексической | flex |
 | R11 | `;` после `PSLSPEC` | ✅ исправлено (обязательна в грамматике) | обязательна (`did you forget a semicolon`) | необязательна | аннотатор (по желанию) |
-| R12 | `ISA identifier` | ⚠️ | ссылка на модуль | `IDENTIFIER` без ссылки (M7 отложен, ISA deprecated) | — |
+| R12 | `ISA identifier` | ✅ исправлено | вставляет тело модуля: его объявления видны в модуле-наследнике и снаружи (`d.z`), транзитивно; ошибки — `undefined`, `recursively defined`, `too few actual parameters` | `IsaModuleName` со ссылкой `NuXmvModuleReference`; scope наследника включает объявления базы (`NuXmvScopes`, `isaModules()`); аннотатор сообщает о трёх ошибках | — |
 | R13 | Спецификация в контексте: `LTLSPEC expr IN module` (NuSMV; нет ни в приложении, ни в гл. 2) | ✅ исправлено | принимает (`test3.smv`) | `<binary ltl op> or ; expected, got 'IN'` | bnf: `… (IN_KW IdentifierUsage)?` у спецификаций |
 | R14 | Переменная внешнего `#FOR` внутри вложенного `#FOR` (`x[i]` под `#FOR j`) | ✅ исправлено | — | `i` не резолвится: `NuXmvForMacroLoopVarReference` смотрит только ближайший макрос | `NuXmvForMacroLoopVarReference.isLoopVarReference` |
 
@@ -111,7 +111,7 @@
 | `TRANS`, `INIT`, `INVAR` (обе формы), `FAIRNESS`, `JUSTICE`, `COMPASSION` | есть, `;` необязательна | ✅ | |
 | `URGENT` (гл. 2) | `UrgentConstraint` | ✅ | |
 | `PRED` (две формы), `MIRROR variable_identifier` | `PredDeclaration`, `MirrorDeclaration ::= MIRROR IdentifierUsage` | ✅ | |
-| `ISA identifier` | `IsaDeclaration ::= ISA IDENTIFIER` | ⚠️ | R12 |
+| `ISA identifier` | `IsaDeclaration ::= ISA IsaModuleName` | ✅ | R12 исправлено |
 | `parameter_synth_problem` (гл. 2) | `ParameterSynthProblemDeclaration` | ✅ | |
 
 ### Спецификации
@@ -162,6 +162,6 @@
 ## Что из этого следует
 
 1. **Ошибки разбора на валидных моделях:** R1–R5, R13, R14 исправлены. На корпусе остались только `array_max-*.smv` с переменной `max`, которые отвергает и nuXmv.
-2. **Семантика:** R6, R7, R12. Нужны правки mixin/аннотатора, грамматика затрагивается мало.
+2. **Семантика:** R6, R7, R12 исправлены.
 3. **Приоритеты:** R8 исправлено (D-009). Затронуты эталоны `Precedence`, `LtlOperators`, `TimedModel`, `Compute`, `ParSynth`; новые деревья сверены с печатью nuXmv.
 4. **Мягкость:** R9–R11 — по желанию, можно решить аннотатором.

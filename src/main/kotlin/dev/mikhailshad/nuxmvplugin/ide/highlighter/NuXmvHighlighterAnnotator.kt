@@ -22,6 +22,8 @@ class NuXmvHighlighterAnnotator : Annotator {
                 }
             }
 
+            is NuXmvIsaModuleName -> highlight(element, holder, NuXmvSyntaxHighlighter.MODULE_NAME_ATTRIBUTE)
+
             is NuXmvSimpleTypeSpecifier -> if (element.resolveType() == NuXmvBuiltInType.CLOCK) {
                 highlight(element, holder, NuXmvSyntaxHighlighter.KEYWORD_ATTRIBUTE)
             }

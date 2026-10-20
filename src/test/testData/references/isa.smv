@@ -1,0 +1,16 @@
+MODULE base
+VAR z : boolean;
+DEFINE dz := !z;
+
+MODULE middle
+ISA base
+VAR y : boolean;
+
+MODULE derived
+ISA middle
+VAR w : boolean;
+INVARSPEC w | z | dz | y;
+
+MODULE main
+VAR d : derived;
+INVARSPEC d.z | d.dz | d.w;

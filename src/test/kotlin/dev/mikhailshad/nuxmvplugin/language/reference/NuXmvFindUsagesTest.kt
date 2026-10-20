@@ -65,4 +65,14 @@ class NuXmvFindUsagesTest : NuXmvCodeInsightFixtureTestCase() {
         assertTrue(renamed.contains("con.x : real;"))
         assertTrue(renamed.contains("next(con.x) = con.x + con.delta"))
     }
+
+    fun testRenameModuleUpdatesIsa() {
+        myFixture.configureByFile("isa.smv")
+        myFixture.editor.caretModel.moveToOffset(myFixture.file.text.indexOf("MODULE base") + 8)
+        myFixture.renameElementAtCaret("core")
+        val renamed = myFixture.file.text
+        assertTrue(renamed.contains("MODULE core"))
+        assertTrue(renamed.contains("ISA core"))
+        assertFalse(renamed.contains("ISA base"))
+    }
 }

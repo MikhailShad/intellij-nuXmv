@@ -179,4 +179,5 @@ FILE
       NuXmvIsaDeclarationImpl(NuXmvElementType.ISA_DECLARATION)
         PsiElement(NuXmvTokenType.ISA)('ISA')
         PsiWhiteSpace(' ')
-        PsiElement(NuXmvTokenType.IDENTIFIER)('base')
+        NuXmvIsaModuleNameImpl(NuXmvElementType.ISA_MODULE_NAME)
+          PsiElement(NuXmvTokenType.IDENTIFIER)('base')

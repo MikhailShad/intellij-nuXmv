@@ -8,7 +8,9 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import java.math.BigInteger
 import dev.mikhailshad.nuxmvplugin.language.psi.*
+import com.intellij.psi.util.parentOfType
 import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvIdentifierUsageMixin
+import dev.mikhailshad.nuxmvplugin.language.psi.scope.isaModules
 import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvBuiltInType
 
 private val WORD_CONSTANT = Regex("0([us]?)([bBoOdDhH])([0-9]*)_([0-9a-fA-F_]+)")
@@ -26,6 +28,7 @@ class NuXmvWarningAnnotator : Annotator {
         checkTimedConstructs(element, holder)
         checkNextUsage(element, holder)
         checkWordConstant(element, holder)
+        checkIsa(element, holder)
 //        checkValidTypes(element, holder)
     }
 
@@ -90,6 +93,31 @@ class NuXmvWarningAnnotator : Annotator {
         holder.newAnnotation(HighlightSeverity.ERROR, message)
             .range(element)
             .create()
+    }
+
+    private fun checkIsa(element: PsiElement, holder: AnnotationHolder) {
+        if (element !is NuXmvIsaModuleName) return
+        val module = element.parentOfType<NuXmvModule>() ?: return
+        val target = (element.reference?.resolve() as? NuXmvModuleName)?.parentOfType<NuXmvModule>()
+        val message = when {
+            target == null -> "Unknown module '${element.text}'"
+            target.moduleDeclaration.moduleParameterList.isNotEmpty() ->
+                "ISA cannot include module '${element.text}' with parameters"
+
+            includesThroughIsa(target, module, HashSet()) ->
+                "Module '${module.moduleDeclaration.moduleName?.name}' is recursively defined through ISA"
+
+            else -> null
+        } ?: return
+        holder.newAnnotation(HighlightSeverity.ERROR, message)
+            .range(element)
+            .create()
+    }
+
+    private fun includesThroughIsa(from: NuXmvModule, target: NuXmvModule, visited: MutableSet<NuXmvModule>): Boolean {
+        if (from === target) return true
+        if (!visited.add(from)) return false
+        return from.isaModules().any { includesThroughIsa(it, target, visited) }
     }
 
     private fun checkWordConstant(element: PsiElement, holder: AnnotationHolder) {

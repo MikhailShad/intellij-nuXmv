@@ -405,7 +405,10 @@ FairnessConstraint ::= FAIRNESS_KW Expr SEMICOLON? {pin=1}
 JusticeConstraint ::= JUSTICE_KW Expr SEMICOLON? {pin=1}
 CompassionConstraint ::= COMPASSION_KW LPAREN Expr COMMA Expr RPAREN SEMICOLON? {pin=1}
 
-IsaDeclaration ::= ISA_KW IDENTIFIER {pin=1}
+IsaDeclaration ::= ISA_KW IsaModuleName {pin=1}
+IsaModuleName ::= SimpleIdentifier {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvIsaModuleNameMixin"
+}
 
 PredDeclaration ::= PRED_KW (LESS IDENTIFIER GREATER ASSIGN)? Expr SEMICOLON? {pin=1}
 

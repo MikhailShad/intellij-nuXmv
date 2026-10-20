@@ -45,6 +45,7 @@
 - `PSLSPEC` requires a terminating `;`, as in nuXmv
 - Operator precedence follows nuXmv: `a ? b : c <-> d` is `(a ? b : c) <-> d` and `?:` is right-associative; temporal operators bind weaker than comparisons and stronger than `&` (`G a & b` is `(G a) & b`, `EF x = 1` is `EF (x = 1)`, `a & b U c` is `a & (b U c)`); `@F~`/`@O~` bind weakest
 - `at next` / `at last` require exactly one space between the words, as in nuXmv
+- `ISA` references its module: navigation, find usages and rename work, declarations of the included module (transitively) resolve in the including one, and unknown, recursive or parameterized `ISA` modules are reported
 
 ## [0.0.3]
 

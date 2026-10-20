@@ -1,6 +1,7 @@
 package dev.mikhailshad.nuxmvplugin.language.psi.scope
 
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.RecursionManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
@@ -153,6 +154,14 @@ object NuXmvScopes {
             }
         }
 
+        for (base in module.isaModules()) {
+            val baseScope = RecursionManager.doPreventingRecursion(base, false) { of(base) } ?: continue
+            baseScope.declarations.forEach { (name, element) -> declarations.putIfAbsent(name, element) }
+            baseScope.variables.forEach { (name, element) -> variables.putIfAbsent(name, element) }
+            baseScope.defines.forEach { (name, element) -> defines.putIfAbsent(name, element) }
+            baseScope.submoduleEdges.forEach { (name, type) -> submoduleEdges.putIfAbsent(name, type) }
+        }
+
         return NuXmvModuleScope(
             module = module,
             declarations = declarations,
@@ -218,6 +227,13 @@ fun NuXmvModule.scope(): NuXmvModuleScope = NuXmvScopes.of(this)
 
 /** Resolve a name within the module's combined namespace. O(1) on cache hit. */
 fun NuXmvModule.findDeclaration(name: String): NuXmvNamedElement? = scope().declarations[name]
+
+/** Modules included into this one with `ISA`, in declaration order; unknown names are skipped. */
+fun NuXmvModule.isaModules(): List<NuXmvModule> {
+    val file = containingFile as? NuXmvFile ?: return emptyList()
+    val modules = NuXmvScopes.modulesIn(file)
+    return moduleBody?.isaDeclarationList.orEmpty().mapNotNull { modules[it.isaModuleName?.text] }
+}
 
 /** The submodule type instantiated by [varName], if any. */
 fun NuXmvModule.submoduleTypeOf(varName: String): String? = scope().submoduleEdges[varName]

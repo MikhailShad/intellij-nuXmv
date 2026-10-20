@@ -8,6 +8,7 @@ import dev.mikhailshad.nuxmvplugin.language.NuXmvFileType
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvIdentifierUsage
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvDefineName
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModule
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModuleName
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVarName
 
 class NuXmvIdentifierReferenceTest : NuXmvCodeInsightFixtureTestCase() {
@@ -242,6 +243,21 @@ class NuXmvIdentifierReferenceTest : NuXmvCodeInsightFixtureTestCase() {
         myFixture.configureByText(NuXmvFileType, source)
         assertEquals("i", resolveSegment("x[i]", "i").text)
         assertEquals("j", resolveSegment("j mod", "j").text)
+    }
+
+    fun testIsaReferencesModule() {
+        myFixture.configureByFile("isa.smv")
+        val target = resolveSegment("ISA base", "base")
+        assertInstanceOf(target, NuXmvModuleName::class.java)
+        assertEquals("base", (target as NuXmvModuleName).name)
+    }
+
+    fun testIsaIncludesDeclarationsTransitively() {
+        myFixture.configureByFile("isa.smv")
+        assertEquals("base", resolveSegment("w | z | dz", "z").enclosingModuleName())
+        assertEquals("base", resolveSegment("| dz | y", "dz").enclosingModuleName())
+        assertEquals("middle", resolveSegment("| dz | y", "y").enclosingModuleName())
+        assertEquals("base", resolveSegment("d.z | d.dz", "z").enclosingModuleName())
     }
 
     private fun usageAt(snippet: String, segment: String): NuXmvIdentifierUsage {
