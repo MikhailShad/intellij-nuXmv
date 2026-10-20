@@ -9,6 +9,7 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.LocalFileSystem
 import dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvSettingsState
 import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvBddCommands
@@ -31,7 +32,7 @@ class NuXmvCommandLineState(
     private val modelVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(modelFile)
         ?: throw ExecutionException("Model file does not exist: ${modelFile.absolutePath}")
     private val consoleBuilder = NuXmvSplitConsoleBuilder(project, modelVirtualFile)
-    private val console: NuXmvSplitConsole = consoleBuilder.console as NuXmvSplitConsole
+    private val console: NuXmvSplitConsole by lazy { consoleBuilder.console as NuXmvSplitConsole }
 
     override fun createConsole(executor: Executor): ConsoleView {
         return console
@@ -49,6 +50,15 @@ class NuXmvCommandLineState(
             throw ExecutionException("Invalid nuXmv executable at: $nuXmvPath. Please check the path in Settings | Tools | nuXmv")
         }
 
+        try {
+            return startNuXmv(nuXmvPath)
+        } catch (e: Throwable) {
+            Disposer.dispose(console)
+            throw e
+        }
+    }
+
+    private fun startNuXmv(nuXmvPath: String): ProcessHandler {
         // Expand macros before execution
         val expandedFile = expandMacrosIfNeeded(modelVirtualFile)
 

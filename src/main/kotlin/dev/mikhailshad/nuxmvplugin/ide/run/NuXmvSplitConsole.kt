@@ -9,6 +9,7 @@ import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBSplitter
 import dev.mikhailshad.nuxmvplugin.ide.run.visualization.NuXmvModelVisualizer
@@ -36,6 +37,9 @@ class NuXmvSplitConsole(
     }
 
     init {
+        Disposer.register(this, textConsole)
+        Disposer.register(this, visualizer)
+
         mainPanel.add(splitter, BorderLayout.CENTER)
         mainPanel.minimumSize = java.awt.Dimension(200, 200)
         mainPanel.preferredSize = java.awt.Dimension(800, 600)
@@ -87,10 +91,7 @@ class NuXmvSplitConsole(
         return textConsole.preferredFocusableComponent
     }
 
-    override fun dispose() {
-        visualizer.dispose()
-        textConsole.dispose()
-    }
+    override fun dispose() = Unit
 
     override fun hasDeferredOutput(): Boolean {
         return textConsole.hasDeferredOutput()

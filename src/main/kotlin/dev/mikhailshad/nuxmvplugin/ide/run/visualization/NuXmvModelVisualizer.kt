@@ -2,6 +2,7 @@ package dev.mikhailshad.nuxmvplugin.ide.run.visualization
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBColor
 import com.intellij.ui.jcef.JBCefBrowser
@@ -42,6 +43,8 @@ class NuXmvModelVisualizer(private val project: Project) : Disposable {
     private lateinit var modelGraph: ModelGraph
 
     init {
+        Disposer.register(this, browser)
+
         browser.component.preferredSize = java.awt.Dimension(600, 400)
         browser.component.minimumSize = java.awt.Dimension(300, 200)
         browser.component.isOpaque = false
@@ -301,11 +304,5 @@ class NuXmvModelVisualizer(private val project: Project) : Disposable {
         }
     }
 
-    /**
-     * Dispose of resources
-     */
-    override fun dispose() {
-        browser.dispose()
-        jsQuery.dispose()
-    }
+    override fun dispose() = Unit
 }
