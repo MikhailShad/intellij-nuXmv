@@ -7,13 +7,8 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVarName
 
 abstract class NuXmvVarNameMixin(node: ASTNode) : NuXmvNamedElementMixin(node), NuXmvVarName {
-    override fun getNameIdentifier(): PsiElement? {
-        return if (firstChild.elementType == NuXmvTypes.IDENTIFIER) {
-            // ComplexIdentifier
-            firstChild
-        } else {
-            // QUOTES ComplexIdentifier QUOTES
-            firstChild.nextSibling
-        }
-    }
+    private val isQuoted: Boolean get() = firstChild.elementType == NuXmvTypes.QUOTES
+
+    override val nameFirstLeaf: PsiElement? get() = if (isQuoted) firstChild.nextSibling else firstChild
+    override val nameLastLeaf: PsiElement? get() = if (isQuoted) lastChild?.prevSibling else lastChild
 }

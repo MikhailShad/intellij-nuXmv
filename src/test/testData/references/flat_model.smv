@@ -1,0 +1,30 @@
+-- Dumped layers are: model
+
+MODULE main
+  IVAR
+    con.EVENT : {add_1, remove_1, timed, stutter};
+    con.delta : real;
+  VAR
+    con.s : {0, 1, 2};
+    con.x : real;
+    c : sub;
+    c.y : boolean;
+    inst : m;
+  DEFINE
+    con.TARGET := con.s = 0;
+  ASSIGN
+    init(con.s) := 0;
+    next(con.s) := case
+        con.s = 0 & con.EVENT = add_1 : 1;
+        TRUE : con.s;
+    esac;
+  TRANS con.EVENT = timed -> next(con.x) = con.x + con.delta;
+  INVARSPEC con.TARGET | c.y | c.x | inst.a.b;
+
+MODULE sub
+  VAR
+    x : boolean;
+
+MODULE m
+  VAR
+    a.b : boolean;

@@ -7,12 +7,10 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvEnumerationTypeValue
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes
 
 abstract class NuXmvEnumValueMixin(node: ASTNode) : NuXmvNamedElementMixin(node), NuXmvEnumerationTypeValue {
-    override fun getNameIdentifier(): PsiElement? {
-        val enumValueType = firstChild.elementType
-        return if (enumValueType == NuXmvTypes.IDENTIFIER || enumValueType == NuXmvTypes.SELF_KW) {
-            return firstChild
-        } else {
-            null
+    override val nameFirstLeaf: PsiElement?
+        get() {
+            val enumValueType = firstChild.elementType
+            return if (enumValueType == NuXmvTypes.IDENTIFIER || enumValueType == NuXmvTypes.SELF_KW) firstChild else null
         }
-    }
+    override val nameLastLeaf: PsiElement? get() = nameFirstLeaf
 }

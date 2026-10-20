@@ -6,7 +6,9 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.util.parentOfType
 import dev.mikhailshad.nuxmvplugin.language.NuXmvFileType
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvIdentifierUsage
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvDefineName
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModule
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvVarName
 
 class NuXmvIdentifierReferenceTest : NuXmvCodeInsightFixtureTestCase() {
     override fun getBasePath(): String = "references"
@@ -142,6 +144,54 @@ class NuXmvIdentifierReferenceTest : NuXmvCodeInsightFixtureTestCase() {
         myFixture.configureByText(NuXmvFileType, source)
         val target = resolveSegment("typeof(a)", "a")
         assertEquals("a", target.text)
+    }
+
+    fun testFlatVariableResolvesAsOneReference() {
+        myFixture.configureByFile("flat_model.smv")
+        val usage = usageAt("next(con.s)", "con.s")
+        assertEquals(1, usage.references.size)
+        val target = checkNotNull(usage.references[0].resolve())
+        assertInstanceOf(target, NuXmvVarName::class.java)
+        assertEquals("con.s", (target as NuXmvVarName).name)
+    }
+
+    fun testFlatDefineResolves() {
+        myFixture.configureByFile("flat_model.smv")
+        val target = resolveSegment("INVARSPEC con.TARGET", "TARGET")
+        assertInstanceOf(target, NuXmvDefineName::class.java)
+        assertEquals("con.TARGET", (target as NuXmvDefineName).name)
+    }
+
+    fun testFlatNameDeclaredBesideInstanceWins() {
+        myFixture.configureByFile("flat_model.smv")
+        val flat = resolveSegment("| c.y", "y")
+        assertEquals("c.y", (flat as NuXmvVarName).name)
+        assertEquals("main", flat.enclosingModuleName())
+
+        val hierarchical = resolveSegment("| c.x", "x")
+        assertEquals("x", (hierarchical as NuXmvVarName).name)
+        assertEquals("sub", hierarchical.enclosingModuleName())
+    }
+
+    fun testFlatNameInsideSubmoduleResolves() {
+        myFixture.configureByFile("flat_model.smv")
+        val target = resolveSegment("inst.a.b", "b")
+        assertEquals("a.b", (target as NuXmvVarName).name)
+        assertEquals("m", target.enclosingModuleName())
+        assertEquals("inst", resolveSegment("inst.a.b", "inst").text)
+    }
+
+    fun testPrefixOfFlatNameAloneDoesNotResolve() {
+        val source = "MODULE main\nVAR\na.b : boolean;\nINVARSPEC a | TRUE;\n"
+        myFixture.configureByText(NuXmvFileType, source)
+        assertNull(referenceAt("a | TRUE", "a").resolve())
+    }
+
+    private fun usageAt(snippet: String, segment: String): NuXmvIdentifierUsage {
+        val text = myFixture.file.text
+        val offset = text.indexOf(snippet) + snippet.indexOf(segment)
+        val leaf = checkNotNull(myFixture.file.findElementAt(offset))
+        return checkNotNull(leaf.parentOfType<NuXmvIdentifierUsage>())
     }
 
     private fun resolveSegment(snippet: String, segment: String): PsiElement {

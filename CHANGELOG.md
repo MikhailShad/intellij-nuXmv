@@ -33,6 +33,8 @@
 - Fixed navigation bar on IntelliJ 2026.2+ (`StructureAwareNavBarModelExtension` was removed from the platform)
 - Structure view navigation no longer calls the override-only `Navigatable.navigate` (IntelliJ 2026.3)
 - Replaced deprecated `FileChooserDescriptorFactory.createSingleFileDescriptor()` in the nuXmv executable setting
+- Support flattened models (`write_flat_model` output): declarations with dotted names such as `con.s : real;` now resolve, navigate, rename and show in the structure view and visualization under their full name
+- Ctrl+click on any segment of a dotted declaration (`con.s`) shows its usages specifically
 
 ## [0.0.3]
 

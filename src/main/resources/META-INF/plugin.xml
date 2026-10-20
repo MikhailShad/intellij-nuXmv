@@ -104,6 +104,9 @@
                 implementationClass="dev.mikhailshad.nuxmvplugin.ide.refactoring.NuxmvRefactoringSupportProvider"/>
         <gotoSymbolContributor
                 implementation="dev.mikhailshad.nuxmvplugin.ide.navigation.NuXmvNavigationContributor"/>
+        <targetElementEvaluator
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.ide.navigation.NuXmvTargetElementEvaluator"/>
         <codeInsight.lineMarkerProvider
                 language="nuXmv"
                 implementationClass="dev.mikhailshad.nuxmvplugin.ide.marker.NuXmvLineMarkerProvider"/>

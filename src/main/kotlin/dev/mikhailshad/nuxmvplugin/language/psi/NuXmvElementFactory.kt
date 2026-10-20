@@ -1,7 +1,6 @@
 package dev.mikhailshad.nuxmvplugin.language.psi
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import dev.mikhailshad.nuxmvplugin.language.NuXmvFileType
 
@@ -19,11 +18,12 @@ object NuXmvElementFactory {
         return file.firstChild.firstChild as NuXmvModuleName
     }
 
-    fun createIdentifier(project: Project, name: String): PsiElement {
+    /** Parses [name] (possibly dotted, e.g. `con.s`) as a variable name; its leaves can replace any name. */
+    fun createVarName(project: Project, name: String): NuXmvVarName {
         val file = createFile(project, "MODULE main\nVAR\n$name : boolean;")
         val varDeclaration = file.findChildByClass(NuXmvModule::class.java)
             ?.moduleBody?.varDeclarationList?.first()
-        val varName = varDeclaration?.singleVarDeclarationList?.first()?.varName
-        return varName?.firstChild ?: throw IllegalStateException("Could not create identifier")
+        return varDeclaration?.singleVarDeclarationList?.first()?.varName
+            ?: throw IllegalStateException("Could not create variable name '$name'")
     }
 }
