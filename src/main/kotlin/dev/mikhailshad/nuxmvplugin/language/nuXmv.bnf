@@ -289,26 +289,26 @@ ForLoopVariable ::= SimpleIdentifier {
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
 }
 
-CtlSpecification ::= CtlSpecKeyWord NamedSpecification? Expr SEMICOLON? {
+CtlSpecification ::= CtlSpecKeyWord NamedSpecification? Expr SpecContext? SEMICOLON? {
     pin=1
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvCtlSpecificationMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
 }
 private CtlSpecKeyWord ::= CTLSPEC_KW | SPEC_KW
 
-LtlSpecification ::= LTLSPEC_KW NamedSpecification? Expr SEMICOLON? {
+LtlSpecification ::= LTLSPEC_KW NamedSpecification? Expr SpecContext? SEMICOLON? {
     pin=1
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvLtlSpecificationMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
 }
 
-InvarSpecification ::= INVARSPEC_KW NamedSpecification? Expr SEMICOLON? {
+InvarSpecification ::= INVARSPEC_KW NamedSpecification? Expr SpecContext? SEMICOLON? {
     pin=1
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvInvarSpecificationMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
 }
 
-PslSpecification ::= PSLSPEC_KW NamedSpecification? PslBody SEMICOLON? {
+PslSpecification ::= PSLSPEC_KW NamedSpecification? PslBody SpecContext? SEMICOLON? {
     pin=1
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvPslSpecificationMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
@@ -320,7 +320,7 @@ private psl_group ::= LBRACE psl_group_item* RBRACE
     | LBRACKET psl_group_item* RBRACKET
 private psl_group_item ::= psl_group | !(RBRACE | RPAREN | RBRACKET | psl_section_keyword) psl_atom
 private psl_atom ::= <<pslKeyword>> | IdentifierUsage | <<anyToken>>
-private psl_body_end ::= SEMICOLON | RBRACE | RPAREN | RBRACKET | psl_section_keyword
+private psl_body_end ::= SEMICOLON | RBRACE | RPAREN | RBRACKET | IN_KW | psl_section_keyword
 private psl_section_keyword ::= VAR_KW | IVAR_KW | FROZENVAR_KW | FUN_KW
     | DEFINE_KW | CONSTANTS_KW | ASSIGN_KW | TRANS_KW | INIT_KW | INVAR_KW | URGENT_KW | COMPASSION_KW | FAIRNESS_KW | JUSTICE_KW
     | LTLSPEC_KW | CTLSPEC_KW | SPEC_KW | INVARSPEC_KW | PSLSPEC_KW
@@ -328,6 +328,8 @@ private psl_section_keyword ::= VAR_KW | IVAR_KW | FROZENVAR_KW | FUN_KW
     | ISA_KW | PRED_KW | MIRROR_KW
     | MODULE_KW
     | FOR_MACRO_KW | END_MACRO_KW
+
+SpecContext ::= IN_KW IdentifierUsage {pin=1}
 
 NamedSpecification ::=  NAME_KW SimpleIdentifier ASSIGN {
     mixin ="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NamedSpecificationMixin"
@@ -408,7 +410,7 @@ IsaDeclaration ::= ISA_KW IDENTIFIER {pin=1}
 
 PredDeclaration ::= PRED_KW (LESS IDENTIFIER GREATER ASSIGN)? Expr SEMICOLON? {pin=1}
 
-ComputeSpecification ::= COMPUTE_KW NamedSpecification? ComputeExpr SEMICOLON? {pin=1}
+ComputeSpecification ::= COMPUTE_KW NamedSpecification? ComputeExpr SpecContext? SEMICOLON? {pin=1}
 ComputeExpr ::= (MIN_KW | MAX_KW) LBRACKET Expr COMMA Expr RBRACKET {pin=1}
 
 // parameter_synth_problem

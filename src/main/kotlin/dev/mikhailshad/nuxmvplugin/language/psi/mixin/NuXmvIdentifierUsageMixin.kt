@@ -11,10 +11,8 @@ abstract class NuXmvIdentifierUsageMixin(node: ASTNode) : ASTWrapperPsiElement(n
     override fun getReference(): PsiReference? = references.firstOrNull()
 
     override fun getReferences(): Array<PsiReference> {
-        if (NuXmvForMacroLoopVarReference.isLoopVarReference(this)) {
-            NuXmvForMacroLoopVarReference.getContainingForMacro(this)?.let {
-                return arrayOf(NuXmvForMacroLoopVarReference(this, it))
-            }
+        NuXmvForMacroLoopVarReference.findDeclaringForMacro(this)?.let {
+            return arrayOf(NuXmvForMacroLoopVarReference(this, it))
         }
         return NuXmvIdentifierReference.referencesFor(this)
     }

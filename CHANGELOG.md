@@ -37,6 +37,8 @@
 - Ctrl+click on any segment of a dotted declaration (`con.s`) shows its usages specifically
 - Support quoted identifiers (`"$auto$rename.cc:157:execute$26" : boolean;`), numeric name segments (`a.SSA.1.ssa`) and indices before a dot (`a[1].b`)
 - Support `unsigned word` / `signed word` split by several spaces or a line break, and empty module parameter lists (`MODULE m()`)
+- Support specifications evaluated in an instance context (`INVARSPEC t <= 3 IN m;`); identifiers inside resolve in the context instance
+- Fixed resolving an outer `#FOR` loop variable inside a nested `#FOR`
 
 ## [0.0.3]
 

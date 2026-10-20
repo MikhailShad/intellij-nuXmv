@@ -108,6 +108,10 @@ class NuXmvParserTest : ParsingTestCase("", "smv", NuXmvParserDefinition()) {
         doTest(true, true)
     }
 
+    fun testSpecContext() {
+        doTest(true, true)
+    }
+
     fun testRecovery() {
         doTest(true, false)
     }

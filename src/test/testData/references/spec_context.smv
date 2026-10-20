@@ -1,0 +1,15 @@
+MODULE sub
+VAR
+    t : 0..3;
+    f : boolean;
+
+MODULE inner
+VAR s : sub;
+
+MODULE main
+VAR
+    m : sub;
+    n : inner;
+INVARSPEC t <= 3 IN m;
+LTLSPEC G (f) IN n.s;
+CTLSPEC AG self.f IN m;

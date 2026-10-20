@@ -215,6 +215,35 @@ class NuXmvIdentifierReferenceTest : NuXmvCodeInsightFixtureTestCase() {
         assertEquals("a[1].b", (checkNotNull(usage.reference?.resolve()) as NuXmvVarName).name)
     }
 
+    fun testSpecificationInContextResolvesInsideInstance() {
+        myFixture.configureByFile("spec_context.smv")
+        val target = resolveSegment("INVARSPEC t <= 3 IN m", "t")
+        assertEquals("sub", target.enclosingModuleName())
+        val instance = resolveSegment("IN m;", "m")
+        assertEquals("m", instance.text)
+        assertEquals("main", instance.enclosingModuleName())
+    }
+
+    fun testSpecificationInNestedContextResolves() {
+        myFixture.configureByFile("spec_context.smv")
+        assertEquals("sub", resolveSegment("LTLSPEC G (f) IN n.s", "f").enclosingModuleName())
+        assertEquals("inner", resolveSegment("IN n.s;", "s").enclosingModuleName())
+    }
+
+    fun testSelfInContextSpecificationIsTheContextModule() {
+        myFixture.configureByFile("spec_context.smv")
+        val target = resolveSegment("CTLSPEC AG self.f IN m", "self")
+        assertEquals("sub", (target as NuXmvModule).moduleDeclaration.moduleName?.name)
+    }
+
+    fun testOuterForLoopVariableResolvesInsideNestedLoop() {
+        val source = "MODULE main\nVAR x : array 1..5 of boolean;\n#FOR i IN 1..2\n  #FOR j IN 1..2\n" +
+                "    ASSIGN x[i] := j mod 2 = 0;\n  #END\n#END\n"
+        myFixture.configureByText(NuXmvFileType, source)
+        assertEquals("i", resolveSegment("x[i]", "i").text)
+        assertEquals("j", resolveSegment("j mod", "j").text)
+    }
+
     private fun usageAt(snippet: String, segment: String): NuXmvIdentifierUsage {
         val text = myFixture.file.text
         val offset = text.indexOf(snippet) + snippet.indexOf(segment)

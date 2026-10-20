@@ -1,0 +1,23 @@
+MODULE sub
+VAR
+    t : 0..3;
+    f : boolean;
+ASSIGN
+    init(t) := 0;
+    next(t) := t;
+
+MODULE inner
+VAR s : sub;
+
+MODULE main
+VAR
+    m : sub;
+    n : inner;
+CTLSPEC AG (t = 0) IN m
+SPEC AG f IN m;
+LTLSPEC G (t >= 0) IN m
+LTLSPEC NAME p := G (t >= 0) IN m;
+INVARSPEC t <= 3 IN n.s;
+INVARSPEC self.t <= 3 IN m;
+COMPUTE MIN [t = 0, t = 1] IN m
+PSLSPEC AG (t = 0) IN m;

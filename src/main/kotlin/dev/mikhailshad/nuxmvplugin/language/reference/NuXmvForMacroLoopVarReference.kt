@@ -28,13 +28,14 @@ class NuXmvForMacroLoopVarReference(
     }
 
     companion object {
-        fun isLoopVarReference(element: NuXmvIdentifierUsage): Boolean {
-            val containingForMacro = PsiTreeUtil.getParentOfType(element, NuXmvForLoopMacro::class.java) ?: return false
-            return element.text == containingForMacro.forLoopVariable?.text
-        }
-
-        fun getContainingForMacro(element: NuXmvIdentifierUsage): NuXmvForLoopMacro? {
-            return PsiTreeUtil.getParentOfType(element, NuXmvForLoopMacro::class.java)
+        /** The innermost enclosing `#FOR` whose loop variable is named like [element], so outer loop variables are visible in nested loops. */
+        fun findDeclaringForMacro(element: NuXmvIdentifierUsage): NuXmvForLoopMacro? {
+            var macro = PsiTreeUtil.getParentOfType(element, NuXmvForLoopMacro::class.java)
+            while (macro != null) {
+                if (element.text == macro.forLoopVariable?.text) return macro
+                macro = PsiTreeUtil.getParentOfType(macro, NuXmvForLoopMacro::class.java)
+            }
+            return null
         }
     }
 }

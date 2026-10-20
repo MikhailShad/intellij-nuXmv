@@ -182,7 +182,7 @@ class NuXmvIdentifierReference(
             val segments = segmentsOf(usage)
             if (segments.isEmpty()) return EMPTY_ARRAY
             val file = usage.containingFile as? NuXmvFile
-            var module: NuXmvModule? = usage.findParentOfType<NuXmvModule>()
+            var module: NuXmvModule? = contextModuleOf(usage, file) ?: usage.findParentOfType<NuXmvModule>()
             val references = ArrayList<PsiReference>()
             var from = 0
             while (from < segments.size) {
@@ -193,6 +193,35 @@ class NuXmvIdentifierReference(
             }
             return references.toTypedArray()
         }
+
+        /**
+         * For a usage inside `SPEC … IN ctx` (but not inside `ctx` itself) returns the module of the
+         * instance `ctx`: nuXmv resolves such a specification as if it were written in that instance.
+         */
+        private fun contextModuleOf(usage: NuXmvIdentifierUsage, file: NuXmvFile?): NuXmvModule? {
+            if (file == null) return null
+            val specification = PsiTreeUtil.getParentOfType(usage, *CONTEXT_SPECIFICATIONS) ?: return null
+            val context = PsiTreeUtil.getChildOfType(specification, NuXmvSpecContext::class.java) ?: return null
+            if (PsiTreeUtil.isAncestor(context, usage, false)) return null
+            val contextUsage = context.identifierUsage ?: return null
+            val segments = segmentsOf(contextUsage)
+            var module: NuXmvModule? = specification.findParentOfType<NuXmvModule>()
+            var from = 0
+            while (from < segments.size && module != null) {
+                val to = longestDeclaredSpan(module, contextUsage, segments, from) ?: from
+                module = nextModule(module, file, nameOf(contextUsage, segments, from, to))
+                from = to + 1
+            }
+            return module
+        }
+
+        private val CONTEXT_SPECIFICATIONS = arrayOf(
+            NuXmvCtlSpecification::class.java,
+            NuXmvLtlSpecification::class.java,
+            NuXmvInvarSpecification::class.java,
+            NuXmvComputeSpecification::class.java,
+            NuXmvPslSpecification::class.java,
+        )
 
         private fun longestDeclaredSpan(
             module: NuXmvModule,
