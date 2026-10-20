@@ -6,7 +6,7 @@ deny() {
   exit 0
 }
 
-if grep -qiE '(publishPlugin|signPlugin|(sign|publish) plugin)' <<<"$input"; then
+if grep -qiE '(gradlew?[^|;&]*|"configurationName":"[^"]*)(publish|sign)Plugin' <<<"$input"; then
   deny "Publishing and signing the plugin are done by the user only."
 fi
 

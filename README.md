@@ -73,7 +73,7 @@ Plugin is available on [JetBrains Marketplace](https://plugins.jetbrains.com/plu
 1. Clone this repository
 2. Build the plugin:
    ```bash
-   ./gradlew build
+   ./gradlew buildPlugin
    ```
 3. Install the plugin from disk in IntelliJ IDEA:
     - Go to Settings → Plugins → ⚙️ → Install Plugin from Disk

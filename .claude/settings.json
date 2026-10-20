@@ -55,23 +55,13 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "Edit|Write|mcp__idea__apply_patch",
+        "matcher": "Edit|Write|mcp__idea__(apply_patch|create_new_file)",
         "hooks": [
           {
             "type": "command",
             "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/compile-grammar.sh",
             "timeout": 300,
             "statusMessage": "Regenerating grammar and compiling..."
-          }
-        ]
-      }
-    ],
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "afplay /System/Library/Sounds/Glass.aiff"
           }
         ]
       }

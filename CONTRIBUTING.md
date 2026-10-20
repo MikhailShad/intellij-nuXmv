@@ -67,7 +67,7 @@ Contains IDE-specific features and integrations:
 2. Open the project in IntelliJ IDEA
 3. Ensure you have the [Grammar-Kit](https://plugins.jetbrains.com/plugin/6606-grammar-kit)
    and [PsiViewer](https://plugins.jetbrains.com/plugin/227-psiviewer) plugins installed in your development environment
-4. Run `./gradlew build` to build the project
+4. Run `./gradlew buildPlugin` to build the project
 
 ### Making Changes
 
