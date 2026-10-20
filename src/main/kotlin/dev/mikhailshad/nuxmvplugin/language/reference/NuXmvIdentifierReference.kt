@@ -25,11 +25,15 @@ class NuXmvIdentifierReference(
     private val segments: List<Segment>,
     private val from: Int,
     private val to: Int,
-    private val module: NuXmvModule?
+    /** Module whose declarations this span is looked up in; null when the preceding span is unknown. */
+    val module: NuXmvModule?
 ) : NuXmvReferenceBase(
     element,
     TextRange(segments[from].offset, segments[to].offset + segments[to].text.length)
 ) {
+
+    /** True when this span follows another one, as `field` in `instance.field`. */
+    val isQualified: Boolean get() = from > 0
 
     override fun resolveInner(incompleteCode: Boolean): List<PsiElement> {
         val file = element.containingFile as? NuXmvFile ?: return emptyList()

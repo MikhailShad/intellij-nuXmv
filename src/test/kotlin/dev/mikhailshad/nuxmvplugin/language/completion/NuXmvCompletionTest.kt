@@ -96,12 +96,33 @@ class NuXmvCompletionTest : NuXmvCodeInsightFixtureTestCase() {
             "counter",
             "input_signal",
             "config",
-            "is_active"
+            "is_active",
+            "idle",
+            "running",
+            "stopped"
         )
         assertTrue(
             "Expected: ${expected.joinToString(", ")}\nActual: ${lookupElementStrings.joinToString(", ")}",
             lookupElementStrings.containsAll(expected)
         )
+    }
+
+    fun testDeclarationKindsCompletion() {
+        myFixture.configureByFiles("declarationKindsCompletion.smv")
+        myFixture.complete(CompletionType.BASIC)
+        val lookupElementStrings = myFixture.lookupElementStrings!!
+        val expected = listOf("level", "red", "green", "scale", "limit", "inherited")
+        assertTrue(
+            "Expected: ${expected.joinToString(", ")}\nActual: ${lookupElementStrings.joinToString(", ")}",
+            lookupElementStrings.containsAll(expected)
+        )
+    }
+
+    fun testSubmoduleFieldCompletion() {
+        myFixture.configureByFiles("submoduleFieldCompletion.smv")
+        myFixture.complete(CompletionType.BASIC)
+        val lookupElementStrings = myFixture.lookupElementStrings!!
+        assertSameElements(lookupElementStrings, "value", "full")
     }
 
     /**

@@ -64,6 +64,8 @@
 - Find Usages no longer lists the declaration itself
 - Completion offers bounded LTL templates (`G [l, u]`, `F [l, +oo)`, `p U [l, u] q`, …)
 - Quick documentation for temporal operators (LTL, CTL, RTCTL, timed) with their meaning from the nuXmv manual
+- Identifier completion offers constants, enum values, module parameters, functions and declarations included
+  through `ISA`; after `instance.` it offers the fields of the instance module
 
 ## [0.0.3]
 

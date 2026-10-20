@@ -1,0 +1,14 @@
+MODULE base
+VAR
+    inherited : boolean;
+
+MODULE main(limit)
+ISA base
+VAR
+    level : 0..3;
+CONSTANTS
+    red, green;
+FUN
+    scale : real -> real;
+INVAR
+    level < <caret>

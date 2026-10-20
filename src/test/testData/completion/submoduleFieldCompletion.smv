@@ -1,0 +1,12 @@
+MODULE counter
+VAR
+    value : 0..7;
+DEFINE
+    full := value = 7;
+
+MODULE main
+VAR
+    own : boolean;
+    c : counter;
+INVAR
+    c.<caret>
