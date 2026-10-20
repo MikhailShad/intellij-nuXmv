@@ -122,6 +122,10 @@ class NuXmvFormattingModelBuilder : FormattingModelBuilder {
             before(FOR_LOOP_MACRO).lineBreakInCode()
 
             // Section members line breaks
+            between(SINGLE_VAR_DECLARATION, SINGLE_VAR_DECLARATION).lineBreakInCode()
+            between(SINGLE_IVAR_DECLARATION, SINGLE_IVAR_DECLARATION).lineBreakInCode()
+            between(SINGLE_ASSIGN_CONSTRAINT, SINGLE_ASSIGN_CONSTRAINT).lineBreakInCode()
+            between(FUNCTION_SPECIFICATION, FUNCTION_SPECIFICATION).lineBreakInCode()
             after(DEFINE_BODY).lineBreakInCode()
             after(REGULAR_CASE_BODY).lineBreakInCode()
 

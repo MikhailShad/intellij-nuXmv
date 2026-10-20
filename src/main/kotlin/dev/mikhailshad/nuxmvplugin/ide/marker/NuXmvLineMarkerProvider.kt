@@ -6,71 +6,44 @@ import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import dev.mikhailshad.nuxmvplugin.language.NuXmvIcons
+import dev.mikhailshad.nuxmvplugin.language.parser.NuXmvParserDefinition
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvFile
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModule
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvIsaModuleName
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModuleName
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvModuleTypeSpecifier
+import dev.mikhailshad.nuxmvplugin.language.psi.scope.NuXmvScopes
 
 class NuXmvLineMarkerProvider : RelatedItemLineMarkerProvider() {
     override fun collectNavigationMarkers(
         element: PsiElement,
         result: MutableCollection<in RelatedItemLineMarkerInfo<*>>
     ) {
-        when (element) {
+        if (!NuXmvParserDefinition.Util.IDENTIFIER.contains(element.node.elementType)) return
+        val file = element.containingFile as? NuXmvFile ?: return
+
+        when (val parent = element.parent) {
             is NuXmvModuleName -> {
-                val moduleName = element.text
-                val currentFile = element.containingFile as? NuXmvFile ?: return
-                val targets = findModuleUsages(currentFile, moduleName)
-
-                if (targets.isNotEmpty()) {
+                val usages = moduleUsages(file, element.text)
+                if (usages.isNotEmpty()) {
                     val builder = NavigationGutterIconBuilder.create(NuXmvIcons.MODULE_LINK_FROM)
-                        .setTargets(targets)
+                        .setTargets(usages)
                         .setTooltipText("Navigate to module usages")
-
                     result.add(builder.createLineMarkerInfo(element))
                 }
             }
 
-            is NuXmvModuleTypeSpecifier -> {
-                val simpleIdentifier = element.firstChild
-                val moduleName = simpleIdentifier.text
-                val currentFile = element.containingFile as? NuXmvFile ?: return
-                val target = findModuleDeclaration(currentFile, moduleName)
-
-                if (target != null) {
-                    val builder = NavigationGutterIconBuilder.create(NuXmvIcons.MODULE_LINK_TO)
-                        .setTarget(target)
-                        .setTooltipText("Navigate to module declaration")
-
-                    result.add(builder.createLineMarkerInfo(element))
-                }
+            is NuXmvModuleTypeSpecifier, is NuXmvIsaModuleName -> {
+                if (parent.firstChild !== element) return
+                val declaration = NuXmvScopes.modulesIn(file)[element.text]?.moduleDeclaration ?: return
+                val builder = NavigationGutterIconBuilder.create(NuXmvIcons.MODULE_LINK_TO)
+                    .setTarget(declaration)
+                    .setTooltipText("Navigate to module declaration")
+                result.add(builder.createLineMarkerInfo(element))
             }
         }
     }
 
-    private fun findModuleUsages(file: NuXmvFile, moduleName: String): List<PsiElement> {
-        val result = mutableListOf<PsiElement>()
-
-        val moduleTypeSpecifiers = PsiTreeUtil.findChildrenOfType(file, NuXmvModuleTypeSpecifier::class.java)
-        for (specifier in moduleTypeSpecifiers) {
-            val identifier = specifier.firstChild
-            if (identifier.text == moduleName) {
-                result.add(specifier)
-            }
-        }
-
-        return result
-    }
-
-    private fun findModuleDeclaration(file: NuXmvFile, moduleName: String): PsiElement? {
-        val modules = PsiTreeUtil.findChildrenOfType(file, NuXmvModule::class.java)
-        for (module in modules) {
-            val name = module.moduleDeclaration.moduleName?.name
-            if (name == moduleName) {
-                return module.moduleDeclaration
-            }
-        }
-
-        return null
-    }
+    private fun moduleUsages(file: NuXmvFile, moduleName: String): List<PsiElement> =
+        PsiTreeUtil.findChildrenOfAnyType(file, NuXmvModuleTypeSpecifier::class.java, NuXmvIsaModuleName::class.java)
+            .filter { it.firstChild?.text == moduleName }
 }

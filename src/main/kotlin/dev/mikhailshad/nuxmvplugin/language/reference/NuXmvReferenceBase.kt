@@ -3,8 +3,6 @@ package dev.mikhailshad.nuxmvplugin.language.reference
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import com.intellij.psi.util.parentOfType
-import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement
 
 abstract class NuXmvReferenceBase(@JvmField protected val psiElement: PsiElement, range: TextRange) :
     PsiReferenceBase<PsiElement?>(psiElement, range), PsiPolyVariantReference {
@@ -44,16 +42,10 @@ abstract class NuXmvReferenceBase(@JvmField protected val psiElement: PsiElement
     }
 
     override fun equals(other: Any?): Boolean {
-        return if (other is NuXmvReferenceBase) psiElement == other.psiElement else false
+        return other is NuXmvReferenceBase && psiElement == other.psiElement
     }
 
     override fun hashCode(): Int {
         return psiElement.hashCode()
     }
-
-    protected val namedElementOwner: PsiElement?
-        get() {
-            val namedElement = psiElement.parentOfType<NuXmvNamedElement>()
-            return if (namedElement?.nameIdentifier === psiElement) namedElement else null
-        }
 }

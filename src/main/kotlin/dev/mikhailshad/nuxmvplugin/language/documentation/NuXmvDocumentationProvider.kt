@@ -2,13 +2,25 @@ package dev.mikhailshad.nuxmvplugin.language.documentation
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.lang.documentation.DocumentationMarkup
+import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
 import dev.mikhailshad.nuxmvplugin.language.psi.*
 import dev.mikhailshad.nuxmvplugin.language.psi.scope.scope
 
 class NuXmvDocumentationProvider : AbstractDocumentationProvider() {
+    override fun getCustomDocumentationElement(
+        editor: Editor,
+        file: PsiFile,
+        contextElement: PsiElement?,
+        targetOffset: Int
+    ): PsiElement? = contextElement?.takeIf { NuXmvOperatorDocumentation.isDocumented(it.elementType) }
+
     override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
+        NuXmvOperatorDocumentation.render(element.elementType)?.let { return it }
+
         // Handle module documentation
         if (element is NuXmvModule) {
             return generateModuleDoc(element)

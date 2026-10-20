@@ -75,4 +75,13 @@ class NuXmvFindUsagesTest : NuXmvCodeInsightFixtureTestCase() {
         assertTrue(renamed.contains("ISA core"))
         assertFalse(renamed.contains("ISA base"))
     }
+
+    fun testFindUsagesDoesNotListTheDeclarationItself() {
+        myFixture.configureByFile("flat_model.smv")
+        val declarationOffset = myFixture.file.text.indexOf("con.s :")
+        myFixture.editor.caretModel.moveToOffset(declarationOffset + 1)
+        val usages = myFixture.findUsages(myFixture.elementAtCaret)
+        assertEquals(5, usages.size)
+        assertTrue(usages.none { it.element?.textRange?.contains(declarationOffset) == true })
+    }
 }

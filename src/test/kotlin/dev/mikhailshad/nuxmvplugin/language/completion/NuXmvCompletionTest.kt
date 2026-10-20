@@ -129,6 +129,28 @@ class NuXmvCompletionTest : NuXmvCodeInsightFixtureTestCase() {
         )
     }
 
+    fun testBoundedLtlOperatorCompletion() {
+        myFixture.configureByFiles("ltlOperatorCompletion.smv")
+        myFixture.complete(CompletionType.BASIC)
+        val expected =
+            listOf("G [l, u]", "F [l, u]", "H [l, u]", "O [l, u]", "G [l, +oo)", "F [l, +oo)", "U [l, u]", "S [l, u]")
+        val lookupElementStrings = myFixture.lookupElementStrings!!
+        assertTrue(
+            "Expected: ${expected.joinToString(", ")}\nActual: ${lookupElementStrings.joinToString(", ")}",
+            lookupElementStrings.containsAll(expected)
+        )
+    }
+
+    fun testBoundedLtlTemplateInsertion() {
+        myFixture.configureByFiles("ltlOperatorCompletion.smv")
+        myFixture.complete(CompletionType.BASIC)
+        val item = myFixture.lookupElements!!.first { it.lookupString == "G [l, u]" }
+        myFixture.lookup.currentItem = item
+        myFixture.finishLookup(com.intellij.codeInsight.lookup.Lookup.NORMAL_SELECT_CHAR)
+        com.intellij.codeInsight.template.impl.TemplateManagerImpl.getTemplateState(myFixture.editor)?.gotoEnd(false)
+        assertTrue(myFixture.file.text, myFixture.file.text.contains("LTLSPEC G [l, u] "))
+    }
+
     fun testCtlOperatorCompletion() {
         myFixture.configureByFiles("ctlOperatorCompletion.smv")
         myFixture.complete(CompletionType.BASIC)

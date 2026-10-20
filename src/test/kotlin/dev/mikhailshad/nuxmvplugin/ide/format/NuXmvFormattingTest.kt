@@ -50,6 +50,36 @@ class NuXmvFormattingTest : NuXmvCodeInsightFixtureTestCase() {
         assertEquals(after, myFixture.file.text)
     }
 
+    fun testOneDeclarationPerLine() {
+        val before = "MODULE main\nVAR a:boolean;b:boolean;\nIVAR i:boolean;j:boolean;\nFROZENVAR p:real;q:real;\n" +
+                "DEFINE d:=a;e:=b;\nASSIGN init(a):=TRUE;next(a):=b;\nFUN f:real -> real;g:real -> real;\nCONSTANTS c1, c2;"
+        val after = """
+            MODULE main
+              VAR
+                a : boolean;
+                b : boolean;
+              IVAR
+                i : boolean;
+                j : boolean;
+              FROZENVAR
+                p : real;
+                q : real;
+              DEFINE
+                d := a;
+                e := b;
+              ASSIGN
+                init(a) := TRUE;
+                next(a) := b;
+              FUN
+                f : real -> real;
+                g : real -> real;
+              CONSTANTS c1, c2;
+        """.trimIndent()
+        myFixture.configureByText(NuXmvFileType, before)
+        myFixture.performEditorAction("ReformatCode")
+        assertEquals(after, myFixture.file.text)
+    }
+
     fun testComplexFormatting() {
         val files = Files.walk(Paths.get(testDataPath, "input")).filter { it.isRegularFile() }.map { it.name }.toList()
 

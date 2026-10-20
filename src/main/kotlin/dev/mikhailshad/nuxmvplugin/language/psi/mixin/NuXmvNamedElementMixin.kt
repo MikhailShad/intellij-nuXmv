@@ -4,12 +4,10 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.util.IncorrectOperationException
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvElementFactory
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement
-import dev.mikhailshad.nuxmvplugin.language.reference.NuXmvNamedElementReference
 
 abstract class NuXmvNamedElementMixin(node: ASTNode) : ASTWrapperPsiElement(node), NuXmvNamedElement {
     protected open val nameFirstLeaf: PsiElement? get() = firstChild
@@ -35,7 +33,6 @@ abstract class NuXmvNamedElementMixin(node: ASTNode) : ASTWrapperPsiElement(node
 
     override fun getNavigationElement(): PsiElement = nameFirstLeaf ?: this
     override fun getTextOffset(): Int = nameFirstLeaf?.textOffset ?: super.getTextOffset()
-    override fun getReference(): PsiReference? = NuXmvNamedElementReference(this)
     override fun setName(name: String): PsiElement {
         val first = nameFirstLeaf ?: throw IncorrectOperationException("No name identifier found")
         val last = nameLastLeaf ?: first

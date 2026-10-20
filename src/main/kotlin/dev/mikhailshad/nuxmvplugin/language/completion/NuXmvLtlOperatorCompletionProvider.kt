@@ -1,9 +1,10 @@
 package dev.mikhailshad.nuxmvplugin.language.completion
 
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.CompletionProvider
-import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.codeInsight.template.TemplateManager
+import com.intellij.codeInsight.template.impl.TextExpression
 import com.intellij.util.ProcessingContext
 import dev.mikhailshad.nuxmvplugin.language.psi.isInTimedModel
 
@@ -27,6 +28,16 @@ object NuXmvLtlOperatorCompletionProvider : CompletionProvider<CompletionParamet
         "X~" to "LTL: Timed Next",
         "Y~" to "LTL: Timed Previous"
     )
+    private val boundedOperators = listOf(
+        "G" to "Globally", "F" to "Finally", "H" to "Historically", "O" to "Once"
+    ).flatMap { (op, name) ->
+        listOf(
+            BoundedTemplate("$op [l, u]", "$op [\$L\$, \$U\$] ", "LTL: Bounded $name"),
+            BoundedTemplate("$op [l, +oo)", "$op [\$L\$, +oo) ", "LTL: Bounded $name")
+        )
+    } + listOf("U" to "Until", "V" to "Releases", "S" to "Since", "T" to "Triggered").map { (op, name) ->
+        BoundedTemplate("$op [l, u]", "$op [\$L\$, \$U\$] ", "LTL: Bounded $name")
+    }
 
     override fun addCompletions(
         parameters: CompletionParameters,
@@ -40,6 +51,31 @@ object NuXmvLtlOperatorCompletionProvider : CompletionProvider<CompletionParamet
                 .bold()
 
             resultSet.addElement(element)
+        }
+        boundedOperators.forEach { template ->
+            resultSet.addElement(
+                LookupElementBuilder.create(template.label)
+                    .withTypeText(template.description)
+                    .bold()
+                    .withInsertHandler(template)
+            )
+        }
+    }
+
+    private class BoundedTemplate(
+        val label: String,
+        private val text: String,
+        val description: String
+    ) : InsertHandler<LookupElement> {
+        override fun handleInsert(context: InsertionContext, item: LookupElement) {
+            context.document.deleteString(context.startOffset, context.tailOffset)
+            val templateManager = TemplateManager.getInstance(context.project)
+            val template = templateManager.createTemplate("", "nuXmv", text)
+            template.addVariable("L", TextExpression("l"), TextExpression("l"), true)
+            if (text.contains("\$U\$")) {
+                template.addVariable("U", TextExpression("u"), TextExpression("u"), true)
+            }
+            templateManager.startTemplate(context.editor, template)
         }
     }
 }

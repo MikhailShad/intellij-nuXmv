@@ -42,7 +42,7 @@ TRANS
 
 MODULE test
 VAR     q:real;
-ASSIGN      q    := 2.5
+ASSIGN      q    := 2.5;
 INVARSPEC q     >= 1
 
 MODULE main
