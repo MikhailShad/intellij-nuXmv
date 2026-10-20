@@ -72,6 +72,13 @@ intellijPlatform {
         }
     }
 
+    changelog {
+        version = property("pluginVersion")
+        path = "${project.projectDir}/CHANGELOG.md"
+        unreleasedTerm = "[Unreleased]"
+        keepUnreleasedSection = false
+    }
+
     signing {
         certificateChainFile = file(env.CERTIFICATE_CHAIN_FILE.value)
         privateKeyFile = file(env.PRIVATE_KEY_FILE.value)
