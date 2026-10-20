@@ -35,6 +35,8 @@
 - Replaced deprecated `FileChooserDescriptorFactory.createSingleFileDescriptor()` in the nuXmv executable setting
 - Support flattened models (`write_flat_model` output): declarations with dotted names such as `con.s : real;` now resolve, navigate, rename and show in the structure view and visualization under their full name
 - Ctrl+click on any segment of a dotted declaration (`con.s`) shows its usages specifically
+- Support quoted identifiers (`"$auto$rename.cc:157:execute$26" : boolean;`), numeric name segments (`a.SSA.1.ssa`) and indices before a dot (`a[1].b`)
+- Support `unsigned word` / `signed word` split by several spaces or a line break, and empty module parameter lists (`MODULE m()`)
 
 ## [0.0.3]
 

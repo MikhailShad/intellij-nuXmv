@@ -76,9 +76,10 @@ class NuXmvHighlighterAnnotator : Annotator {
             }
 
             is NuXmvModuleTypeSpecifier -> {
+                val moduleName = (element as NuXmvModuleTypeSpecifier).identifier ?: return
                 holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                     .textAttributes(NuXmvSyntaxHighlighter.TYPE_SPECIFIER_ATTRIBUTE)
-                    .range((element as NuXmvModuleTypeSpecifier).identifier)
+                    .range(moduleName)
                     .create()
             }
         }

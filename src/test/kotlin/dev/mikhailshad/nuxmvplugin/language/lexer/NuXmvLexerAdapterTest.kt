@@ -350,6 +350,19 @@ class NuXmvLexerAdapterTest : LexerTestCase() {
         )
     }
 
+    fun testQuotedIdentifiersAndSpacedWordTypes() {
+        doTest(
+            "\"a.b c:\" unsigned  word signed\nword",
+            """
+                NuXmvTokenType.QUOTED_IDENTIFIER ('"a.b c:"')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.unsigned word ('unsigned  word')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.signed word ('signed\nword')
+            """.trimIndent()
+        )
+    }
+
     override fun createLexer(): Lexer = NuXmvLexerAdapter()
 
     override fun getDirPath(): String = "src/test/testData/parser"

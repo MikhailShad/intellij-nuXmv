@@ -1,0 +1,9 @@
+MODULE main
+VAR
+    "amount" : word[5];
+    "$auto$rename.cc:157:execute$26" : boolean;
+    "x y:z" : boolean;
+DEFINE
+    __expr1 := ! "$auto$rename.cc:157:execute$26";
+    __expr2 := "amount" = 0ud5_0 & "x y:z";
+INVARSPEC __expr1 | __expr2;

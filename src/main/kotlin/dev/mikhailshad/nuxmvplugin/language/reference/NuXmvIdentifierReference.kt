@@ -1,8 +1,11 @@
 package dev.mikhailshad.nuxmvplugin.language.reference
 
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.findParentOfType
 import com.intellij.psi.util.parentOfType
@@ -36,7 +39,7 @@ class NuXmvIdentifierReference(
             emptyList()
         }
 
-        val name = nameOf(segments, from, to)
+        val name = nameOf(element, segments, from, to)
         if (name == SELF) {
             // `self` resolves to the containing module itself (goto navigates to the module header).
             return listOf(currentModule)
@@ -74,7 +77,7 @@ class NuXmvIdentifierReference(
         var seen = 0
         while (child != null) {
             val type = child.node.elementType
-            if (type == NuXmvTypes.IDENTIFIER || type == NuXmvTypes.SELF_KW) {
+            if (type in SEGMENT_TOKENS) {
                 if (seen == index) return child
                 seen++
             }
@@ -161,7 +164,7 @@ class NuXmvIdentifierReference(
             var child: PsiElement? = usage.firstChild
             while (child != null) {
                 val type = child.node.elementType
-                if (type == NuXmvTypes.IDENTIFIER || type == NuXmvTypes.SELF_KW) {
+                if (type in SEGMENT_TOKENS) {
                     result.add(Segment(child.text, child.startOffsetInParent))
                 }
                 child = child.nextSibling
@@ -183,18 +186,23 @@ class NuXmvIdentifierReference(
             val references = ArrayList<PsiReference>()
             var from = 0
             while (from < segments.size) {
-                val to = module?.let { longestDeclaredSpan(it, segments, from) } ?: from
+                val to = module?.let { longestDeclaredSpan(it, usage, segments, from) } ?: from
                 references.add(NuXmvIdentifierReference(usage, segments, from, to, module))
-                module = nextModule(module, file, nameOf(segments, from, to))
+                module = nextModule(module, file, nameOf(usage, segments, from, to))
                 from = to + 1
             }
             return references.toTypedArray()
         }
 
-        private fun longestDeclaredSpan(module: NuXmvModule, segments: List<Segment>, from: Int): Int? {
+        private fun longestDeclaredSpan(
+            module: NuXmvModule,
+            usage: PsiElement,
+            segments: List<Segment>,
+            from: Int
+        ): Int? {
             val declarations = module.scope().declarations
             for (to in segments.lastIndex downTo from + 1) {
-                if (nameOf(segments, from, to) in declarations) return to
+                if (nameOf(usage, segments, from, to) in declarations) return to
             }
             return null
         }
@@ -206,7 +214,26 @@ class NuXmvIdentifierReference(
             return NuXmvScopes.modulesIn(file)[moduleType]
         }
 
-        private fun nameOf(segments: List<Segment>, from: Int, to: Int): String =
-            segments.subList(from, to + 1).joinToString(".") { it.text }
+        private val SEGMENT_TOKENS = TokenSet.create(
+            NuXmvTypes.IDENTIFIER,
+            NuXmvTypes.QUOTED_IDENTIFIER,
+            NuXmvTypes.POSITIVE_INTEGER_NUMBER,
+            NuXmvTypes.SELF_KW
+        )
+
+        // The span is named by its source text, so indices between segments (`a[1].b`) are kept.
+        private fun nameOf(usage: PsiElement, segments: List<Segment>, from: Int, to: Int): String {
+            val start = segments[from].offset
+            val end = segments[to].offset + segments[to].text.length
+            val name = StringBuilder()
+            var child: PsiElement? = usage.firstChild
+            while (child != null && child.startOffsetInParent < end) {
+                if (child.startOffsetInParent >= start && child !is PsiWhiteSpace && child !is PsiComment) {
+                    name.append(child.text)
+                }
+                child = child.nextSibling
+            }
+            return name.toString()
+        }
     }
 }

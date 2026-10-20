@@ -39,7 +39,7 @@ class NuXmvParserDefinition : ParserDefinition {
         val COMMA = TokenSet.create(NuXmvTypes.COMMA)
 
         @JvmStatic
-        val IDENTIFIER = TokenSet.create(NuXmvTypes.IDENTIFIER)
+        val IDENTIFIER = TokenSet.create(NuXmvTypes.IDENTIFIER, NuXmvTypes.QUOTED_IDENTIFIER)
 
         @JvmStatic
         val MATH_OPERATORS = TokenSet.create(

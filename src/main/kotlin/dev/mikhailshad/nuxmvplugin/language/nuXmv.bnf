@@ -57,7 +57,6 @@
     COLON           = ':'
     RANGE           = '..'
     CONCAT          = '::'
-    QUOTES          = '"'
 
     UNION           = 'union'
     IN              = 'in'
@@ -207,6 +206,7 @@
     END_MACRO_KW        = '#END'
 
     IDENTIFIER = "regexp:[A-Za-z_][A-Za-z_0-9$\-#]*"
+    QUOTED_IDENTIFIER = 'regexp:"[^"]*"'
     WORD = "regexp:0[us]?[bBdDoOhH][0-9]*_[0-9a-fA-F_]+"
     HEX_NUMBER = "regexp:([0-9a-fA-F]+)"
     FLOAT_NUMBER = "regexp:[0-9]+\.[0-9]+"
@@ -229,7 +229,7 @@ CODE FORMATTING
 File ::= !<<eof>> TimeDomainAnnotation? Module+ {pin=1}
 TimeDomainAnnotation ::= TIME_DOMAIN_KW IDENTIFIER {pin=1}
 Module ::= ModuleDeclaration ModuleBody?
-ModuleDeclaration ::= MODULE_KW ModuleName (LPAREN ModuleParameter (COMMA ModuleParameter)* RPAREN)? {
+ModuleDeclaration ::= MODULE_KW ModuleName (LPAREN (ModuleParameter (COMMA ModuleParameter)*)? RPAREN)? {
     pin=1
 }
 ModuleName ::= SimpleIdentifier {
@@ -349,8 +349,8 @@ SingleIvarDeclaration ::= VarName COLON SimpleTypeSpecifier SEMICOLON {
 }
 
 FrozenVarDeclaration ::= FROZENVAR_KW SingleIvarDeclaration+ {pin=1}
-VarName ::= QUOTES ComplexIdentifier QUOTES | ComplexIdentifier {
-    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvVarNameMixin"
+VarName ::= ComplexIdentifier {
+    mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvNamedElementMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvNamedElement"
 }
 
@@ -582,6 +582,7 @@ ReferenceBasicExpr ::= IdentifierUsage
 IdentifierUsage ::= ComplexIdentifier | SimpleIdentifier {
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvIdentifierUsageMixin"
 }
-private ComplexIdentifier ::= BaseIdentifier (DOT SimpleIdentifier) * (LBRACKET Expr RBRACKET)*
+private ComplexIdentifier ::= BaseIdentifier (DOT NameSegment | LBRACKET Expr RBRACKET)*
+private NameSegment ::= SimpleIdentifier | POSITIVE_INTEGER_NUMBER
 private BaseIdentifier ::= SimpleIdentifier | SELF_KW
-private SimpleIdentifier ::= IDENTIFIER
+private SimpleIdentifier ::= IDENTIFIER | QUOTED_IDENTIFIER

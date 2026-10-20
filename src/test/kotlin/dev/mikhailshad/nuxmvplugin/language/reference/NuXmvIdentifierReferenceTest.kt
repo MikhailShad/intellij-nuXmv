@@ -187,6 +187,34 @@ class NuXmvIdentifierReferenceTest : NuXmvCodeInsightFixtureTestCase() {
         assertNull(referenceAt("a | TRUE", "a").resolve())
     }
 
+    fun testQuotedNameResolvesOnlyQuoted() {
+        val source = "MODULE main\nVAR\n\"amount\" : boolean;\nINVARSPEC \"amount\" | amount;\n"
+        myFixture.configureByText(NuXmvFileType, source)
+        val quoted = resolveSegment("INVARSPEC \"amount\"", "\"amount\"")
+        assertEquals("\"amount\"", (quoted as NuXmvVarName).name)
+        assertNull(referenceAt("| amount", "amount").resolve())
+    }
+
+    fun testQuotedNameWithSpecialCharactersResolves() {
+        val source = "MODULE main\nVAR\n\"x y:z\" : boolean;\nINVARSPEC ! \"x y:z\";\n"
+        myFixture.configureByText(NuXmvFileType, source)
+        assertEquals("\"x y:z\"", (resolveSegment("! \"x y:z\"", "x y:z") as NuXmvVarName).name)
+    }
+
+    fun testNumericSegmentNameResolves() {
+        val source = "MODULE main\nVAR\nx.1 : boolean;\nx.1.y : boolean;\nINVARSPEC x.1 | x.1.y;\n"
+        myFixture.configureByText(NuXmvFileType, source)
+        assertEquals("x.1", (resolveSegment("INVARSPEC x.1", "1") as NuXmvVarName).name)
+        assertEquals("x.1.y", (resolveSegment("| x.1.y", "y") as NuXmvVarName).name)
+    }
+
+    fun testIndexBeforeDotNameResolves() {
+        val source = "MODULE main\nVAR\na[1].b : boolean;\nINVARSPEC a[1].b;\n"
+        myFixture.configureByText(NuXmvFileType, source)
+        val usage = usageAt("INVARSPEC a[1].b", "a[1].b")
+        assertEquals("a[1].b", (checkNotNull(usage.reference?.resolve()) as NuXmvVarName).name)
+    }
+
     private fun usageAt(snippet: String, segment: String): NuXmvIdentifierUsage {
         val text = myFixture.file.text
         val offset = text.indexOf(snippet) + snippet.indexOf(segment)

@@ -1,0 +1,7 @@
+MODULE main
+VAR
+    a[1].b : boolean;
+    arr : array 0..1 of boolean;
+DEFINE
+    d := a[1].b | arr[0];
+INVARSPEC a[1].b | !a[1].b;

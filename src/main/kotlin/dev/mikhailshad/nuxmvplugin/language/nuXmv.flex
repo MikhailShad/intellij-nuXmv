@@ -26,6 +26,7 @@ import static dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes.*;
 LETTER=[A-Za-z_]
 DIGIT=[0-9]
 IDENTIFIER={LETTER} ({LETTER} | {DIGIT} | [\$\-\#])*
+QUOTED_IDENTIFIER=\" [^\"]* \"
 
 POSITIVE_INTEGER_NUMBER = {DIGIT}+
 FLOAT_NUMBER = {POSITIVE_INTEGER_NUMBER} "." {POSITIVE_INTEGER_NUMBER}
@@ -91,8 +92,8 @@ LINE_COMMENT=("--")[^\r\n]*
     // Type Spcifier
     "boolean"        {return BOOLEAN_TYPE;}
     "word"           {return WORD_TYPE;}
-    "unsigned word"  {return UNSIGNED_WORD_TYPE;}
-    "signed word"    {return SIGNED_WORD_TYPE;}
+    "unsigned" {WHITE_SPACE} "word"  {return UNSIGNED_WORD_TYPE;}
+    "signed" {WHITE_SPACE} "word"    {return SIGNED_WORD_TYPE;}
     "integer"        {return INTEGER_TYPE;}
     "real"           {return REAL_TYPE;}
     "array"          {return ARRAY_TYPE;}
@@ -235,6 +236,7 @@ LINE_COMMENT=("--")[^\r\n]*
 
     // Common tokens
     {IDENTIFIER}                 {return IDENTIFIER;}
+    {QUOTED_IDENTIFIER}          {return QUOTED_IDENTIFIER;}
     {WORD}                       {return WORD;}
     {POSITIVE_INTEGER_NUMBER}    {return POSITIVE_INTEGER_NUMBER;}
     {FLOAT_NUMBER}               {return FLOAT_NUMBER;}

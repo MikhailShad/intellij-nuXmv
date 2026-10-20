@@ -1,0 +1,8 @@
+MODULE main
+VAR
+    u : unsigned  word[8];
+    s : signed
+        word[4];
+    t : unsigned	word[2];
+DEFINE
+    c := unsigned  word[8](3);

@@ -1,0 +1,6 @@
+MODULE main
+VAR
+    cb__77$main.SSA.1.ssa : unsigned word[32];
+    x.1 : boolean;
+    x.1.y : boolean;
+INVARSPEC x.1 | x.1.y | cb__77$main.SSA.1.ssa = 0ud32_0;

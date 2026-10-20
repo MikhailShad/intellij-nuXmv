@@ -12,7 +12,10 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes
  */
 class NuXmvTargetElementEvaluator : TargetElementEvaluatorEx2() {
     override fun getNamedElement(element: PsiElement): PsiElement? {
-        if (element.elementType != NuXmvTypes.IDENTIFIER) return null
+        if (element.elementType != NuXmvTypes.IDENTIFIER
+            && element.elementType != NuXmvTypes.QUOTED_IDENTIFIER
+            && element.elementType != NuXmvTypes.POSITIVE_INTEGER_NUMBER
+        ) return null
         val owner = element.parent as? NuXmvNamedElement ?: return null
         val nameIdentifier = owner.nameIdentifier ?: return null
         return if (nameIdentifier.textRange.contains(element.textRange)) owner else null

@@ -88,6 +88,26 @@ class NuXmvParserTest : ParsingTestCase("", "smv", NuXmvParserDefinition()) {
         doTest(true, true)
     }
 
+    fun testIndexBeforeDot() {
+        doTest(true, true)
+    }
+
+    fun testWordTypeSpacing() {
+        doTest(true, true)
+    }
+
+    fun testEmptyModuleParameters() {
+        doTest(true, true)
+    }
+
+    fun testNumericNameSegments() {
+        doTest(true, true)
+    }
+
+    fun testQuotedIdentifiers() {
+        doTest(true, true)
+    }
+
     fun testRecovery() {
         doTest(true, false)
     }
