@@ -28,9 +28,9 @@
 | R6 | `Clock` как тип в TTS (приложение: «clock and Clock are … type specifiers») | ✅ исправлено | принимает | разбирается как `ModuleTypeSpecifier` (экземпляр модуля `Clock`), ошибки разбора нет | `NuXmvParserUtil.clockTypeName` |
 | R7 | `simple_expr` / `next_expr`: `next` запрещён в INIT, INVAR, `init()`/обычном ASSIGN, CTLSPEC, `parameter_list`, PRED | ✅ исправлено (аннотатор) | `unexpected 'next' operator` при `flatten_hierarchy` (проверено на INIT и CTLSPEC) | не диагностируется | аннотатор |
 | R8 | Приоритеты: хвост `?:` поглощает `<->`/`->`; LTL/CTL-операторы связывают сильнее basic-операторов | ⚠️ | по мануалу (стр. 15) | дерево другое, ошибок разбора нет | `Expr` в bnf; известно с этапа 3 |
-| R9 | `word_value` с `_` в начале (`0b__1`), ширина 0 (`0b0_1`) | ➕ | ошибка | принимает | flex `WORD` или аннотатор |
-| R10 | Токен `HEX_NUMBER` | ⚠️ | `12ab` — ошибка | лексится, но ни одно правило его не использует: ошибка разбора вместо понятной лексической | flex |
-| R11 | `;` после `PSLSPEC` | ➕ | обязательна (`did you forget a semicolon`) | необязательна | аннотатор (по желанию) |
+| R9 | `word_value` с `_` в начале (`0b__1`), ширина 0 (`0b0_1`) | ✅ исправлено | ошибка | принимает | flex `WORD` или аннотатор |
+| R10 | Токен `HEX_NUMBER` | ✅ исправлено (токен удалён) | `12ab` — ошибка | лексится, но ни одно правило его не использует: ошибка разбора вместо понятной лексической | flex |
+| R11 | `;` после `PSLSPEC` | ✅ исправлено (обязательна в грамматике) | обязательна (`did you forget a semicolon`) | необязательна | аннотатор (по желанию) |
 | R12 | `ISA identifier` | ⚠️ | ссылка на модуль | `IDENTIFIER` без ссылки (M7 отложен, ISA deprecated) | — |
 | R13 | Спецификация в контексте: `LTLSPEC expr IN module` (NuSMV; нет ни в приложении, ни в гл. 2) | ✅ исправлено | принимает (`test3.smv`) | `<binary ltl op> or ; expected, got 'IN'` | bnf: `… (IN_KW IdentifierUsage)?` у спецификаций |
 | R14 | Переменная внешнего `#FOR` внутри вложенного `#FOR` (`x[i]` под `#FOR j`) | ✅ исправлено | — | `i` не резолвится: `NuXmvForMacroLoopVarReference` смотрит только ближайший макрос | `NuXmvForMacroLoopVarReference.isLoopVarReference` |
@@ -51,8 +51,8 @@
 | `float_number` | `{POS} "." {POS}` | ✅ | |
 | `fractional_number` | `[fF] "'" {POS} "/" {POS}` | ✅ | в мануале типографский `’`, nuXmv принимает ASCII `'` |
 | `exponential_number` | `({POS}\|{FLOAT}) [eE] "-"? {POS}` | ✅ | |
-| `word_constant` | `0 [us]? [bBdDoOhH] {DIGIT}* _ [0-9a-fA-F_]+` | ➕ | R9: значение может начинаться с `_`, ширина 0 допускается |
-| hex-числа вне word | `HEX_NUMBER` | ⚠️ | R10: в языке такого токена нет |
+| `word_constant` | `0 [us]? [bBdDoOhH] {DIGIT}* _ [0-9a-fA-F] [0-9a-fA-F_]*` + аннотатор | ✅ | R9 исправлено: лексер требует цифру в начале значения; ширину 1..2³¹−1, десятичную ширину, цифры основания и помещение в ширину проверяет `NuXmvWarningAnnotator` |
+| hex-числа вне word | — | ✅ | R10 исправлено: `HEX_NUMBER` удалён, `12ab` даёт `12` + `ab`, как у nuXmv |
 | `"…"` | `QUOTED_IDENTIFIER = "[^"]*"` | ✅ | R5 исправлено; кавычки — часть имени (D-008) |
 | Лишние зарезервированные `COMPID`, `COMPWFF`, `CONSTRAINT`, `CTLWFF`, `ITYPE`, `LTLWFF`, `MDEFINE`, `NEXTWFF`, `noncontinuous`, `PREDICATES`, `SIMPWFF`, `Integer`, `Real`, `Word`, `IN` | лексятся, в грамматике не используются | ✅ | верно: слова зарезервированы и не могут быть идентификаторами |
 | `#`, `#FOR`, `#END` | `MACRO_PREFIX`, `FOR_MACRO_KW`, `END_MACRO_KW` | ➕ | расширение плагина (макрос `#FOR`), в языке nuXmv нет |
@@ -125,7 +125,7 @@
 | Bounded LTL, `X~`/`Y~`, `time_until(e) op e` (гл. 2) | `Bound`, `LTL_TIMED_*`, `TimedLtlExpr` | ✅ | `Bound` допускается после любого унарного LTL-оператора (мягко) |
 | `rtctl_expr` (`EBF/ABF/EBG/ABG range`, `A/E [ … BU range … ]`) | `RtCtlUnaryExpr`, хвост `UntilCtlExpr` | ✅ | |
 | `COMPUTE` (+ `NAME`) | `ComputeSpecification` | ✅ | |
-| `PSLSPEC … ;` | `PslSpecification` с мягким телом | ➕ | D-002; `;` необязательна (R11); `case … endcase` не поддержан — nuXmv 2.1.0 на нашем примере с `case` тоже дал syntax error |
+| `PSLSPEC … ;` | `PslSpecification` с мягким телом, `;` обязательна | ✅ | D-002; R11 исправлено; `case … endcase` не поддержан — nuXmv 2.1.0 на нашем примере с `case` тоже дал syntax error |
 
 ## Прогон по корпусу после R1–R5
 
@@ -149,6 +149,15 @@
 - **разрешён:** TRANS, INVARSPEC, LTLSPEC, DEFINE, `next(x) := …`, URGENT, параметры экземпляра модуля (вопреки `parameter_list :: simple_expr` приложения).
 
 Аннотатор повторяет именно это поведение. На корпусе срабатываний 0.
+
+**R9, правила word-констант** (nuXmv 2.1.0):
+- значение начинается с hex-цифры, иначе `syntax error`; хвостовой `_` допустим;
+- ширина 1..2147483647;
+- десятичная константа требует ширину;
+- цифры соответствуют основанию (иначе `Parser error`);
+- значение помещается в ширину без знака: `0sd4_8` принимается.
+
+На корпусе 25 321 word-константа, срабатываний 0.
 
 ## Что из этого следует
 

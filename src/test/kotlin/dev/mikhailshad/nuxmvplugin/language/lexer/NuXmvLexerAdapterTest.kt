@@ -363,6 +363,22 @@ class NuXmvLexerAdapterTest : LexerTestCase() {
         )
     }
 
+    fun testMalformedNumbersSplitLikeNuXmv() {
+        doTest(
+            "0b__1 12ab 1e",
+            """
+                NuXmvTokenType.POSITIVE_INTEGER_NUMBER ('0')
+                NuXmvTokenType.IDENTIFIER ('b__1')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.POSITIVE_INTEGER_NUMBER ('12')
+                NuXmvTokenType.IDENTIFIER ('ab')
+                WHITE_SPACE (' ')
+                NuXmvTokenType.POSITIVE_INTEGER_NUMBER ('1')
+                NuXmvTokenType.IDENTIFIER ('e')
+            """.trimIndent()
+        )
+    }
+
     override fun createLexer(): Lexer = NuXmvLexerAdapter()
 
     override fun getDirPath(): String = "src/test/testData/parser"

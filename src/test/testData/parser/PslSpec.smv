@@ -9,6 +9,6 @@ PSLSPEC AG (a -> AF b);
 PSLSPEC NAME p1 := always (req -> eventually! ack);
 PSLSPEC {a; b[*]; c} |=> {ack};
 PSLSPEC NAME p2 := always ({req; !ack[*2]} |-> {ack}) abort b;
-PSLSPEC forall i in {0, 1} : always (a -> next! b)
-PSLSPEC never {a; b && c}
+PSLSPEC forall i in {0, 1} : always (a -> next! b);
+PSLSPEC never {a; b && c};
 INVARSPEC a | !a;

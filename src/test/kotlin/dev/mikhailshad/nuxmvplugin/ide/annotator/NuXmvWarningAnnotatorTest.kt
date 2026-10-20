@@ -1,6 +1,7 @@
 package dev.mikhailshad.nuxmvplugin.ide.annotator
 
 import NuXmvCodeInsightFixtureTestCase
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
 import dev.mikhailshad.nuxmvplugin.language.NuXmvFileType
 import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvSimpleTypeSpecifier
@@ -107,5 +108,32 @@ class NuXmvWarningAnnotatorTest : NuXmvCodeInsightFixtureTestCase() {
             """.trimIndent()
         )
         myFixture.checkHighlighting(true, false, true)
+    }
+
+    fun testWordConstantRestrictions() {
+        myFixture.configureByText(
+            NuXmvFileType,
+            """
+            MODULE main
+            DEFINE
+                ok := 0b_1011 & 0ud8_255 & 0h8_ff & 0sd4_8 & 0b_1_ & 0uH8_Ff & 0o_37;
+                w0 := <error descr="Width of a word constant must be in 1..2147483647">0b0_1</error>;
+                wide := <error descr="Width of a word constant must be in 1..2147483647">0b2147483648_1</error>;
+                dec := <error descr="Decimal word constant requires a width">0d_19</error>;
+                digit := <error descr="Digit '2' is not allowed in a binary word constant">0b_2</error>;
+                oct := <error descr="Digit '8' is not allowed in an octal word constant">0o_8</error>;
+                fit := <error descr="Value of word constant 0d8_256 does not fit in 8 bits">0d8_256</error>;
+                fit2 := <error descr="Value of word constant 0b2_111 does not fit in 2 bits">0b2_111</error>;
+            """.trimIndent()
+        )
+        myFixture.checkHighlighting(true, false, true)
+    }
+
+    fun testPslSpecificationRequiresSemicolon() {
+        val file = myFixture.configureByText(
+            NuXmvFileType,
+            "MODULE main\nVAR p : boolean;\nPSLSPEC AG p\nINVARSPEC p;\n"
+        )
+        assertNotNull(PsiTreeUtil.findChildOfType(file, PsiErrorElement::class.java))
     }
 }

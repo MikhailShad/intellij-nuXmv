@@ -41,6 +41,9 @@
 - Fixed resolving an outer `#FOR` loop variable inside a nested `#FOR`
 - `Clock` is recognized as a type in timed models, like `clock`
 - Report `next` where nuXmv rejects it: in INIT, INVAR, FAIRNESS, JUSTICE, COMPASSION, CTLSPEC, COMPUTE, PRED, `x :=` / `init(x) :=`, nested in another `next`, and through DEFINEs
+- Word constants are checked like in nuXmv: the value must start with a digit, width must be in 1..2147483647, decimal constants need a width, digits must match the base and the value must fit the width
+- Removed the stray hex-number token: `12ab` is now reported as a syntax error at `ab`, like in nuXmv
+- `PSLSPEC` requires a terminating `;`, as in nuXmv
 
 ## [0.0.3]
 

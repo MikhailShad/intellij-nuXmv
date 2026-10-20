@@ -6,9 +6,14 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
+import java.math.BigInteger
 import dev.mikhailshad.nuxmvplugin.language.psi.*
 import dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvIdentifierUsageMixin
 import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvBuiltInType
+
+private val WORD_CONSTANT = Regex("0([us]?)([bBoOdDhH])([0-9]*)_([0-9a-fA-F_]+)")
+private val MAX_WORD_WIDTH: BigInteger = BigInteger.valueOf(Int.MAX_VALUE.toLong())
+private val RADIX_NAMES = mapOf(2 to "a binary", 8 to "an octal", 10 to "a decimal", 16 to "a hexadecimal")
 
 class NuXmvWarningAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
@@ -20,6 +25,7 @@ class NuXmvWarningAnnotator : Annotator {
         checkTimeDomain(element, holder)
         checkTimedConstructs(element, holder)
         checkNextUsage(element, holder)
+        checkWordConstant(element, holder)
 //        checkValidTypes(element, holder)
     }
 
@@ -84,6 +90,41 @@ class NuXmvWarningAnnotator : Annotator {
         holder.newAnnotation(HighlightSeverity.ERROR, message)
             .range(element)
             .create()
+    }
+
+    private fun checkWordConstant(element: PsiElement, holder: AnnotationHolder) {
+        if (element !is NuXmvWordConstant) return
+        val message = wordConstantProblem(element.text) ?: return
+        holder.newAnnotation(HighlightSeverity.ERROR, message)
+            .range(element)
+            .create()
+    }
+
+    private fun wordConstantProblem(text: String): String? {
+        val match = WORD_CONSTANT.matchEntire(text) ?: return null
+        val (_, base, widthText, valueText) = match.destructured
+        val radix = when (base.lowercase()) {
+            "b" -> 2
+            "o" -> 8
+            "d" -> 10
+            else -> 16
+        }
+        val digits = valueText.replace("_", "")
+        digits.firstOrNull { Character.digit(it, radix) < 0 }?.let {
+            return "Digit '$it' is not allowed in ${RADIX_NAMES.getValue(radix)} word constant"
+        }
+        if (widthText.isEmpty()) {
+            return if (radix == 10) "Decimal word constant requires a width" else null
+        }
+        val width = widthText.toBigInteger()
+        if (width < BigInteger.ONE || width > MAX_WORD_WIDTH) {
+            return "Width of a word constant must be in 1..$MAX_WORD_WIDTH"
+        }
+        return if (BigInteger(digits, radix).bitLength() > width.toInt()) {
+            "Value of word constant $text does not fit in $width bits"
+        } else {
+            null
+        }
     }
 
     private fun checkTimeDomain(element: PsiElement, holder: AnnotationHolder) {

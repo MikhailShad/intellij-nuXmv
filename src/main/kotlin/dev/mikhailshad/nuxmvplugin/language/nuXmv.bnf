@@ -207,8 +207,7 @@
 
     IDENTIFIER = "regexp:[A-Za-z_][A-Za-z_0-9$\-#]*"
     QUOTED_IDENTIFIER = 'regexp:"[^"]*"'
-    WORD = "regexp:0[us]?[bBdDoOhH][0-9]*_[0-9a-fA-F_]+"
-    HEX_NUMBER = "regexp:([0-9a-fA-F]+)"
+    WORD = "regexp:0[us]?[bBdDoOhH][0-9]*_[0-9a-fA-F][0-9a-fA-F_]*"
     FLOAT_NUMBER = "regexp:[0-9]+\.[0-9]+"
     FRACTIONAL_NUMBER = "regexp:[fF]'[0-9]+/[0-9]+"
     EXPONENTIAL_NUMBER = "regexp:[0-9]+(\.[0-9]+)?[eE]-?[0-9]+"
@@ -308,7 +307,7 @@ InvarSpecification ::= INVARSPEC_KW NamedSpecification? Expr SpecContext? SEMICO
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
 }
 
-PslSpecification ::= PSLSPEC_KW NamedSpecification? PslBody SpecContext? SEMICOLON? {
+PslSpecification ::= PSLSPEC_KW NamedSpecification? PslBody SpecContext? SEMICOLON {
     pin=1
     mixin="dev.mikhailshad.nuxmvplugin.language.psi.mixin.NuXmvPslSpecificationMixin"
     implements="dev.mikhailshad.nuxmvplugin.language.psi.NuXmvPresentableElement"
