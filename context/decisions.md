@@ -41,7 +41,7 @@
 - **Решение.** Лексер выдаёт `time` и `clock` как `IDENTIFIER`, токены `CLOCK_TYPE`/`CLOCK_KW` удаляются. Смысл слова определяется семантически по признаку `NuXmvFile.isTimed`: `time` не помечается как неразрешённая ссылка и подсвечивается как константа, `clock` резолвится как тип в `NuXmvBuiltInType`.
 - **Альтернативы.** Зарезервировать слова в лексере: тогда перестанут разбираться обычные модели с такими именами.
 - **Реализация.** `NuXmvFile.isTimed` / `PsiElement.isInTimedModel`. `NuXmvWarningAnnotator` не помечает `time` в TTS как неразрешённую ссылку и предупреждает о TTS-конструкциях вне TTS. `NuXmvHighlighterAnnotator` подсвечивает `time` как константу. Completion предлагает `clock`, `X~`, `Y~`, `time`, `time_until`, `time_since`, `URGENT` только в TTS. Тест — `NuXmvWarningAnnotatorTest`.
-- **Последствия.** В позиции типа `clock` распознаёт `NuXmvParserUtil.clockTypeName` по тексту токена `IDENTIFIER`, поэтому `VAR c : clock;` разбирается как тип в любой модели; проверка на TTS — задача аннотатора. Требуется хелпер `isTimed` и правки в `NuXmvIdentifierUsageMixin`, `NuXmvWarningAnnotator`, `NuXmvHighlighterAnnotator`. Фикстуры — `TimeAsIdentifier.smv` и `TimedModel.smv`.
+- **Последствия.** В позиции типа `clock` и `Clock` (приложение C: «clock and Clock are interpreted as type specifiers only in timed models») распознаёт `NuXmvParserUtil.clockTypeName` по тексту токена `IDENTIFIER`, поэтому `VAR c : clock;` разбирается как тип в любой модели; проверка на TTS — задача аннотатора. Требуется хелпер `isTimed` и правки в `NuXmvIdentifierUsageMixin`, `NuXmvWarningAnnotator`, `NuXmvHighlighterAnnotator`. Фикстуры — `TimeAsIdentifier.smv` и `TimedModel.smv`.
 
 ### D-004. Знак числа разбирает грамматика, а не лексер
 

@@ -1,7 +1,10 @@
 package dev.mikhailshad.nuxmvplugin.ide.annotator
 
 import NuXmvCodeInsightFixtureTestCase
+import com.intellij.psi.util.PsiTreeUtil
 import dev.mikhailshad.nuxmvplugin.language.NuXmvFileType
+import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvSimpleTypeSpecifier
+import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvBuiltInType
 
 class NuXmvWarningAnnotatorTest : NuXmvCodeInsightFixtureTestCase() {
 
@@ -57,6 +60,50 @@ class NuXmvWarningAnnotatorTest : NuXmvCodeInsightFixtureTestCase() {
                 a : boolean;
                 b : boolean;
             PSLSPEC forall i in {0, 1} : always (a -> next! b);
+            """.trimIndent()
+        )
+        myFixture.checkHighlighting(true, false, true)
+    }
+
+    fun testCapitalClockIsTypeInTimedModel() {
+        myFixture.configureByText(
+            NuXmvFileType,
+            """
+            @TIME_DOMAIN continuous
+            MODULE main
+            VAR
+                c : Clock;
+            INVARSPEC TRUE;
+            """.trimIndent()
+        )
+        myFixture.checkHighlighting(true, false, true)
+        val type = PsiTreeUtil.findChildOfType(myFixture.file, NuXmvSimpleTypeSpecifier::class.java)
+        assertEquals(NuXmvBuiltInType.CLOCK, type?.resolveType())
+    }
+
+    fun testNextOutsideNextExpressions() {
+        myFixture.configureByText(
+            NuXmvFileType,
+            """
+            MODULE main
+            VAR
+                x : boolean;
+                y : boolean;
+            DEFINE
+                d := next(x);
+                e := d & y;
+            ASSIGN
+                next(y) := next(x);
+                init(x) := <error descr="'next' is not allowed in ASSIGN init(…)">next(y)</error>;
+            INIT <error descr="'next' is not allowed in INIT">next(x)</error> = x;
+            INVAR <error descr="'e' uses 'next' (via DEFINE), which is not allowed in INVAR">e</error>;
+            TRANS next(x) = !x & e;
+            TRANS next(<error descr="Nested 'next'">next(x)</error>) = x;
+            TRANS next(<error descr="'d' uses 'next' (via DEFINE) inside 'next'">d</error>) = x;
+            FAIRNESS <error descr="'next' is not allowed in FAIRNESS">next(x)</error>;
+            CTLSPEC AG (<error descr="'next' is not allowed in CTLSPEC">next(x)</error> = x);
+            INVARSPEC next(x) = x;
+            LTLSPEC G (next(x) = x);
             """.trimIndent()
         )
         myFixture.checkHighlighting(true, false, true)

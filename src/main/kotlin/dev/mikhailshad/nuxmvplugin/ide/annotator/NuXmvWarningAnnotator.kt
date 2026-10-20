@@ -19,6 +19,7 @@ class NuXmvWarningAnnotator : Annotator {
         checkValidReferences(element, holder)
         checkTimeDomain(element, holder)
         checkTimedConstructs(element, holder)
+        checkNextUsage(element, holder)
 //        checkValidTypes(element, holder)
     }
 
@@ -51,6 +52,38 @@ class NuXmvWarningAnnotator : Annotator {
                 .range(element)
                 .create()
         }
+    }
+
+    private fun checkNextUsage(element: PsiElement, holder: AnnotationHolder) {
+        val message = when {
+            NuXmvNextOperator.isNextCall(element) -> {
+                val section = NuXmvNextOperator.forbiddingSection(element)
+                when {
+                    section != null -> "'next' is not allowed in $section"
+                    NuXmvNextOperator.isInsideNextCall(element) -> "Nested 'next'"
+                    else -> null
+                }
+            }
+
+            element is NuXmvIdentifierUsage -> {
+                val define = element.reference?.resolve() as? NuXmvDefineName
+                if (define == null || !NuXmvNextOperator.defineUsesNext(define)) {
+                    null
+                } else {
+                    val section = NuXmvNextOperator.forbiddingSection(element)
+                    when {
+                        section != null -> "'${element.text}' uses 'next' (via DEFINE), which is not allowed in $section"
+                        NuXmvNextOperator.isInsideNextCall(element) -> "'${element.text}' uses 'next' (via DEFINE) inside 'next'"
+                        else -> null
+                    }
+                }
+            }
+
+            else -> null
+        } ?: return
+        holder.newAnnotation(HighlightSeverity.ERROR, message)
+            .range(element)
+            .create()
     }
 
     private fun checkTimeDomain(element: PsiElement, holder: AnnotationHolder) {

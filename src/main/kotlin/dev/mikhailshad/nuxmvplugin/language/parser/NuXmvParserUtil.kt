@@ -6,7 +6,7 @@ import dev.mikhailshad.nuxmvplugin.language.psi.NuXmvTypes
 
 class NuXmvParserUtil : GeneratedParserUtilBase() {
     companion object {
-        private const val CLOCK_TYPE_NAME = "clock"
+        private val CLOCK_TYPE_NAMES = setOf("clock", "Clock")
 
         private val PSL_KEYWORDS = setOf(
             "always", "never", "eventually", "until", "until_", "before", "before_",
@@ -18,7 +18,7 @@ class NuXmvParserUtil : GeneratedParserUtilBase() {
         @JvmStatic
         @Suppress("UNUSED_PARAMETER")
         fun clockTypeName(builder: PsiBuilder, level: Int): Boolean =
-            consumeIdentifier(builder) { it == CLOCK_TYPE_NAME }
+            consumeIdentifier(builder) { it in CLOCK_TYPE_NAMES }
 
         @JvmStatic
         @Suppress("UNUSED_PARAMETER")

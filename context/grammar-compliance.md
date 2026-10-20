@@ -25,8 +25,8 @@
 | R3 | Пустые скобки `MODULE m()` и `VAR i : m();` | ✅ исправлено | принимает | `')' unexpected` | `ModuleDeclaration` в bnf |
 | R4 | Сегмент имени, начинающийся с цифры: `a.1.b`, `cb__77$main.SSA.1.ssa` | ✅ исправлено (D-008) | принимает; в корпусе 18 ошибок (`svcomp`) | `IDENTIFIER expected` | flex/bnf |
 | R5 | Имена в кавычках: `"x.y" : boolean;` | ✅ исправлено (D-008) | принимает; в корпусе 9 ошибок (`vis`) | `"` даёт `BAD_CHARACTER`; альтернатива `VarName ::= QUOTES …` недостижима | flex: токен `QUOTES` |
-| R6 | `Clock` как тип в TTS (приложение: «clock and Clock are … type specifiers») | ⚠️ | принимает | разбирается как `ModuleTypeSpecifier` (экземпляр модуля `Clock`), ошибки разбора нет | `NuXmvParserUtil.clockTypeName` |
-| R7 | `simple_expr` / `next_expr`: `next` запрещён в INIT, INVAR, `init()`/обычном ASSIGN, CTLSPEC, `parameter_list`, PRED | ❌ (семантика) | `unexpected 'next' operator` при `flatten_hierarchy` (проверено на INIT и CTLSPEC) | не диагностируется | аннотатор |
+| R6 | `Clock` как тип в TTS (приложение: «clock and Clock are … type specifiers») | ✅ исправлено | принимает | разбирается как `ModuleTypeSpecifier` (экземпляр модуля `Clock`), ошибки разбора нет | `NuXmvParserUtil.clockTypeName` |
+| R7 | `simple_expr` / `next_expr`: `next` запрещён в INIT, INVAR, `init()`/обычном ASSIGN, CTLSPEC, `parameter_list`, PRED | ✅ исправлено (аннотатор) | `unexpected 'next' operator` при `flatten_hierarchy` (проверено на INIT и CTLSPEC) | не диагностируется | аннотатор |
 | R8 | Приоритеты: хвост `?:` поглощает `<->`/`->`; LTL/CTL-операторы связывают сильнее basic-операторов | ⚠️ | по мануалу (стр. 15) | дерево другое, ошибок разбора нет | `Expr` в bnf; известно с этапа 3 |
 | R9 | `word_value` с `_` в начале (`0b__1`), ширина 0 (`0b0_1`) | ➕ | ошибка | принимает | flex `WORD` или аннотатор |
 | R10 | Токен `HEX_NUMBER` | ⚠️ | `12ab` — ошибка | лексится, но ни одно правило его не использует: ошибка разбора вместо понятной лексической | flex |
@@ -81,7 +81,7 @@
 | `union`, `{ set_body_expr }`, `in` | `UnionBasicExpr`, `SetBasicExpr`, `InBasicExpr` | ✅ | |
 | `?:` | `TernaryBasicExpr` | ⚠️ | R8 |
 | `case_expr` / `case_body` | `CaseBasicExpr`, `RegularCaseBody` | ✅ | `;` после каждой ветки обязательна, как в приложении |
-| `simple_expr` vs `next_expr` | не различаются | ❌ | R7 (семантика) |
+| `simple_expr` vs `next_expr` | грамматика не различает; аннотатор (`NuXmvNextOperator`) проверяет по поведению nuXmv | ✅ | R7 исправлено |
 
 ### Типы
 
@@ -91,7 +91,7 @@
 | `boolean`, `integer`, `real` | есть | ✅ | |
 | `word/unsigned word/signed word [ integer_number ]` | `WordType … [ TypeBound ]` | ➕ | D-005: допускаются константы/DEFINE (гл. 2: `basic_expr`); см. также R2 |
 | `clock` | `ClockType ::= <<clockTypeName>>` | ✅ | |
-| `Clock` | разбирается как `ModuleTypeSpecifier` | ⚠️ | R6 |
+| `Clock` | `ClockType` | ✅ | R6 исправлено |
 | `{ enumeration_type_body }` | `EnumerationTypeBody` (`WholeNumber \| ComplexIdentifier`) | ✅ | |
 | `integer_number .. integer_number` | `RangeType ::= TypeBound RANGE TypeBound` | ➕ | D-005 |
 | `array integer_number .. integer_number of simple_type_specifier` | `ARRAY_TYPE (RangeType \| WordType \| INTEGER_TYPE) ARRAY_OF …` | ➕ | `array word[N] of`, `array integer of` — из гл. 2 |
@@ -143,6 +143,12 @@
 - имена внутри спецификации резолвятся в модуле экземпляра-контекста (`NuXmvIdentifierReference.contextModuleOf`), `self` — это контекст;
 - сам `ctx` резолвится в модуле, где стоит спецификация;
 - `IN` только в верхнем регистре: строчное `in` — проверка вхождения во множество.
+
+**R7, где nuXmv 2.1.0 отвергает `next`** (`unexpected 'next' operator` / `Nested next operator.` / `Unexpected next operator.`), проверено на мини-моделях:
+- **запрещён:** INIT, INVAR, FAIRNESS, JUSTICE, COMPASSION, CTLSPEC/SPEC, COMPUTE, PRED, `x := …`, `init(x) := …`, `next` внутри `next`, а также DEFINE с `next`, использованный в любом из этих мест;
+- **разрешён:** TRANS, INVARSPEC, LTLSPEC, DEFINE, `next(x) := …`, URGENT, параметры экземпляра модуля (вопреки `parameter_list :: simple_expr` приложения).
+
+Аннотатор повторяет именно это поведение. На корпусе срабатываний 0.
 
 ## Что из этого следует
 

@@ -39,6 +39,8 @@
 - Support `unsigned word` / `signed word` split by several spaces or a line break, and empty module parameter lists (`MODULE m()`)
 - Support specifications evaluated in an instance context (`INVARSPEC t <= 3 IN m;`); identifiers inside resolve in the context instance
 - Fixed resolving an outer `#FOR` loop variable inside a nested `#FOR`
+- `Clock` is recognized as a type in timed models, like `clock`
+- Report `next` where nuXmv rejects it: in INIT, INVAR, FAIRNESS, JUSTICE, COMPASSION, CTLSPEC, COMPUTE, PRED, `x :=` / `init(x) :=`, nested in another `next`, and through DEFINEs
 
 ## [0.0.3]
 
