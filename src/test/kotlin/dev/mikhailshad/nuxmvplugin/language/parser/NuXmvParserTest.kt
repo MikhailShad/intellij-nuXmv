@@ -112,6 +112,10 @@ class NuXmvParserTest : ParsingTestCase("", "smv", NuXmvParserDefinition()) {
         doTest(true, true)
     }
 
+    fun testTemporalPrecedence() {
+        doTest(true, true)
+    }
+
     fun testRecovery() {
         doTest(true, false)
     }

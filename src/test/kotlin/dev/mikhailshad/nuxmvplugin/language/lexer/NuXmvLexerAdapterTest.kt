@@ -275,7 +275,7 @@ class NuXmvLexerAdapterTest : LexerTestCase() {
 
     fun testTemporalOperators() {
         doTest(
-            "X~ Y~ X Y O H AX AG at  next at\tlast @F~ @O~ +oo",
+            "X~ Y~ X Y O H AX AG at next at last @F~ @O~ +oo",
             """
                 NuXmvTokenType.X~ ('X~')
                 WHITE_SPACE (' ')
@@ -293,9 +293,9 @@ class NuXmvLexerAdapterTest : LexerTestCase() {
                 WHITE_SPACE (' ')
                 NuXmvTokenType.AG ('AG')
                 WHITE_SPACE (' ')
-                NuXmvTokenType.@F~ ('at  next')
+                NuXmvTokenType.@F~ ('at next')
                 WHITE_SPACE (' ')
-                NuXmvTokenType.@O~ ('at${"\t"}last')
+                NuXmvTokenType.@O~ ('at last')
                 WHITE_SPACE (' ')
                 NuXmvTokenType.@F~ ('@F~')
                 WHITE_SPACE (' ')

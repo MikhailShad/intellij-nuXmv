@@ -5,9 +5,9 @@ VAR
     x : 0..10;
 LTLSPEC O p;
 LTLSPEC H p -> O q;
-LTLSPEC G (x at next p = 3);
-LTLSPEC G (x at  last p = 3);
-LTLSPEC G (x @F~ p >= x @O~ q);
+LTLSPEC G ((x at next p) = 3);
+LTLSPEC G ((x at last p) = 3);
+LTLSPEC G ((x @F~ p) >= (x @O~ q));
 LTLSPEC p S q;
 LTLSPEC Z p T q;
 CTLSPEC AX p;

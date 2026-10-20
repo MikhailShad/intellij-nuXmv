@@ -27,7 +27,7 @@
 | R5 | Имена в кавычках: `"x.y" : boolean;` | ✅ исправлено (D-008) | принимает; в корпусе 9 ошибок (`vis`) | `"` даёт `BAD_CHARACTER`; альтернатива `VarName ::= QUOTES …` недостижима | flex: токен `QUOTES` |
 | R6 | `Clock` как тип в TTS (приложение: «clock and Clock are … type specifiers») | ✅ исправлено | принимает | разбирается как `ModuleTypeSpecifier` (экземпляр модуля `Clock`), ошибки разбора нет | `NuXmvParserUtil.clockTypeName` |
 | R7 | `simple_expr` / `next_expr`: `next` запрещён в INIT, INVAR, `init()`/обычном ASSIGN, CTLSPEC, `parameter_list`, PRED | ✅ исправлено (аннотатор) | `unexpected 'next' operator` при `flatten_hierarchy` (проверено на INIT и CTLSPEC) | не диагностируется | аннотатор |
-| R8 | Приоритеты: хвост `?:` поглощает `<->`/`->`; LTL/CTL-операторы связывают сильнее basic-операторов | ⚠️ | по мануалу (стр. 15) | дерево другое, ошибок разбора нет | `Expr` в bnf; известно с этапа 3 |
+| R8 | Приоритеты: хвост `?:` поглощает `<->`/`->`; LTL/CTL-операторы связывают сильнее basic-операторов | ✅ исправлено (D-009) | по мануалу (стр. 15) | дерево другое, ошибок разбора нет | `Expr` в bnf; известно с этапа 3 |
 | R9 | `word_value` с `_` в начале (`0b__1`), ширина 0 (`0b0_1`) | ✅ исправлено | ошибка | принимает | flex `WORD` или аннотатор |
 | R10 | Токен `HEX_NUMBER` | ✅ исправлено (токен удалён) | `12ab` — ошибка | лексится, но ни одно правило его не использует: ошибка разбора вместо понятной лексической | flex |
 | R11 | `;` после `PSLSPEC` | ✅ исправлено (обязательна в грамматике) | обязательна (`did you forget a semicolon`) | необязательна | аннотатор (по желанию) |
@@ -44,7 +44,7 @@
 | `identifier` | `IDENTIFIER={LETTER}({LETTER}\|{DIGIT}\|[\$\-\#])*` | ✅ | `x-1` — один идентификатор, как у nuXmv (D-004) |
 | Комментарии `--…`, `/-- … --/` | `LINE_COMMENT`, состояние `IN_BLOCK_COMMENT` | ✅ | |
 | Зарезервированные слова (стр. 7) | все есть как токены | ✅ | `Clock`/`clock`/`time` намеренно `IDENTIFIER` (D-003); `MONOPOS`/`MONONEG` — из гл. 2 (PARSYNTH) |
-| `at next`, `at last` | `"at"{LINE_WS}+"next"` | ✅ | из гл. 2 |
+| `at next`, `at last` | `"at next"`, `"at last"` | ✅ | из гл. 2; ровно один пробел, как у nuXmv 2.1.0 (два пробела, таб, перевод строки — `syntax error`). Исправлена ошибка этапа 2 (L9), где допускалось любое число пробелов |
 | `@F~`, `@O~`, `X~`, `Y~`, `+oo` | есть | ✅ | `X~`/`Y~`/`+oo` — из гл. 2 |
 | `unsigned word`, `signed word` | `"unsigned" {WHITE_SPACE} "word"` | ✅ | R2 исправлено |
 | `pos_integer_number`, `integer_number` | `POSITIVE_INTEGER_NUMBER`, знак — `WholeNumber ::= MINUS? …` | ✅ | D-004 |
@@ -75,11 +75,11 @@
 | `pi` | `BuiltInConstant ::= PI` | ✅ | |
 | Встроенные функции приложения (`abs`…`sqrt`, `word1`, `bool`, `toint`, `signed`, `unsigned`, `extend`, `resize`, `count`, `floor`, `next`) | `FunctionNameUsage` | ✅ | арность не проверяется |
 | Функции гл. 2 (`swconst`, `uwconst`, `sizeof`, `READ`, `WRITE`, `CONSTARRAY`, `typeof`, `signed/unsigned word[N](e)`) | `FunctionNameUsage`, `ConstArrayBasicExpr`, `TypeOfArgument`, `WordConversionBasicExpr` | ✅ | |
-| Бинарные и унарные операторы | `*BasicExpr` в `Expr` | ✅ | порядок альтернатив по стр. 15, но см. R8 |
+| Бинарные и унарные операторы | `*BasicExpr` в `Expr` | ✅ | порядок по стр. 15, темпоральные — по nuXmv (R8, D-009) |
 | `basic_expr [ index ]` | `IndexBasicExpr` и индекс внутри `ComplexIdentifier` | ✅ | |
 | `basic_expr [ integer_number : integer_number ]` | `IndexBasicExpr ::= Expr [ Expr (: Expr)? ]` | ➕ | приложение — числа, гл. 2 — `basic_expr` |
 | `union`, `{ set_body_expr }`, `in` | `UnionBasicExpr`, `SetBasicExpr`, `InBasicExpr` | ✅ | |
-| `?:` | `TernaryBasicExpr` | ⚠️ | R8 |
+| `?:` | `TernaryBasicExpr ::= Expr TernaryThen Expr` (прав.) | ✅ | R8 исправлено |
 | `case_expr` / `case_body` | `CaseBasicExpr`, `RegularCaseBody` | ✅ | `;` после каждой ветки обязательна, как в приложении |
 | `simple_expr` vs `next_expr` | грамматика не различает; аннотатор (`NuXmvNextOperator`) проверяет по поведению nuXmv | ✅ | R7 исправлено |
 
@@ -163,5 +163,5 @@
 
 1. **Ошибки разбора на валидных моделях:** R1–R5, R13, R14 исправлены. На корпусе остались только `array_max-*.smv` с переменной `max`, которые отвергает и nuXmv.
 2. **Семантика:** R6, R7, R12. Нужны правки mixin/аннотатора, грамматика затрагивается мало.
-3. **Приоритеты:** R8 — отдельная задача. Требует перестройки `Expr`, правка затронет эталоны PSI.
+3. **Приоритеты:** R8 исправлено (D-009). Затронуты эталоны `Precedence`, `LtlOperators`, `TimedModel`, `Compute`, `ParSynth`; новые деревья сверены с печатью nuXmv.
 4. **Мягкость:** R9–R11 — по желанию, можно решить аннотатором.

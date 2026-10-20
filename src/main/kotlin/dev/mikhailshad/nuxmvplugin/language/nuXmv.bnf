@@ -455,11 +455,16 @@ ParameterList ::= LPAREN [Expr (COMMA Expr)*] RPAREN
 // Expressions
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-Expr ::= ImplicationBasicExpr
+// Alternatives go from the weakest to the strongest binding. The relative order of temporal
+// operators is not in the manual; it was taken from how nuXmv 2.1.0 parses formulas (D-009).
+Expr ::= AtLtlExpr
+    | ImplicationBasicExpr
     | EquivalenceBasicExpr
     | TernaryBasicExpr
     | BooleanOrBasicExprGroup
     | AndBasicExpr
+    | BinaryLtlExpr
+    | TemporalUnaryExprGroup
     | ComparisonBasicExprGroup
     | InBasicExpr
     | UnionBasicExpr
@@ -474,13 +479,14 @@ Expr ::= ImplicationBasicExpr
     | WordConversionBasicExpr
     | ConstArrayBasicExpr
     | FunctionCallBasicExpr
-    | CtlExprGroup
-    | LtlExprGroup
+    | UntilCtlExpr
+    | TimedLtlExpr
     | PrimaryBasicExprGroup
 
 CaseBasicExpr ::= CASE_KW RegularCaseBody+ ESAC_KW {pin=1}
 RegularCaseBody ::= Expr COLON Expr SEMICOLON {pin=2}
-TernaryBasicExpr ::= Expr QUESTION_MARK Expr COLON Expr {pin=2}
+TernaryBasicExpr ::= Expr TernaryThen Expr {pin=2 rightAssociative=true}
+private TernaryThen ::= QUESTION_MARK Expr COLON
 
 private ComparisonBasicExprGroup ::= LessBasicExpr | GreaterBasicExpr | LessEqBasicExpr | GreaterEqBasicExpr | EqualityBasicExpr | NotEqualityBasicExpr
 LessBasicExpr ::= Expr LESS Expr
@@ -539,9 +545,9 @@ BasicExprList ::= Expr (COMMA Expr)* {pin(".*")=1}
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // CTL SPEC
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-private CtlExprGroup ::= UnaryCtlExpr
+private TemporalUnaryExprGroup ::= UnaryLtlExpr
+    | UnaryCtlExpr
     | RtCtlUnaryExpr
-    | UntilCtlExpr
 UnaryCtlExpr ::= UnaryCtlOp Expr
 private UnaryCtlOp ::= CTL_EXISTS_GLOBALLY | CTL_EXISTS_NEXT | CTL_EXISTS_FINALLY
     | CTL_FORALL_GLOBALLY | CTL_FORALL_NEXT | CTL_FORALL_FINALLY
@@ -553,13 +559,12 @@ private UntilCtlOp ::= CTL_EXISTS | CTL_FORALL
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // LTL SPEC
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-private LtlExprGroup ::= UnaryLtlExpr
-    | BinaryLtlExpr
-    | TimedLtlExpr
 UnaryLtlExpr ::= UnaryLtlOp Bound? Expr
 UnaryLtlOp ::= LTL_TIMED_NEXT | LTL_TIMED_PREVIOUS | LTL_ONCE | LTL_HISTORICALLY | LTL_NOT_PREVIOUS| LTL_PREVIOUS | LTL_FINALLY | LTL_GLOBALLY | LTL_NEXT
 BinaryLtlExpr ::= Expr BinaryLtlOp Bound? Expr
-BinaryLtlOp ::= LTL_AT_LAST | LTL_AT_NEXT | LTL_TRIGGERED | LTL_SINCE | LTL_RELEASES | TL_UNTIL
+BinaryLtlOp ::= LTL_TRIGGERED | LTL_SINCE | LTL_RELEASES | TL_UNTIL
+AtLtlExpr ::= Expr AtLtlOp Expr {rightAssociative=true}
+AtLtlOp ::= LTL_AT_LAST | LTL_AT_NEXT
 TimedLtlExpr ::= TimeLtlOp ParenthesisBasicExpr
 Bound ::= LBRACKET Expr COMMA (Expr RBRACKET | PLUS_INFINITY RPAREN) {pin=1}
 TimeLtlOp ::= LTL_TIME_SINCE | LTL_TIME_UNTIL

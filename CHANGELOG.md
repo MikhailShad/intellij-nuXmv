@@ -7,7 +7,6 @@
 - Fixed fractional (`f'1/3`) and exponential with fractional mantissa (`1.5E-7`) real constants
 - Fixed `O` (once) being treated as `H`, and swapped `AX`/`AG` token types
 - Support `PRED`, `READ`, `WRITE`, `CONSTARRAY`, `typeof`, `pi` keywords, `@TIME_DOMAIN`, `X~`, `Y~`, `+oo`
-- `at next` / `at last` accept any amount of whitespace between words
 - `time`, `clock`, `Clock` are no longer reserved outside timed models
 - Support set expressions `{a, b}`, bit selection `w[7:4]`, `signed/unsigned word[N](e)` conversions, `CONSTARRAY(typeof(a), e)`, array DEFINEs `[[1, 2], [3, 4]]`
 - Support calls of functions declared with a complex identifier (`m.f(x)`)
@@ -44,6 +43,8 @@
 - Word constants are checked like in nuXmv: the value must start with a digit, width must be in 1..2147483647, decimal constants need a width, digits must match the base and the value must fit the width
 - Removed the stray hex-number token: `12ab` is now reported as a syntax error at `ab`, like in nuXmv
 - `PSLSPEC` requires a terminating `;`, as in nuXmv
+- Operator precedence follows nuXmv: `a ? b : c <-> d` is `(a ? b : c) <-> d` and `?:` is right-associative; temporal operators bind weaker than comparisons and stronger than `&` (`G a & b` is `(G a) & b`, `EF x = 1` is `EF (x = 1)`, `a & b U c` is `a & (b U c)`); `@F~`/`@O~` bind weakest
+- `at next` / `at last` require exactly one space between the words, as in nuXmv
 
 ## [0.0.3]
 

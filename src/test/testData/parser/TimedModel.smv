@@ -16,5 +16,5 @@ LTLSPEC G X~ (c > 0);
 LTLSPEC G (Y~ s = busy -> s = busy);
 LTLSPEC G (time_until(s = idle) <= 5);
 LTLSPEC G (time_since(s = busy) > d);
-LTLSPEC G (time @F~ (s = idle) >= 2);
+LTLSPEC G ((time @F~ (s = idle)) >= 2);
 INVARSPEC time >= 0;

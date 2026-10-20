@@ -1,0 +1,21 @@
+MODULE main
+VAR
+    a : boolean;
+    b : boolean;
+    c : boolean;
+    x : 0..3;
+LTLSPEC G a & b;
+LTLSPEC a & b U c;
+LTLSPEC a U b & c;
+LTLSPEC a U b U c;
+LTLSPEC a -> b U c;
+LTLSPEC !a U b;
+LTLSPEC G a U b;
+LTLSPEC a U b = c;
+LTLSPEC X x = 1;
+LTLSPEC G (a & b @F~ c);
+LTLSPEC G (a @F~ b -> c);
+LTLSPEC G (a @O~ b @F~ c);
+CTLSPEC AG a & b;
+CTLSPEC EF x = 1;
+CTLSPEC EBF 1..3 a & b;

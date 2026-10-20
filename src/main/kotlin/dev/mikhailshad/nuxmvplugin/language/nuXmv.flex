@@ -108,9 +108,9 @@ LINE_COMMENT=("--")[^\r\n]*
 
     // LTL Specific Keywords
     "LTLSPEC"     {return LTLSPEC_KW; }
-    "at" {LINE_WS}+ "next"   {return LTL_AT_NEXT;}
+    "at next"     {return LTL_AT_NEXT;}
     "@F~"         {return LTL_AT_NEXT;}
-    "at" {LINE_WS}+ "last"   {return LTL_AT_LAST;}
+    "at last"     {return LTL_AT_LAST;}
     "@O~"         {return LTL_AT_LAST;}
     "X~"          {return LTL_TIMED_NEXT;}
     "Y~"          {return LTL_TIMED_PREVIOUS;}
