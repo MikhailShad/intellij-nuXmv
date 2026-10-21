@@ -9,7 +9,8 @@
 - Check `PSLSPEC` and `COMPUTE` specifications from the run configuration
 - Simulation run mode (`pick_state`/`simulate`, `msat_*` or `timed_*` depending on the domain)
 - Option to keep the nuXmv shell open after the run; traces from commands typed in the console are visualized too
-- Run gutter icons on `MODULE main` and on every specification
+- Run gutter icons on `MODULE main` and on every specification; their actions and generated configuration names say
+  what is checked (`LTL s2`, `LTL at line 17`, `all specifications`, `simulation`)
 - Preview of the nuXmv commands in the run configuration editor
 - Fixed counterexamples of `-- invariant … is false` and of variables of module instances (`m.c`) not being visualized
 - Fixed binary minus before a number (`x -1`, `3-1`): the sign is no longer glued to the number by the lexer

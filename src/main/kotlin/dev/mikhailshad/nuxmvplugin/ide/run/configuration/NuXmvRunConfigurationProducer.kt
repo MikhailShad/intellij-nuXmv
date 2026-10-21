@@ -36,7 +36,7 @@ abstract class NuXmvConfigurationProducerBase(private val runMode: NuXmvRunMode)
         configuration.modelFilePath = target.file.virtualFile.path
         configuration.runMode = runMode
         configuration.checkSelection = target.selection
-        configuration.name = target.name
+        configuration.setGeneratedName()
         return true
     }
 
@@ -45,29 +45,25 @@ abstract class NuXmvConfigurationProducerBase(private val runMode: NuXmvRunMode)
         context: ConfigurationContext
     ): Boolean {
         val target = targetOf(context.psiLocation) ?: return false
-        return configuration.modelFilePath == target.file.virtualFile.path &&
-                configuration.runMode == runMode &&
-                configuration.checkSelection == target.selection
+        if (configuration.modelFilePath != target.file.virtualFile.path) return false
+        val targetSettings = configuration.launchSettings.copy(runMode = runMode, selection = target.selection)
+        return NuXmvConfigurationNames.sameChecks(target.profile, configuration.launchSettings, targetSettings)
     }
 
     private fun targetOf(element: PsiElement?): Target? {
         val file = element?.containingFile as? NuXmvFile ?: return null
-        val name = file.virtualFile?.nameWithoutExtension ?: return null
-        val spec = NuXmvModelProfile.of(file).specAt(element)
+        if (file.virtualFile == null) return null
+        val profile = NuXmvModelProfile.of(file)
+        val spec = profile.specAt(element)
         if (runMode == NuXmvRunMode.SIMULATION) {
-            return if (spec == null) Target(file, NuXmvCheckSelection.ALL, "$name (simulation)") else null
+            return if (spec == null) Target(file, profile, NuXmvCheckSelection.ALL) else null
         }
-        if (spec == null) return Target(file, NuXmvCheckSelection.ALL, name)
+        if (spec == null) return Target(file, profile, NuXmvCheckSelection.ALL)
         if (NuXmvApplicability.individualSelectionUnavailableReason(spec) != null) {
-            val wholeKind = NuXmvCheckSelection(mapOf(spec.kind to NuXmvKindSelection(NuXmvKindMode.ALL)))
-            return Target(file, wholeKind, "$name: ${spec.kind}")
+            return Target(file, profile, NuXmvCheckSelection(mapOf(spec.kind to NuXmvKindSelection(NuXmvKindMode.ALL))))
         }
-        return Target(
-            file,
-            NuXmvCheckSelection.single(spec.kind, spec.key),
-            "$name: ${spec.name ?: "${spec.kind} at line ${spec.line}"}"
-        )
+        return Target(file, profile, NuXmvCheckSelection.single(spec.kind, spec.key))
     }
 
-    private data class Target(val file: NuXmvFile, val selection: NuXmvCheckSelection, val name: String)
+    private data class Target(val file: NuXmvFile, val profile: NuXmvModelProfile, val selection: NuXmvCheckSelection)
 }

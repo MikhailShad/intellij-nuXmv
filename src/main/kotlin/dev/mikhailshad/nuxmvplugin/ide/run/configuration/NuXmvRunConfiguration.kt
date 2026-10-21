@@ -25,7 +25,7 @@ class NuXmvRunConfiguration(
     project: Project,
     factory: ConfigurationFactory,
     name: String
-) : RunConfigurationBase<NuXmvRunConfigurationOptions>(project, factory, name) {
+) : LocatableConfigurationBase<NuXmvRunConfigurationOptions>(project, factory, name) {
     companion object {
         const val MODEL_FILE_PATH_FIELD = "MODEL_FILE_PATH"
         const val COMMAND_LINE_OPTIONS_FIELD = "COMMAND_LINE_OPTIONS"
@@ -122,6 +122,15 @@ class NuXmvRunConfiguration(
     override fun getOptions(): NuXmvRunConfigurationOptions {
         return super.getOptions() as NuXmvRunConfigurationOptions
     }
+
+    /** `<model>: <what is checked>`, for example `atm: LTL s2`; see [NuXmvConfigurationNames.describe]. */
+    override fun suggestedName(): String? {
+        val model = File(modelFilePath).nameWithoutExtension.ifEmpty { return null }
+        return "$model: ${actionName}"
+    }
+
+    /** What the configuration checks, without the model name: the gutter actions already belong to the model file. */
+    override fun getActionName(): String = NuXmvConfigurationNames.describe(modelProfile(), launchSettings)
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> {
         return NuXmvSettingsEditor(project)

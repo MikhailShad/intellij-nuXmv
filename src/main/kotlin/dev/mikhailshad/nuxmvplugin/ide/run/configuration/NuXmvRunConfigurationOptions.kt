@@ -1,13 +1,13 @@
 package dev.mikhailshad.nuxmvplugin.ide.run.configuration
 
-import com.intellij.execution.configurations.RunConfigurationOptions
+import com.intellij.execution.configurations.LocatableRunConfigurationOptions
 import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvLaunchSettings
 import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvRunMode
 
 /**
  * Run configuration options for NuXmv
  */
-class NuXmvRunConfigurationOptions : RunConfigurationOptions() {
+class NuXmvRunConfigurationOptions : LocatableRunConfigurationOptions() {
     var modelFilePath by string("")
     var commandLineOptions by string("")
     var runMode by enum(NuXmvRunMode.VERIFICATION)
