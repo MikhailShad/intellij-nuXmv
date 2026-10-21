@@ -1,84 +1,90 @@
 # Changelog
 
-## [Unreleased]
+## [0.1.0]
 
-- Run configuration offers only what the model supports: the domain (finite, infinite, timed) is detected from the
-  model, and specifications are chosen per kind or one by one, with a checking algorithm (BDD, BMC, k-induction, IC3)
-  per kind or per specification; unavailable options are disabled with a reason
-- Run timed models (`@TIME_DOMAIN continuous`) with `-time` and `go_time`
-- Check `PSLSPEC` and `COMPUTE` specifications from the run configuration
-- Simulation run mode (`pick_state`/`simulate`, `msat_*` or `timed_*` depending on the domain)
-- Option to keep the nuXmv shell open after the run; traces from commands typed in the console are visualized too
-- Run gutter icons on `MODULE main` and on every specification; their actions and generated configuration names say
-  what is checked (`LTL s2`, `LTL at line 17`, `all specifications`, `simulation`)
-- Preview of the nuXmv commands in the run configuration editor
-- Fixed counterexamples of `-- invariant … is false` and of variables of module instances (`m.c`) not being visualized
-- Fixed binary minus before a number (`x -1`, `3-1`): the sign is no longer glued to the number by the lexer
-- Fixed word constants without a sign specifier and with `_` separators (`0b_0101_1111`)
-- Fixed fractional (`f'1/3`) and exponential with fractional mantissa (`1.5E-7`) real constants
-- Fixed `O` (once) being treated as `H`, and swapped `AX`/`AG` token types
-- Support `PRED`, `READ`, `WRITE`, `CONSTARRAY`, `typeof`, `pi` keywords, `@TIME_DOMAIN`, `X~`, `Y~`, `+oo`
-- `time`, `clock`, `Clock` are no longer reserved outside timed models
-- Support set expressions `{a, b}`, bit selection `w[7:4]`, `signed/unsigned word[N](e)` conversions,
-  `CONSTARRAY(typeof(a), e)`, array DEFINEs `[[1, 2], [3, 4]]`
-- Support calls of functions declared with a complex identifier (`m.f(x)`)
-- Support module instances without parentheses (`VAR inst : counter;`) and constants/DEFINEs in word widths and range
-  bounds (`word[N]`, `0..N`)
-- Support `array word[N] of …` and `array integer of …` types
-- Fixed range constants inside expressions (`x in 1..3`)
-- Fixed parsing of a `FUN` section following another module section
-- `unsigned word[N]` variables are recognized as words
-- Support `@TIME_DOMAIN` annotation, `URGENT` constraints and `clock` type of timed models
-- Support `PSLSPEC` (tolerant parsing, SEREs with `;` inside braces)
-- Support `COMPUTE NAME id := …`, `PARSYNTH` without options, `PRED <name> := …`
-- `MIRROR` now references a declared variable instead of declaring a new one
-- Fixed `time_until(p = q)` / `time_since(…)` with a non-trivial argument
-- Improved error recovery after a broken module section
-- Support bounded LTL operators `G/F/H/O [l, u]`, `U/V/S/T [l, u]` and `[l, +oo)` intervals
-- Support RTCTL operators (`EBF/ABF/EBG/ABG m..n`, `A [p BU m..n q]`) in `CTLSPEC`
-- Fixed CTL until `E [p U q]` / `A [p U q]`
-- Timed models: `time` is a built-in constant; `clock`, `URGENT`, `X~`, `Y~`, `time_until`, `time_since` are reported
-  outside `@TIME_DOMAIN continuous`; unknown time domains are errors
-- Identifiers inside `PSLSPEC` are not reported as unresolved; PSL keywords are highlighted
-- Completion: `FUN`, `PSLSPEC`, `PARSYNTH`, `URGENT` sections, `typeof`, `pi`, word/int array types; `clock`, `X~`,
-  `Y~`, `time`, `time_until`, `time_since` in timed models only
-- Folding, structure view and breadcrumbs for `PSLSPEC`, `URGENT`, `PARSYNTH`
-- Formatter keeps PSL bodies intact and formats LTL bounds as `G [0, 5] p`, `F [2, +oo) p`
-- Fixed navigation bar on IntelliJ 2026.2+ (`StructureAwareNavBarModelExtension` was removed from the platform)
-- Structure view navigation no longer calls the override-only `Navigatable.navigate` (IntelliJ 2026.3)
-- Replaced deprecated `FileChooserDescriptorFactory.createSingleFileDescriptor()` in the nuXmv executable setting
-- Support flattened models (`write_flat_model` output): declarations with dotted names such as `con.s : real;` now
-  resolve, navigate, rename and show in the structure view and visualization under their full name
-- Ctrl+click on any segment of a dotted declaration (`con.s`) shows its usages specifically
-- Support quoted identifiers (`"$auto$rename.cc:157:execute$26" : boolean;`), numeric name segments (`a.SSA.1.ssa`) and
-  indices before a dot (`a[1].b`)
-- Support `unsigned word` / `signed word` split by several spaces or a line break, and empty module parameter lists
-  (`MODULE m()`)
-- Support specifications evaluated in an instance context (`INVARSPEC t <= 3 IN m;`); identifiers inside resolve in the
-  context instance
-- Fixed resolving an outer `#FOR` loop variable inside a nested `#FOR`
-- `Clock` is recognized as a type in timed models, like `clock`
-- Report `next` where nuXmv rejects it: in INIT, INVAR, FAIRNESS, JUSTICE, COMPASSION, CTLSPEC, COMPUTE, PRED, `x :=` /
-  `init(x) :=`, nested in another `next`, and through DEFINEs
-- Word constants are checked like in nuXmv: the value must start with a digit, width must be in 1..2147483647, decimal
-  constants need a width, digits must match the base and the value must fit the width
-- Removed the stray hex-number token: `12ab` is now reported as a syntax error at `ab`, like in nuXmv
-- `PSLSPEC` requires a terminating `;`, as in nuXmv
-- Operator precedence follows nuXmv: `a ? b : c <-> d` is `(a ? b : c) <-> d` and `?:` is right-associative; temporal
-  operators bind weaker than comparisons and stronger than `&` (`G a & b` is `(G a) & b`, `EF x = 1` is `EF (x = 1)`,
-  `a & b U c` is `a & (b U c)`); `@F~`/`@O~` bind weakest
-- `at next` / `at last` require exactly one space between the words, as in nuXmv
-- `ISA` references its module: navigation, find usages and rename work, declarations of the included module
-  (transitively) resolve in the including one, and unknown, recursive or parameterized `ISA` modules are reported
-- Formatter puts every declaration of VAR, IVAR, FROZENVAR, ASSIGN and FUN sections on its own line
-- Module gutter icons are registered on leaf elements (fixes a platform performance warning) and also cover `ISA`
-- Find Usages no longer lists the declaration itself
-- Completion offers bounded LTL templates (`G [l, u]`, `F [l, +oo)`, `p U [l, u] q`, …)
-- Quick documentation for temporal operators (LTL, CTL, RTCTL, timed) with their meaning from the nuXmv manual
-- Identifier completion offers constants, enum values, module parameters, functions and declarations included
-  through `ISA`; after `instance.` it offers the fields of the instance module
-- Unresolved reference check covers every segment of a dotted name (`inst.nope`) and highlights only the unknown
-  segment
+NuXmv 2.2.0 language support and run configurations that adapt to your model: the plugin now understands real-world
+models without false errors, tells you exactly what nuXmv can check in them and runs any specification in one click.
+
+### Added
+
+- **Run configurations that know your model.** The plugin detects whether a model is finite, infinite (`integer`,
+  `real`, `FUN`) or timed (`@TIME_DOMAIN continuous`) and shows its specifications as a tree grouped by kind. Pick the
+  whole model, one kind or individual specifications, and choose how to check them: BDD, BMC, k-induction or IC3.
+  Options that nuXmv cannot handle for this model are disabled with an explanation (for example, past operators with
+  SMT-based BMC), and a live preview shows the exact commands that will be sent to nuXmv.
+- **One-click runs from the gutter.** A run icon on `MODULE main` checks the whole model or starts a simulation, and an
+  icon on every specification checks just that one. Actions and created configurations are named after what they run
+  (`LTL s2`, `LTL at line 17`, `all specifications`).
+- **More of nuXmv from the IDE:**
+    - timed models (run with `-time`);
+    - `PSLSPEC` and `COMPUTE` checks;
+    - a simulation mode that picks the right engine for the model's domain.
+- **Interactive sessions.** Keep the nuXmv shell open after the run and keep typing commands. Counterexamples and
+  simulation traces from your own commands are visualized too.
+- **Complete nuXmv 2.2.0 syntax:**
+    - bounded LTL (`G [0, 5] p`, `F [2, +oo) p`, `p U [l, u] q`) and RTCTL (`EBF 0..3 p`, `A [p BU 1..2 q]`);
+    - PSL specifications;
+    - timed models: `clock`, `URGENT`, `X~`, `Y~`, `time_until`, `time_since`;
+    - set expressions, bit selection `w[7:4]`, word conversions, `CONSTARRAY`/`typeof`, array DEFINEs, word and integer
+      arrays;
+    - `PRED`, `MIRROR`, `PARSYNTH`, `ISA`, named `COMPUTE`;
+    - specifications evaluated `IN` an instance.
+- **Flattened and generated models.** Output of `write_flat_model` (`con.s : real;`), quoted identifiers
+  (`"$auto$rename.cc:157:execute$26"`), numeric name segments (`a.SSA.1.ssa`) and `a[1].b` are fully supported:
+  navigation, rename, structure view and visualization use their full names.
+- **Smarter editing:**
+    - completion of variables, defines, constants, enum values, module parameters and functions, including declarations
+      inherited through `ISA`, and the fields of an instance after `instance.`;
+    - completion templates for bounded LTL operators;
+    - quick documentation for temporal operators, taken from the nuXmv manual;
+    - `ISA` navigates to its module and supports Find Usages and rename;
+    - folding, structure view and breadcrumbs for PSL, `URGENT` and `PARSYNTH`.
+- **Errors reported like nuXmv reports them:**
+    - `next` where nuXmv rejects it (in `INIT`, `INVAR`, fairness constraints, `CTLSPEC`, `COMPUTE`, nested or through
+      DEFINEs);
+    - malformed word constants (width, digits, value range);
+    - timed-only constructs outside timed models;
+    - unknown time domains;
+    - unknown, recursive or parameterized `ISA` modules;
+    - unresolved names, with only the unknown segment of a dotted name highlighted.
+
+### Changed
+
+- **Operator precedence follows nuXmv.** Temporal operators bind weaker than comparisons and stronger than `&`:
+  `G a & b`
+  is `(G a) & b`. `?:` is right-associative.
+- **`time`, `clock` and `Clock` are ordinary identifiers outside timed models.**
+- **Syntax is as strict as nuXmv:**
+    - `PSLSPEC` requires a terminating `;`;
+    - `at next` / `at last` take exactly one space;
+    - `12ab` is a syntax error, as in nuXmv.
+- **Formatter:**
+    - every declaration of `VAR`, `IVAR`, `FROZENVAR`, `ASSIGN` and `FUN` goes on its own line;
+    - PSL bodies are kept intact;
+    - LTL bounds are formatted as `G [0, 5] p`.
+- **Find Usages** no longer lists the declaration itself.
+
+### Fixed
+
+- Counterexamples of failed invariants and values of module instance variables (`m.c`) now appear in the visualization.
+- Fixed parsing of:
+    - negative numbers (`x -1`, `3-1`);
+    - word constants without a sign or with `_` separators (`0b_0101_1111`);
+    - fractional and exponential reals (`f'1/3`, `1.5E-7`);
+    - ranges inside expressions (`x in 1..3`);
+    - CTL until (`E [p U q]`);
+    - `time_until(…)` / `time_since(…)` with complex arguments;
+    - a `FUN` section after another section;
+    - `unsigned word` split across lines;
+    - empty parameter lists (`MODULE m()`);
+    - modules instantiated without parentheses.
+- Fixed `O` (once) behaving like `H`, and swapped `AX`/`AG`.
+- Fixed resolving an outer `#FOR` variable inside a nested `#FOR`, and constants and DEFINEs used as word widths or
+  range
+  bounds (`word[N]`, `0..N`).
+- Better error recovery after a broken module section.
+- Fixed a memory leak in the run console.
+- Navigation bar and structure view work on IntelliJ IDEA 2026.2 and later.
 
 ## [0.0.3]
 
@@ -97,6 +103,7 @@
 - Interactive model visualization
 - FOR loop macro extension for compact model description
 
+[0.1.0]: https://github.com/MikhailShad/intellij-nuXmv/compare/0.0.3...0.1.0
 [0.0.3]: https://github.com/MikhailShad/intellij-nuXmv/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/MikhailShad/intellij-nuXmv/compare/0.0.1...0.0.2
 [0.0.1]: https://github.com/MikhailShad/intellij-nuXmv/commits/0.0.1
