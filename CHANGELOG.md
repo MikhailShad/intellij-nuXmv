@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+- Run configuration offers only what the model supports: the domain (finite, infinite, timed) is detected from the
+  model, and specifications are chosen per kind or one by one, with a checking algorithm (BDD, BMC, k-induction, IC3)
+  per kind or per specification; unavailable options are disabled with a reason
+- Run timed models (`@TIME_DOMAIN continuous`) with `-time` and `go_time`
+- Check `PSLSPEC` and `COMPUTE` specifications from the run configuration
+- Simulation run mode (`pick_state`/`simulate`, `msat_*` or `timed_*` depending on the domain)
+- Option to keep the nuXmv shell open after the run; traces from commands typed in the console are visualized too
+- Run gutter icons on `MODULE main` and on every specification
+- Preview of the nuXmv commands in the run configuration editor
+- Fixed counterexamples of `-- invariant … is false` and of variables of module instances (`m.c`) not being visualized
 - Fixed binary minus before a number (`x -1`, `3-1`): the sign is no longer glued to the number by the lexer
 - Fixed word constants without a sign specifier and with `_` separators (`0b_0101_1111`)
 - Fixed fractional (`f'1/3`) and exponential with fractional mantissa (`1.5E-7`) real constants

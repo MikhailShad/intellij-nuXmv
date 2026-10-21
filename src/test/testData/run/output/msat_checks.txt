@@ -1,0 +1,40 @@
+
+
+
+
+
+nuXmv > nuXmv > -- cannot prove the invariant x < 3  is true or false : the induction failed
+-- as demonstrated by the following induction step sequence
+Trace Description: Failed induction 
+Trace Type: Induction Sequence 
+  -> State: 1.1 <-
+    x = 2
+    r = 0.0
+  -> State: 1.2 <-
+    x = 3
+    r = f'1/2
+nuXmv > -- no proof or counterexample found with bound 0
+-- no proof or counterexample found with bound 1
+-- invariant x < 3  is false
+-- as demonstrated by the following execution sequence
+Trace Description: IC3 smt counterexample 
+Trace Type: Counterexample 
+  -> State: 1.1 <-
+    x = 0
+    r = 0.0
+  -> State: 1.2 <-
+    x = 1
+    r = f'1/2
+  -> State: 1.3 <-
+    x = 2
+    r = 1.0
+  -> State: 1.4 <-
+    x = 3
+    r = f'3/2
+nuXmv > -- no counterexample found with bound 0
+-- no counterexample found with bound 1
+-- no counterexample found with bound 2
+-- no counterexample found with bound 3
+-- no counterexample found with bound 4
+-- no counterexample found with bound 5
+nuXmv > 

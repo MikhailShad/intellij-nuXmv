@@ -145,6 +145,11 @@
                 implementation="dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvConfigurationType"/>
         <runConfigurationProducer
                 implementation="dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvRunConfigurationProducer"/>
+        <runConfigurationProducer
+                implementation="dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvSimulationConfigurationProducer"/>
+        <runLineMarkerContributor
+                language="nuXmv"
+                implementationClass="dev.mikhailshad.nuxmvplugin.ide.marker.NuXmvRunLineMarkerContributor"/>
 
     </extensions>
 </idea-plugin>

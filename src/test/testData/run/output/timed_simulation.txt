@@ -1,0 +1,25 @@
+
+
+
+
+
+nuXmv > nuXmv > nuXmv > Simulation is SAT (can be extended)
+nuXmv >     <!-- ################### Trace number: 1 ################### -->
+Trace Description: Timed Simulation 
+Trace Type: Simulation 
+  -> State: 1.1 <-
+    c = 0.0
+    s = TRUE
+  -- [ time elapse: time = 0.0; delta = 5.0 ] --
+  -> State: 1.2 <-
+    c = 5.0
+    s = TRUE
+  -- [ discrete transition ] --
+  -> State: 1.3 <-
+    c = 5.0
+    s = FALSE
+  -- [ discrete transition ] --
+  -> State: 1.4 <-
+    c = 5.0
+    s = TRUE
+nuXmv > 

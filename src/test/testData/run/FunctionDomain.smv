@@ -1,0 +1,6 @@
+MODULE main
+  FUN
+    f : boolean -> boolean;
+  VAR
+    b : boolean;
+  INVARSPEC f(b) = f(b)

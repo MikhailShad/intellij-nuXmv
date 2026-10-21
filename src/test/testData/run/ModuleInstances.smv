@@ -1,0 +1,20 @@
+MODULE counter
+  VAR
+    c : 0..3;
+  ASSIGN
+    init(c) := 0;
+    next(c) := (c + 1) mod 4;
+  INVARSPEC c < 4
+  LTLSPEC NAME live := G F c = 0
+
+
+MODULE main
+  VAR
+    s : 0..3;
+    a : counter;
+    b : counter;
+  ASSIGN
+    init(s) := 0;
+    next(s) := (s + 1) mod 4;
+  PSLSPEC always (s = 0 -> next (s = 1));
+  INVARSPEC s < 4

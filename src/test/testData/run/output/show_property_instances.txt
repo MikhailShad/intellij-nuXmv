@@ -1,0 +1,20 @@
+
+
+
+
+
+nuXmv > nuXmv > **** PROPERTY LIST [ Type, Status, Counter-example Number, Name ] ****
+--------------------------  PROPERTY LIST  -------------------------
+000 : G ( F c = 0) IN a
+  [LTL            Unchecked      N/A    a.live]
+001 : G ( F c = 0) IN b
+  [LTL            Unchecked      N/A    b.live]
+002 :always ((s = 0 -> next (s = 1))) 
+  [PSL            Unchecked      N/A    N/A]
+003 :c < 4 IN a
+  [Invar          Unchecked      N/A    N/A]
+004 :c < 4 IN b
+  [Invar          Unchecked      N/A    N/A]
+005 :s < 4 
+  [Invar          Unchecked      N/A    N/A]
+nuXmv > 

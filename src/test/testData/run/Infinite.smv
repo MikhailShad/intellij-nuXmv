@@ -1,0 +1,8 @@
+MODULE main
+  VAR
+    x : integer;
+    r : real;
+  INIT x = 0 & r = 0.0
+  TRANS next(x) = x + 1 & next(r) = r + 0.5
+  INVARSPEC x < 3
+  LTLSPEC G F x > 10

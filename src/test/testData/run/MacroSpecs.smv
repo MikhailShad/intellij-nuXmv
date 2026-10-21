@@ -1,0 +1,10 @@
+MODULE main
+  VAR
+    s : 0..3;
+  ASSIGN
+    init(s) := 0;
+    next(s) := (s + 1) mod 4;
+  #FOR i IN 0..1
+    INVARSPEC s != i + 4
+  #END
+  INVARSPEC NAME plain := s < 4

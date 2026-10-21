@@ -3,8 +3,7 @@ package dev.mikhailshad.nuxmvplugin.language.psi.type
 enum class NuXmvDomainType(val stringRepresentation: String) {
     FINITE_DOMAIN("Finite Domain"),
     INFINITE_DOMAIN("Infinite Domain"),
-//    TIMED_DOMAIN("Timed Domain") TODO: implement later
-    ;
+    TIMED_DOMAIN("Timed Domain");
 
     companion object {
         fun fromString(value: String?): NuXmvDomainType {

@@ -1,7 +1,8 @@
 package dev.mikhailshad.nuxmvplugin.ide.run.configuration
 
 import com.intellij.execution.configurations.RunConfigurationOptions
-import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
+import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvLaunchSettings
+import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvRunMode
 
 /**
  * Run configuration options for NuXmv
@@ -9,8 +10,11 @@ import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
 class NuXmvRunConfigurationOptions : RunConfigurationOptions() {
     var modelFilePath by string("")
     var commandLineOptions by string("")
-    var checkCtlSpecifications by property(false)
-    var checkLtlSpecifications by property(false)
-    var checkInvarSpecifications by property(false)
-    var domainType by enum(NuXmvDomainType.FINITE_DOMAIN)
+    var runMode by enum(NuXmvRunMode.VERIFICATION)
+    var checkSelection by string("")
+    var domainOverride by string("")
+    var bmcBound by property(NuXmvLaunchSettings.DEFAULT_BMC_BOUND)
+    var simulationSteps by property(NuXmvLaunchSettings.DEFAULT_SIMULATION_STEPS)
+    var randomSimulation by property(false)
+    var interactiveSession by property(false)
 }

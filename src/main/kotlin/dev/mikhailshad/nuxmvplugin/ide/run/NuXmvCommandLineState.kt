@@ -8,14 +8,16 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.ui.ConsoleView
+import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import dev.mikhailshad.nuxmvplugin.ide.configuration.NuXmvSettingsState
-import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvBddCommands
-import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvMsatCommands
+import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvCommandSequence
+import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvLaunchPlan
 import dev.mikhailshad.nuxmvplugin.ide.run.configuration.NuXmvRunConfiguration
-import dev.mikhailshad.nuxmvplugin.language.psi.type.NuXmvDomainType
+import dev.mikhailshad.nuxmvplugin.language.utils.MacroExpansionService
 import java.io.File
 
 class NuXmvCommandLineState(
@@ -59,34 +61,32 @@ class NuXmvCommandLineState(
     }
 
     private fun startNuXmv(nuXmvPath: String): ProcessHandler {
-        // Expand macros before execution
-        val expandedFile = expandMacrosIfNeeded(modelVirtualFile)
+        val plan = runConfiguration.launchPlan()
+            ?: throw ExecutionException("Model file is not a nuXmv model: ${modelFile.absolutePath}")
+        plan.problems.firstOrNull { it.isError }?.let { throw ExecutionException(it.message) }
 
-        // Visualize the original model (for better user experience)
+        val expandedFile = expandMacrosIfNeeded(modelVirtualFile)
         console.visualizeModel(modelVirtualFile)
 
-        // Use the expanded file for execution
-        val fileToExecute = File(expandedFile.path)
-
-        val cmd = buildCommandLine(nuXmvPath, fileToExecute)
+        val cmd = buildCommandLine(nuXmvPath, File(expandedFile.path), plan)
         logger.info("Starting interactive NuXmv: ${cmd.commandLineString}")
 
         val handler = OSProcessHandler(cmd)
         console.attachToProcess(handler)
+        plan.problems.forEach { console.print("${it.message}\n", ConsoleViewContentType.LOG_WARNING_OUTPUT) }
 
-        val commands = buildCommandList()
-        handler.addProcessListener(NuXmvProcessListener(console, commands))
+        val commands = NuXmvCommandSequence(plan) { console.print("$it\n", ConsoleViewContentType.ERROR_OUTPUT) }
+        handler.addProcessListener(NuXmvProcessListener(commands, console::print) { traces ->
+            console.visualizeModuleWithTraces(modelVirtualFile, traces)
+        })
 
         handler.startNotify()
         return handler
     }
 
-    private fun expandMacrosIfNeeded(modelFile: com.intellij.openapi.vfs.VirtualFile): com.intellij.openapi.vfs.VirtualFile {
+    private fun expandMacrosIfNeeded(modelFile: VirtualFile): VirtualFile {
         try {
-            // Import dynamically to avoid circular dependencies
-            val macroExpansionService =
-                dev.mikhailshad.nuxmvplugin.language.utils.MacroExpansionService.getInstance(project)
-            return macroExpansionService.expandMacrosInFile(modelFile)
+            return MacroExpansionService.getInstance(project).expandMacrosInFile(modelFile)
         } catch (e: Exception) {
             logger.error("Failed to expand macros in file: ${modelFile.path}", e)
             return modelFile
@@ -94,35 +94,21 @@ class NuXmvCommandLineState(
     }
 
     @Throws(ExecutionException::class)
-    private fun buildCommandLine(nuXmvPath: String, modelFile: File): GeneralCommandLine {
+    private fun buildCommandLine(nuXmvPath: String, modelFile: File, plan: NuXmvLaunchPlan): GeneralCommandLine {
         val commandLine = GeneralCommandLine(nuXmvPath)
             .withParentEnvironmentType(GeneralCommandLine.ParentEnvironmentType.CONSOLE)
             .withParameters("-int")
+            .withParameters(plan.cliParams)
             .withWorkDirectory(modelFile.parentFile)
 
         if (runConfiguration.commandLineOptions.isNotBlank()) {
             runConfiguration.commandLineOptions
                 .split(" ")
-                .filter { it.isNotBlank() }
+                .filter { it.isNotBlank() && it !in plan.cliParams }
                 .forEach { commandLine.addParameter(it) }
         }
 
         commandLine.addParameter(modelFile.absolutePath)
         return commandLine
-    }
-
-    private fun buildCommandList(): List<String> {
-        val runCommands = when (runConfiguration.domainType) {
-            NuXmvDomainType.FINITE_DOMAIN -> NuXmvBddCommands
-            else -> NuXmvMsatCommands
-        }
-        val list = mutableListOf<String>()
-        list += runCommands.buildCmd
-        if (runConfiguration.checkCtlSpecifications) list += runCommands.checkCtlCmd
-        if (runConfiguration.checkLtlSpecifications) list += runCommands.checkLtlCmd
-        if (runConfiguration.checkInvarSpecifications) list += runCommands.checkInvarCmd
-        list += runCommands.showTracesCmd
-        list += runCommands.quitCmd
-        return list
     }
 }

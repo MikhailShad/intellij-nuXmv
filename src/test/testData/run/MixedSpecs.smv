@@ -1,0 +1,25 @@
+MODULE counter
+  VAR
+    c : 0..3;
+  ASSIGN
+    init(c) := 0;
+    next(c) := (c + 1) mod 4;
+  INVARSPEC NAME inner := c < 4
+
+
+MODULE main
+  VAR
+    s : 0..3;
+    m : counter;
+  ASSIGN
+    init(s) := 0;
+    next(s) := (s + 1) mod 4;
+  LTLSPEC G (s = 3 -> X s = 0)
+  INVARSPEC NAME p1 := s != 3
+  CTLSPEC AG s < 4
+  INVARSPEC next(s) != s
+  LTLSPEC NAME past := G (s = 0 -> Y TRUE | s = 0)
+  COMPUTE MIN[s = 0, s = 3]
+  INVARSPEC m.c < 4
+  FAIRNESS s = 1
+  JUSTICE s = 2

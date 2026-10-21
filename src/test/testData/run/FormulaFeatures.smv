@@ -1,0 +1,9 @@
+MODULE main
+  VAR
+    s : 0..3;
+  ASSIGN
+    init(s) := 0;
+    next(s) := (s + 1) mod 4;
+  LTLSPEC NAME past := G (s = 1 -> Y s = 0)
+  LTLSPEC NAME bnd := G (s = 0 -> F [1, 3] s = 3)
+  INVARSPEC NAME nxt := next(s) != s

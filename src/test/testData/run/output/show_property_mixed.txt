@@ -1,0 +1,24 @@
+
+
+
+
+
+nuXmv > nuXmv > **** PROPERTY LIST [ Type, Status, Counter-example Number, Name ] ****
+--------------------------  PROPERTY LIST  -------------------------
+000 :AG s < 4 
+  [CTL            Unchecked      N/A    N/A]
+001 :MIN [ s = 0 , s = 3 ]  
+  [Quantitative   Unchecked      N/A    N/A]
+002 : G (s = 3 ->  X s = 0) 
+  [LTL            Unchecked      N/A    N/A]
+003 : G (s = 0 -> ( Y TRUE | s = 0)) 
+  [LTL            Unchecked      N/A    past]
+004 :c < 4 IN m
+  [Invar          Unchecked      N/A    m.inner]
+005 :s != 3 
+  [Invar          Unchecked      N/A    p1]
+006 :next(s) != s 
+  [Invar          Unchecked      N/A    N/A]
+007 :m.c < 4 
+  [Invar          Unchecked      N/A    N/A]
+nuXmv > 

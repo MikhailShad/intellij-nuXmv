@@ -1,0 +1,53 @@
+
+
+
+
+
+nuXmv > nuXmv > -- invariant s != 3  is false
+-- as demonstrated by the following execution sequence
+Trace Description: AG alpha Counterexample 
+Trace Type: Counterexample 
+  -> State: 1.1 <-
+    s = 0
+    m.c = 0
+  -> State: 1.2 <-
+    s = 1
+    m.c = 1
+  -> State: 1.3 <-
+    s = 2
+    m.c = 2
+  -> State: 1.4 <-
+    s = 3
+    m.c = 3
+-- invariant next(s) != s  is true
+-- invariant c < 4 IN m is true
+-- invariant m.c < 4  is true
+nuXmv > nuXmv > ********  Simulation Starting From State 2.1   ********
+nuXmv >     <!-- ################### Trace number: 1 ################### -->
+Trace Description: AG alpha Counterexample 
+Trace Type: Counterexample 
+  -> State: 1.1 <-
+    s = 0
+    m.c = 0
+  -> State: 1.2 <-
+    s = 1
+    m.c = 1
+  -> State: 1.3 <-
+    s = 2
+    m.c = 2
+  -> State: 1.4 <-
+    s = 3
+    m.c = 3
+    <!-- ################### Trace number: 2 ################### -->
+Trace Description: Simulation Trace 
+Trace Type: Simulation 
+  -> State: 2.1 <-
+    s = 0
+    m.c = 0
+  -> State: 2.2 <-
+    s = 1
+    m.c = 1
+  -> State: 2.3 <-
+    s = 2
+    m.c = 2
+nuXmv > 

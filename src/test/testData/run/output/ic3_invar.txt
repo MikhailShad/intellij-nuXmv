@@ -1,0 +1,22 @@
+
+
+
+
+
+nuXmv > nuXmv > nuXmv > -- invariant s != 3  is false
+-- as demonstrated by the following execution sequence
+Trace Description: IC3 counterexample 
+Trace Type: Counterexample 
+  -> State: 1.1 <-
+    s = 0
+    m.c = 0
+  -> State: 1.2 <-
+    s = 1
+    m.c = 1
+  -> State: 1.3 <-
+    s = 2
+    m.c = 2
+  -> State: 1.4 <-
+    s = 3
+    m.c = 3
+nuXmv > 

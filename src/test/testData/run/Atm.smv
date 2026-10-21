@@ -1,0 +1,27 @@
+--https://opencourse.inf.ed.ac.uk/sites/default/files/https/opencourse.inf.ed.ac.uk/fv/2023/l4-nuxmv-handout.pdf
+MODULE main
+  VAR
+    state : {welcome, enterPin, tryAgain, askAmount, thanksGoodbye, sorry};
+    input : {cardIn, correctPin, wrongPin, ack, fundsOK, problem, none};
+  ASSIGN
+    init(state) := welcome;
+    next(state) := case
+                       state = welcome & input = cardIn : enterPin;
+                       state = enterPin & input = correctPin : askAmount;
+                       state = enterPin & input = wrongPin : tryAgain;
+                       state = tryAgain & input = ack : enterPin;
+                       state = askAmount & input = fundsOK : thanksGoodbye;
+                       state = askAmount & input = problem : sorry;
+                       TRUE : state;
+                     esac;
+  LTLSPEC F(G state = thanksGoodbye
+  | G state = sorry
+  );
+  LTLSPEC NAME s2 :=
+    G (
+        (state = welcome -> F input = cardIn) &
+        (state = enterPin -> F (input = correctPin | input = wrongPin)) &
+        (state = askAmount -> F (input = fundsOK | input = problem)) &
+        (state = tryAgain -> F input = ack)
+    )
+    -> F(G state = thanksGoodbye | G state = sorry);

@@ -1,0 +1,10 @@
+@TIME_DOMAIN continuous
+MODULE main
+  VAR
+    c : clock;
+    s : boolean;
+  INIT c = 0 & s
+  INVAR TRUE -> c <= 5
+  TRANS next(s) = !s
+  INVARSPEC c <= 5
+  LTLSPEC G F s

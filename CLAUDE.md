@@ -54,14 +54,16 @@ New IDE features generally add a class here and register it in `plugin.xml`.
 
 `ide/run/` is the largest subtree:
 
-- `command/` — builds CLI invocations per verification engine (BDD, MSAT) and spec type (CTL, LTL, INVAR).
+- `command/` — turns a model profile and a run configuration into nuXmv commands: `NuXmvCheckAlgorithm` (spec kind ×
+  domain → command), `NuXmvApplicability`, `NuXmvLaunchPlanner`, `NuXmvCommandSequence` (resolves unnamed specs through
+  `show_property` at run time). The run modes and their sources are in `context/nuxmv-run-modes.md`.
 - `configuration/` — `NuXmvRunConfiguration` and settings editor.
 - `visualization/` — JCEF browser visualization. `model/` holds the state/trace data classes; `parser/`
-  (`CommandOutputParser` and its per-command subclasses) parses the NuXmv stdout into traces; the HTML/JS shell lives in
+  (`CommandOutputParser` and its subclasses) parses the NuXmv stdout into traces; the HTML/JS shell lives in
   `src/main/resources/visualization/`.
 
-NuXmv has two domain modes the plugin distinguishes throughout: **Finite** (BDD-based) and **Infinite**
-(SMT/MSAT-based). The run/command layer branches on this.
+NuXmv has three domain modes the plugin distinguishes throughout: **Finite** (BDD-based), **Infinite**
+(SMT/MSAT-based) and **Timed** (`@TIME_DOMAIN continuous`, run with `-time`). The run/command layer branches on this.
 
 ## Regenerating the Lexer and Parser
 
@@ -88,8 +90,11 @@ When orienting in the codebase, these are the load-bearing classes other code ha
 - `NuXmvLanguage` / `NuXmvFileType` — language and `.smv`/`.xmv`/`.nuxmv` file type registration.
 - `NuXmvRunConfiguration` — run configuration; see `ide/run/configuration/`.
 - `NuXmvModelVisualizer` — JCEF visualization host.
-- `CommandOutputParser` (+ `ShowTracesOutputParser`, `InvarCheckCommandOutputParser`,
-  `TimedLogicCheckCommandOutputParser`) — parse NuXmv stdout into the counterexample/trace model.
+- `NuXmvModelProfile` (`language/utils/`) — cached domain and specification list of a model; the run configuration,
+  producers and run gutter icons decide what is available from it.
+- `NuXmvLaunchPlanner` — builds the commands of a run from the profile and the configuration.
+- `CommandOutputParser` (+ `TraceBlockOutputParser`, `ShowTracesOutputParser`) — parse NuXmv stdout into the
+  counterexample/trace model by output content, not by the command that produced it.
 - `MacroExpansionService` — `#FOR ... #END ENDFOR` macro expansion.
 - `NuXmvScopes` (`language/psi/scope/`) — cached per-module declaration tables (including `ISA`-included modules) and
   per-file module tables; resolve, completion and annotators go through it instead of walking PSI.

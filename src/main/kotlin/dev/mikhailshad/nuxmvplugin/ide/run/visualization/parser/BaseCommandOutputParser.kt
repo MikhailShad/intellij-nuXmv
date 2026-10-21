@@ -5,7 +5,7 @@ import dev.mikhailshad.nuxmvplugin.ide.run.visualization.model.CounterexampleSta
 abstract class BaseCommandOutputParser : CommandOutputParser {
     companion object {
         protected val STATE_REGEX =
-            Regex("""(?m)(?:^\s*-- Loop starts here\s*\n)?\s*->\s*State:\s*(\d+\.\d+)\s*<-\s*\n((?:\s+\w+\s*=\s*.*\n?)*)""")
+            Regex("""(?m)(?:^\s*-- Loop starts here\s*\n)?\s*->\s*State:\s*(\d+\.\d+)\s*<-\s*\n((?:\s+[\w.\[\]$#]+\s*=\s*.*\n?)*)""")
     }
 
     fun parseTraceStates(traceText: String): List<CounterexampleState> {
@@ -17,7 +17,7 @@ abstract class BaseCommandOutputParser : CommandOutputParser {
             val variables = variablesBlock.lines()
                 .filter { it.contains("=") }
                 .associate {
-                    val (key, value) = it.trim().split("=").map(String::trim)
+                    val (key, value) = it.trim().split("=", limit = 2).map(String::trim)
                     key to value
                 }.toMutableMap()
 

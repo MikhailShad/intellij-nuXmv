@@ -5,27 +5,37 @@ import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Key
+import dev.mikhailshad.nuxmvplugin.ide.run.command.NuXmvCommandSequence
 import dev.mikhailshad.nuxmvplugin.ide.run.visualization.model.CounterexampleTrace
-import dev.mikhailshad.nuxmvplugin.ide.run.visualization.parser.InvarCheckCommandOutputParser
 import dev.mikhailshad.nuxmvplugin.ide.run.visualization.parser.ShowTracesOutputParser
-import dev.mikhailshad.nuxmvplugin.ide.run.visualization.parser.TimedLogicCheckCommandOutputParser
+import dev.mikhailshad.nuxmvplugin.ide.run.visualization.parser.TraceBlockOutputParser
 import java.io.BufferedWriter
 import java.io.IOException
 import java.io.OutputStreamWriter
 
+/**
+ * Drives the interactive nuXmv shell: sends the next command of [commands] on every prompt and collects traces
+ * from the output of every command, including the ones the user types in the console.
+ *
+ * @param print prints a line to the run console
+ * @param showTraces receives all traces collected so far, once the planned commands are done and whenever traces change after that
+ */
 class NuXmvProcessListener(
-    private val console: NuXmvSplitConsole,
-    commands: List<String>
+    private val commands: NuXmvCommandSequence,
+    private val print: (String, ConsoleViewContentType) -> Unit,
+    private val showTraces: (List<CounterexampleTrace>) -> Unit
 ) : ProcessListener {
     companion object {
         private val logger = Logger.getInstance(NuXmvProcessListener::class.java)
+        private const val PROMPT = "nuXmv >"
     }
 
-    private val commandsIt = commands.iterator()
-    private var currentCommand = ""
-    private var currentOutputBuffer = StringBuilder()
-    private var tracesByNumber = mutableMapOf<Int, CounterexampleTrace>()
-    private var wasCommandPrinted = false
+    private var currentCommand: String? = null
+    private val currentOutputBuffer = StringBuilder()
+    private val tracesByNumber = linkedMapOf<Int, CounterexampleTrace>()
+    private var wasCommandPrinted = true
+    private var sequenceFinished = false
+    private var tracesChanged = false
 
     override fun startNotified(event: ProcessEvent) {}
 
@@ -33,101 +43,72 @@ class NuXmvProcessListener(
 
     override fun processTerminated(event: ProcessEvent) {
         printCommandIfNeeded()
-        parseCurrentCommandOutput()
-        visualizeAllTraces()
+        collectTraces(takeOutput())
+        showTracesIfChanged()
     }
 
     override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-        val line = event.text
-        currentOutputBuffer.append(line)
+        currentOutputBuffer.append(event.text)
         printCommandIfNeeded()
+        if (!event.text.trim().endsWith(PROMPT)) return
 
-        if (line.trim().endsWith("nuXmv >")) {
-            parseCurrentCommandOutput()
+        val output = takeOutput()
+        collectTraces(output)
+        val nextCommand = commands.next(currentCommand, output)
+        currentCommand = nextCommand
+        if (nextCommand != null) {
+            wasCommandPrinted = false
+            send(event, nextCommand)
+        } else {
+            sequenceFinished = true
+        }
+        if (sequenceFinished) showTracesIfChanged()
+    }
 
-            if (commandsIt.hasNext()) {
-                val nextCmd = commandsIt.next()
-                currentCommand = nextCmd
-                wasCommandPrinted = false
+    private fun takeOutput(): String = currentOutputBuffer.toString().also { currentOutputBuffer.clear() }
 
-                try {
-                    val writer = BufferedWriter(OutputStreamWriter(event.processHandler.processInput!!))
-                    writer.write(nextCmd)
-                    writer.newLine()
-                    writer.flush()
-                } catch (e: IOException) {
-                    logger.error("Failed to send command to nuXmv process", e)
-                    console.print("Error sending command: ${e.message}\n", ConsoleViewContentType.ERROR_OUTPUT)
-                }
-            } else {
-                visualizeAllTraces()
-            }
+    private fun send(event: ProcessEvent, command: String) {
+        try {
+            val writer = BufferedWriter(OutputStreamWriter(event.processHandler.processInput!!))
+            writer.write(command)
+            writer.newLine()
+            writer.flush()
+        } catch (e: IOException) {
+            logger.error("Failed to send command to nuXmv process", e)
+            print("Error sending command: ${e.message}\n", ConsoleViewContentType.ERROR_OUTPUT)
         }
     }
 
     private fun printCommandIfNeeded() {
-        if (!wasCommandPrinted && currentCommand.isNotEmpty()) {
-            console.print("$currentCommand\n", ConsoleViewContentType.USER_INPUT)
+        val command = currentCommand
+        if (!wasCommandPrinted && command != null) {
+            print("$command\n", ConsoleViewContentType.USER_INPUT)
             wasCommandPrinted = true
         }
     }
 
-    private fun parseCurrentCommandOutput() {
-        if (currentCommand.isNotBlank()) {
-            val output = currentOutputBuffer.toString()
-            currentOutputBuffer.clear()
-
-            try {
-                if (currentCommand.contains("check_")) {
-                    if (output.contains("is false") ||
-                        output.contains("is violated") ||
-                        output.contains("-- no proof or counterexample found with bound") ||
-                        output.contains("-- invariant violated at depth")
-                    ) {
-                        logger.info("Found failed specifications in command: $currentCommand")
-                    }
+    private fun collectTraces(output: String) {
+        if (output.isBlank()) return
+        try {
+            val traces = if (ShowTracesOutputParser.TRACE_START_REGEX.containsMatchIn(output)) {
+                ShowTracesOutputParser.parseOutput(output).onEach { trace ->
+                    val stored = tracesByNumber[trace.traceNumber]
+                    if (stored == null) tracesByNumber[trace.traceNumber] =
+                        trace else stored.states.putAll(trace.states)
                 }
-
-                when {
-                    currentCommand.contains("invar") -> {
-                        InvarCheckCommandOutputParser.parseOutput(output).forEach { trace ->
-                            // Add trace data to the map
-                            tracesByNumber[trace.traceNumber] = trace
-                        }
-                    }
-
-                    currentCommand.contains("ctl") || currentCommand.contains("ltl") -> {
-                        // Add trace data to the map
-                        TimedLogicCheckCommandOutputParser.parseOutput(output).forEach { trace ->
-                            tracesByNumber[trace.traceNumber] = trace
-                        }
-                    }
-
-                    currentCommand.contains("show_traces") -> {
-                        // Merge full traces with already stored ones
-                        val allTraces = ShowTracesOutputParser.parseOutput(output)
-                        for (trace in allTraces) {
-                            val storedTrace = tracesByNumber[trace.traceNumber]
-                            storedTrace?.states?.putAll(trace.states)
-                        }
-                    }
-
-                    else -> {
-                        // TODO: Add other parsers for different commands in the future
-                    }
-                }
-            } catch (e: Exception) {
-                logger.error("Error parsing command output for '$currentCommand': ${e.message}", e)
+            } else {
+                TraceBlockOutputParser.parseOutput(output).onEach { tracesByNumber[it.traceNumber] = it }
             }
+            if (traces.isNotEmpty()) tracesChanged = true
+        } catch (e: Exception) {
+            logger.error("Error parsing output of '${currentCommand.orEmpty()}': ${e.message}", e)
         }
     }
 
-    private fun visualizeAllTraces() {
-        if (tracesByNumber.isNotEmpty() && console.modelFile != null) {
-            logger.info("Visualizing ${tracesByNumber.size} traces for model ${console.modelFile.path}")
-            console.visualizeModuleWithTraces(console.modelFile, tracesByNumber.values.toList())
-        } else {
-            logger.info("No traces to visualize or model file is null")
-        }
+    private fun showTracesIfChanged() {
+        if (!tracesChanged) return
+        tracesChanged = false
+        logger.info("Visualizing ${tracesByNumber.size} traces")
+        showTraces(tracesByNumber.values.toList())
     }
 }

@@ -9,7 +9,9 @@ import dev.mikhailshad.nuxmvplugin.ide.run.visualization.model.CounterexampleTra
  */
 object ShowTracesOutputParser : BaseCommandOutputParser() {
     private val logger = Logger.getInstance(ShowTracesOutputParser::class.java)
-    val TRACE_START_REGEX = Regex("""<!--\s*#+\s*Trace\snumber:\s(\d)+\s#+\s*-->""")
+    private val TRACE_DESCRIPTION_REGEX = Regex("""Trace\s*[Dd]escription:\s*(.+)""")
+    private val TRACE_TYPE_REGEX = Regex("""Trace\s*[Tt]ype:\s*(.+)""")
+    val TRACE_START_REGEX = Regex("""<!--\s*#+\s*Trace\snumber:\s(\d+)\s#+\s*-->""")
 
     override fun parseOutput(output: String): List<CounterexampleTrace> {
         logger.debug("Parsing show_traces output, length=${output.length}")
@@ -31,6 +33,9 @@ object ShowTracesOutputParser : BaseCommandOutputParser() {
                 output.length
             }
             val traceText = output.substring(start, end).trim()
+            trace.specification = ""
+            trace.description = TRACE_DESCRIPTION_REGEX.find(traceText)?.groupValues?.get(1)?.trim() ?: "unknown"
+            trace.type = TRACE_TYPE_REGEX.find(traceText)?.groupValues?.get(1)?.trim() ?: "unknown"
             val traceStates = parseTraceStates(traceText)
             trace.states.putAll(traceStates.associateBy { it.stateNumber }.toMutableMap())
             traces.add(trace)
