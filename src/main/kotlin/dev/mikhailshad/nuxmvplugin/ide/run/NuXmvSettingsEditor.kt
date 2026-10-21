@@ -11,11 +11,7 @@ import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.ui.*
-import com.intellij.ui.components.JBCheckBox
-import com.intellij.ui.components.JBLabel
-import com.intellij.ui.components.JBScrollPane
-import com.intellij.ui.components.JBTextArea
-import com.intellij.ui.components.JBTextField
+import com.intellij.ui.components.*
 import com.intellij.util.PsiNavigateUtil
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.JBUI
@@ -368,7 +364,7 @@ class NuXmvSettingsEditor(private val project: Project) : SettingsEditor<NuXmvRu
 
     private class SpecTreeRenderer : CheckboxTree.CheckboxTreeCellRenderer() {
         override fun customizeRenderer(
-            tree: JTree, value: Any?, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean
+            tree: JTree, value: Any, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean
         ) {
             val node = (value as? CheckedTreeNode)?.userObject ?: return
             val reason = when (node) {

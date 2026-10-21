@@ -24,7 +24,12 @@ class NuXmvSplitConsole(
     project: Project
 ) : ConsoleView, Disposable {
     val textConsole: ConsoleView = TextConsoleBuilderFactory.getInstance().createBuilder(project).console
-    val visualizer = NuXmvModelVisualizer(project)
+    val visualizer: NuXmvModelVisualizer = try {
+        NuXmvModelVisualizer(project)
+    } catch (e: Throwable) {
+        Disposer.dispose(textConsole)
+        throw e
+    }
     private val mainPanel = JPanel(BorderLayout())
     private val splitter = JBSplitter(false, 0.4f, 0.3f, 0.7f).apply {
         firstComponent = textConsole.component

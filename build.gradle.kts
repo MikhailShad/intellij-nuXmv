@@ -1,5 +1,3 @@
-import org.jetbrains.grammarkit.tasks.GenerateLexerTask
-import org.jetbrains.grammarkit.tasks.GenerateParserTask
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -7,10 +5,10 @@ fun property(key: String) = providers.gradleProperty(key).get()
 
 plugins {
     id("java")
-    kotlin("jvm") version "2.1.21"
-    kotlin("plugin.serialization") version "2.1.21"
-    id("org.jetbrains.grammarkit") version "2022.3.2.2"
-    id("org.jetbrains.intellij.platform") version "2.16.0"
+    kotlin("jvm") version "2.4.21"
+    kotlin("plugin.serialization") version "2.4.21"
+    id("org.jetbrains.intellij.platform") version "2.19.0"
+    id("org.jetbrains.intellij.platform.grammarkit") version "2.19.0"
     id("org.jetbrains.changelog") version "2.5.0"
     id("co.uzzu.dotenv.gradle") version "4.0.0"
 }
@@ -44,15 +42,18 @@ idea {
 
 dependencies {
     intellijPlatform {
-        intellijIdeaCommunity("2025.1.2")
+        intellijIdea("2026.2.3")
         bundledPlugin("com.intellij.java")
+        bundledPlugin("com.intellij.modules.jcef")
+        grammarKit("2023.3.4")
+        jflex("1.10.18")
 
         testFramework(TestFrameworkType.Platform)
     }
 
-    implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
-    implementation("org.json:json:20231013")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+    implementation("io.github.oshai:kotlin-logging-jvm:8.0.4")
+    implementation("org.json:json:20260814")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
     testImplementation("junit:junit:4.13.2")
 }
@@ -90,42 +91,36 @@ intellijPlatform {
     }
 }
 
-val cleanNuXmvGrammarOutputs = tasks.register<Delete>("cleanNuXmvGrammarOutputs") {
-    delete(
-        file("src/main/gen/dev/mikhailshad/nuxmvplugin/language/parser/NuXmvParser.java"),
-        file("src/main/gen/dev/mikhailshad/nuxmvplugin/language/psi"),
-        file("src/main/gen/dev/mikhailshad/nuxmvplugin/language/lexer/_NuXmvLexer.java"),
-        file("src/main/gen/dev/mikhailshad/nuxmvplugin/language/lexer/_NuXmvLexer.java~")
-    )
+tasks {
+    generateParser {
+        sourceFile = file("src/main/kotlin/dev/mikhailshad/nuxmvplugin/language/nuXmv.bnf")
+        targetRootOutputDir = file("src/main/gen")
+        pathToParser = "dev/mikhailshad/nuxmvplugin/language/parser/NuXmvParser.java"
+        pathToPsiRoot = "dev/mikhailshad/nuxmvplugin/language/psi"
+        purgeOldFiles = true
+    }
+    generateLexer {
+        sourceFile = file("src/main/kotlin/dev/mikhailshad/nuxmvplugin/language/nuXmv.flex")
+        targetRootOutputDir = file("src/main/gen")
+        pathToClass = "dev/mikhailshad/nuxmvplugin/language/lexer/_NuXmvLexer.java"
+        purgeOldFiles = true
+        dependsOn(generateParser)
+    }
+    prepareTestSandbox {
+        disabledPlugins.add("com.intellij.modules.ultimate")
+    }
 }
 
-val generateNuXmvParser = tasks.register<GenerateParserTask>("generateNuXmvParser") {
-    sourceFile.set(file("src/main/kotlin/dev/mikhailshad/nuxmvplugin/language/nuXmv.bnf"))
-    pathToParser.set("/parser/NuXmvParser.java")
-    pathToPsiRoot.set("/gen/psi")
-    targetRootOutputDir.set(file("src/main/gen"))
-    purgeOldFiles.set(true)
-    dependsOn(cleanNuXmvGrammarOutputs)
-}
-
-val generateNuXmvLexer = tasks.register<GenerateLexerTask>("generateNuXmvLexer") {
-    sourceFile.set(file("src/main/kotlin/dev/mikhailshad/nuxmvplugin/language/nuXmv.flex"))
-    targetOutputDir.set(file("src/main/gen/dev/mikhailshad/nuxmvplugin/language/lexer"))
-    purgeOldFiles.set(false)
-
-    dependsOn(generateNuXmvParser)
-}
-
-tasks.clean {
-    dependsOn(cleanNuXmvGrammarOutputs)
-}
-
-val runIdeWithPsiViewer by intellijPlatformTesting.runIde.registering {
+val runIdeWithPsiViewer = intellijPlatformTesting.runIde.register("runIdeWithPsiViewer") {
     plugins {
         plugin("PsiViewer", property("psiViewerPluginVersion"))
     }
 }
 
 tasks.named<KotlinCompile>("compileKotlin") {
-    dependsOn(generateNuXmvLexer)
+    dependsOn(tasks.generateLexer)
+}
+
+kotlin {
+    jvmToolchain(25)
 }

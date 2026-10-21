@@ -34,7 +34,8 @@ class NuXmvCommandLineState(
     private val modelVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(modelFile)
         ?: throw ExecutionException("Model file does not exist: ${modelFile.absolutePath}")
     private val consoleBuilder = NuXmvSplitConsoleBuilder(project, modelVirtualFile)
-    private val console: NuXmvSplitConsole by lazy { consoleBuilder.console as NuXmvSplitConsole }
+    private val consoleHolder = lazy { consoleBuilder.console as NuXmvSplitConsole }
+    private val console: NuXmvSplitConsole by consoleHolder
 
     override fun createConsole(executor: Executor): ConsoleView {
         return console
@@ -55,7 +56,7 @@ class NuXmvCommandLineState(
         try {
             return startNuXmv(nuXmvPath)
         } catch (e: Throwable) {
-            Disposer.dispose(console)
+            if (consoleHolder.isInitialized()) Disposer.dispose(console)
             throw e
         }
     }
